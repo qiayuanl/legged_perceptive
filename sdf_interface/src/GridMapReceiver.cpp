@@ -9,7 +9,9 @@
 namespace legged {
 GridMapReceiver::GridMapReceiver(ros::NodeHandle nh, std::shared_ptr<grid_map::SignedDistanceField> sdfPtr, const std::string& mapTopic,
                                  std::string elevationLayer)
-    : sdfPtr_(std::move(sdfPtr)), elevationLayer_(std::move(elevationLayer)), mapUpdated_(false) {
+    : sdfPtr_(std::move(sdfPtr)), elevationLayer_(std::move(elevationLayer)), mapUpdated_(true) {
+  map_.setGeometry(grid_map::Length(5.0, 5.0), 0.03);
+  map_.add(elevationLayer_, 0);
   subscriber_ = nh.subscribe(mapTopic, 1, &GridMapReceiver::gridMapCallback, this);
 }
 
