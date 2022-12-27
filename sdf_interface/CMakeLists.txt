@@ -45,6 +45,7 @@ link_directories(
 
 add_library(${PROJECT_NAME}
         src/GridMapReceiver.cpp
+        src/BaseSdfConstraint.cpp
         )
 
 target_link_libraries(${PROJECT_NAME}

@@ -7,8 +7,9 @@
 #include <utility>
 
 namespace legged {
-GridMapReceiver::GridMapReceiver(ros::NodeHandle nh, const std::string& mapTopic, std::string elevationLayer)
-    : elevationLayer_(std::move(elevationLayer)), mapUpdated_(false) {
+GridMapReceiver::GridMapReceiver(ros::NodeHandle nh, std::shared_ptr<grid_map::SignedDistanceField> sdfPtr, const std::string& mapTopic,
+                                 std::string elevationLayer)
+    : sdfPtr_(std::move(sdfPtr)), elevationLayer_(std::move(elevationLayer)), mapUpdated_(false) {
   subscriber_ = nh.subscribe(mapTopic, 1, &GridMapReceiver::gridMapCallback, this);
 }
 
@@ -19,18 +20,19 @@ void GridMapReceiver::preSolverRun(scalar_t /*initTime*/, scalar_t /*finalTime*/
     mapUpdated_ = false;
 
     auto& elevationData = map_.get(elevationLayer_);
-    // In-paint if needed.
+    // Inpaint if needed.
     if (elevationData.hasNaN()) {
-      const float inPaint{elevationData.minCoeffOfFinites()};
+      const float inpaint{elevationData.minCoeffOfFinites()};
       ROS_WARN("[GridMapReceiver] Map contains NaN values. Will apply inpainting with min value.");
-      elevationData = elevationData.unaryExpr([=](float v) { return std::isfinite(v) ? v : inPaint; });
+      elevationData = elevationData.unaryExpr([=](float v) { return std::isfinite(v) ? v : inpaint; });
     }
 
     // Generate SDF.
     const float heightMargin{0.1};
     const float minValue{elevationData.minCoeffOfFinites() - heightMargin};
     const float maxValue{elevationData.maxCoeffOfFinites() + heightMargin};
-    grid_map::SignedDistanceField sdf(map_, elevationLayer_, minValue, maxValue);
+    sdfPtr_ = std::make_shared<grid_map::SignedDistanceField>(map_, elevationLayer_, minValue, maxValue);
+    sdfPtr_->value(grid_map::Position3(0, 0, 0));
   }
 }
 
