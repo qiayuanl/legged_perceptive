@@ -1,0 +1,10 @@
+<library path="lib/libsdf_controllers">
+
+    <class name="legged/BaseSdfController"
+           type="legged::BaseSdfController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+        </description>
+    </class>
+
+</library>
