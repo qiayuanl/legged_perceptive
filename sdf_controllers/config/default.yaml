@@ -2,5 +2,5 @@ controllers:
   joint_state_controller:
     type: joint_state_controller/JointStateController
     publish_rate: 100
-  base_sdf_controller:
-    type: legged/BaseSdfController
+  sphere_sdf_controller:
+    type: legged/SphereSdfController

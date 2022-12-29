@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include "sdf_interface/BaseSdfConstraint.h"
+#include "sdf_interface/SphereSdfConstraint.h"
 
 #include <legged_interface/LeggedInterface.h>
 
 namespace legged {
 
-class BaseSdfLeggedInterface : public legged::LeggedInterface {
+class SphereSdfLeggedInterface : public legged::LeggedInterface {
  public:
   using LeggedInterface::LeggedInterface;
 

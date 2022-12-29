@@ -47,7 +47,7 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
-        src/BaseSdfController.cpp
+        src/SphereSdfController.cpp
         )
 
 target_link_libraries(${PROJECT_NAME}

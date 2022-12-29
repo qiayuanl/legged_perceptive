@@ -8,6 +8,7 @@ find_package(catkin REQUIRED
         roscpp
         legged_interface
         grid_map_sdf
+        ocs2_sphere_approximation
         )
 
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
@@ -32,6 +33,16 @@ catkin_package(
 ## Build ##
 ###########
 
+set(FLAGS
+        ${OCS2_CXX_FLAGS}
+        ${pinocchio_CFLAGS_OTHER}
+        -Wno-ignored-attributes
+        -Wno-invalid-partial-specialization   # to silence warning with unsupported Eigen Tensor
+        -DPINOCCHIO_URDFDOM_TYPEDEF_SHARED_PTR
+        -DPINOCCHIO_URDFDOM_USE_STD_SHARED_PTR
+        )
+
+
 include_directories(
         include
         ${catkin_INCLUDE_DIRS}
@@ -45,7 +56,7 @@ link_directories(
 
 add_library(${PROJECT_NAME}
         src/GridMapReceiver.cpp
-        src/BaseSdfConstraint.cpp
+        src/SphereSdfConstraint.cpp
         src/LeggedInterface.cpp
         )
 
@@ -54,7 +65,7 @@ target_link_libraries(${PROJECT_NAME}
         ${pinocchio_LIBRARIES}
         )
 
-target_compile_options(${PROJECT_NAME} PUBLIC ${OCS2_CXX_FLAGS})
+target_compile_options(${PROJECT_NAME} PUBLIC ${FLAGS})
 
 #########################
 ###   CLANG TOOLING   ###

@@ -1,7 +1,7 @@
 <library path="lib/libsdf_controllers">
 
-    <class name="legged/BaseSdfController"
-           type="legged::BaseSdfController"
+    <class name="legged/SphereSdfController"
+           type="legged::SphereSdfController"
            base_class_type="controller_interface::ControllerBase">
         <description>
         </description>
