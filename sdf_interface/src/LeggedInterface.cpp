@@ -9,6 +9,9 @@ namespace legged {
 void BaseSdfLeggedInterface::setupOptimalControlProblem(const std::string& taskFile, const std::string& urdfFile,
                                                         const std::string& referenceFile, bool verbose) {
   LeggedInterface::setupOptimalControlProblem(taskFile, urdfFile, referenceFile, verbose);
+
+  sdfPrt_ = std::make_shared<Sdf>("elevation");
+
   std::unique_ptr<PenaltyBase> penalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(0.1, 1e-3)));
 
   std::unique_ptr<BaseSdfConstraint> baseSdfConstraint(new BaseSdfConstraint(sdfPrt_, 0.15, getCentroidalModelInfo()));

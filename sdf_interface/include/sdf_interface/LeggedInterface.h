@@ -17,10 +17,10 @@ class BaseSdfLeggedInterface : public legged::LeggedInterface {
   void setupOptimalControlProblem(const std::string& taskFile, const std::string& urdfFile, const std::string& referenceFile,
                                   bool verbose) override;
 
-  std::shared_ptr<grid_map::SignedDistanceField> getSdfPrt() const { return sdfPrt_; }
+  std::shared_ptr<Sdf> getSdfPrt() const { return sdfPrt_; }
 
  private:
-  std::shared_ptr<grid_map::SignedDistanceField> sdfPrt_;
+  std::shared_ptr<Sdf> sdfPrt_;
 };
 
 }  // namespace legged

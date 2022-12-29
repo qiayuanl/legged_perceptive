@@ -7,9 +7,8 @@
 #include <utility>
 
 namespace legged {
-GridMapReceiver::GridMapReceiver(ros::NodeHandle nh, std::shared_ptr<grid_map::SignedDistanceField> sdfPtr, const std::string& mapTopic,
-                                 std::string elevationLayer)
-    : sdfPtr_(std::move(sdfPtr)), elevationLayer_(std::move(elevationLayer)), mapUpdated_(true) {
+GridMapReceiver::GridMapReceiver(ros::NodeHandle nh, std::shared_ptr<Sdf> sdfPtr, const std::string& mapTopic)
+    : sdfPtr_(std::move(sdfPtr)), elevationLayer_(sdfPtr_->getElevationLayer()), mapUpdated_(true) {
   map_.setGeometry(grid_map::Length(5.0, 5.0), 0.03);
   map_.add(elevationLayer_, 0);
   subscriber_ = nh.subscribe(mapTopic, 1, &GridMapReceiver::gridMapCallback, this);
@@ -28,13 +27,13 @@ void GridMapReceiver::preSolverRun(scalar_t /*initTime*/, scalar_t /*finalTime*/
       ROS_WARN("[GridMapReceiver] Map contains NaN values. Will apply inpainting with min value.");
       elevationData = elevationData.unaryExpr([=](float v) { return std::isfinite(v) ? v : inpaint; });
     }
-
-    // Generate SDF.
-    const float heightMargin{0.1};
-    const float minValue{elevationData.minCoeffOfFinites() - heightMargin};
-    const float maxValue{elevationData.maxCoeffOfFinites() + heightMargin};
-    sdfPtr_ = std::make_shared<grid_map::SignedDistanceField>(map_, elevationLayer_, minValue, maxValue);
-    sdfPtr_->value(grid_map::Position3(0, 0, 0));
+    map_.atPosition(elevationLayer_, grid_map::Position(1, 0)) = 0.2;
+    map_.atPosition(elevationLayer_, grid_map::Position(1, 0.1)) = 0.2;
+    map_.atPosition(elevationLayer_, grid_map::Position(1, -0.1)) = 0.2;
+    map_.atPosition(elevationLayer_, grid_map::Position(1.1, 0)) = 0.2;
+    map_.atPosition(elevationLayer_, grid_map::Position(1.1, 0.1)) = 0.2;
+    map_.atPosition(elevationLayer_, grid_map::Position(1.1, -0.1)) = 0.2;
+    sdfPtr_->update(map_);
   }
 }
 

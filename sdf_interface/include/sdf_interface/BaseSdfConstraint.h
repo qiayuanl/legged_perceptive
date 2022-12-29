@@ -8,7 +8,7 @@
 
 #include <ocs2_centroidal_model/AccessHelperFunctions.h>
 #include <ocs2_core/constraint/StateConstraint.h>
-#include <grid_map_sdf/SignedDistanceField.hpp>
+#include <sdf_interface/Sdf.h>
 
 namespace legged {
 
@@ -16,7 +16,7 @@ using namespace ocs2;
 
 class BaseSdfConstraint final : public ocs2::StateConstraint {
  public:
-  BaseSdfConstraint(std::shared_ptr<grid_map::SignedDistanceField> sdfPtr, scalar_t radius, CentroidalModelInfo info);
+  BaseSdfConstraint(std::shared_ptr<Sdf> sdfPtr, scalar_t radius, CentroidalModelInfo info);
 
   /** Default destructor */
   ~BaseSdfConstraint() override = default;
@@ -33,7 +33,7 @@ class BaseSdfConstraint final : public ocs2::StateConstraint {
 
   BaseSdfConstraint(const BaseSdfConstraint& other) = default;
 
-  std::shared_ptr<grid_map::SignedDistanceField> sdfPtr_;
+  std::shared_ptr<Sdf> sdfPtr_;
   scalar_t radius_;
   CentroidalModelInfo info_;
 };
