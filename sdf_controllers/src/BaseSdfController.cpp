@@ -19,8 +19,8 @@ void BaseSdfController::setupMpc() {
   LeggedController::setupMpc();
 
   ros::NodeHandle nh;
-  auto gridMapReceiver = std::make_shared<GridMapReceiver>(nh, dynamic_cast<BaseSdfLeggedInterface&>(*leggedInterface_).getSdfPrt(),
-                                                           "elevation_mapping", "elevation");
+  auto gridMapReceiver =
+      std::make_shared<GridMapReceiver>(nh, dynamic_cast<BaseSdfLeggedInterface&>(*leggedInterface_).getSdfPrt(), "elevation_mapping");
   mpc_->getSolverPtr()->addSynchronizedModule(gridMapReceiver);
 }
 
