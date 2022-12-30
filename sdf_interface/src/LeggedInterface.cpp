@@ -4,7 +4,6 @@
 
 #include "sdf_interface/LeggedInterface.h"
 
-#include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
 #include <ocs2_core/soft_constraint/StateSoftConstraint.h>
 #include <ocs2_sphere_approximation/PinocchioSphereKinematics.h>
 
@@ -15,14 +14,15 @@ void SphereSdfLeggedInterface::setupOptimalControlProblem(const std::string& tas
 
   sdfPrt_ = std::make_shared<Sdf>("elevation");
 
-  PinocchioSphereInterface sphereInterface(getPinocchioInterface(), {"base"}, {0.1}, 0.5);
+  PinocchioSphereInterface sphereInterface(getPinocchioInterface(), {"base"}, {0.05}, 0.5);
 
   CentroidalModelPinocchioMapping pinocchioMapping(getCentroidalModelInfo());
   auto sphereKinematicsPtr = std::make_unique<PinocchioSphereKinematics>(sphereInterface, pinocchioMapping);
 
-  std::unique_ptr<SphereSdfConstraint> sphereSdfConstraint(new SphereSdfConstraint(*sphereKinematicsPtr, getPinocchioInterface(), sdfPrt_));
+  std::unique_ptr<SphereSdfConstraint> sphereSdfConstraint(
+      new SphereSdfConstraint(*sphereKinematicsPtr, getPinocchioInterface(), pinocchioMapping, sdfPrt_));
 
-  std::unique_ptr<PenaltyBase> penalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(0.1, 1e-3)));
+  std::unique_ptr<PenaltyBase> penalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(0.1, 1e-2)));
   getOptimalControlProblem().stateSoftConstraintPtr->add(
       "base_sdf_constraint", std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(sphereSdfConstraint), std::move(penalty))));
 }
