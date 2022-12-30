@@ -19,8 +19,11 @@ class SphereSdfLeggedInterface : public legged::LeggedInterface {
 
   std::shared_ptr<Sdf> getSdfPrt() const { return sdfPrt_; }
 
+  std::shared_ptr<PinocchioSphereInterface> getPinocchioSphereInterfacePrt() const { return pinocchioSphereInterfacePrt_; }
+
  private:
   std::shared_ptr<Sdf> sdfPrt_;
+  std::shared_ptr<PinocchioSphereInterface> pinocchioSphereInterfacePrt_;
 };
 
 }  // namespace legged

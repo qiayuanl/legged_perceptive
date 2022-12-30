@@ -9,6 +9,7 @@ find_package(catkin REQUIRED
         legged_interface
         grid_map_sdf
         ocs2_sphere_approximation
+        visualization_msgs
         )
 
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
@@ -25,6 +26,8 @@ catkin_package(
         roscpp
         legged_interface
         grid_map_sdf
+        ocs2_sphere_approximation
+        visualization_msgs
         DEPENDS
         pinocchio
 )
@@ -57,6 +60,7 @@ link_directories(
 add_library(${PROJECT_NAME}
         src/GridMapReceiver.cpp
         src/SphereSdfConstraint.cpp
+        src/SphereVisualization.cpp
         src/LeggedInterface.cpp
         )
 

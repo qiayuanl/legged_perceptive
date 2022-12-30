@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "sdf_interface/SphereVisualization.h"
 
 #include <legged_controllers/LeggedController.h>
 
@@ -14,7 +15,13 @@ class SphereSdfController : public legged::LeggedController {
  protected:
   void setupLeggedInterface(const std::string& task_file, const std::string& urdf_file, const std::string& reference_file,
                             bool verbose) override;
+
   void setupMpc() override;
+
+  void update(const ros::Time& time, const ros::Duration& period) override;
+
+ private:
+  std::shared_ptr<SphereVisualization> sphereVisualizationPtr_;
 };
 
 }  // namespace legged
