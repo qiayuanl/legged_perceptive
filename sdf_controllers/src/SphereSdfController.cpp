@@ -3,8 +3,8 @@
 //
 
 #include "sdf_controllers/SphereSdfController.h"
-#include "sdf_interface/GridMapReceiver.h"
 #include "sdf_interface/LeggedInterface.h"
+#include "sdf_interface/PlanarTerrainReceiver.h"
 
 #include <pluginlib/class_list_macros.hpp>
 
@@ -23,9 +23,9 @@ void SphereSdfController::setupMpc() {
   LeggedController::setupMpc();
 
   ros::NodeHandle nh;
-  auto gridMapReceiver = std::make_shared<GridMapReceiver>(nh, dynamic_cast<SphereSdfLeggedInterface&>(*leggedInterface_).getSdfPrt(),
-                                                           "/convex_plane_decomposition_ros/filtered_map");
-  mpc_->getSolverPtr()->addSynchronizedModule(gridMapReceiver);
+  auto planarTerrainReceiver = std::make_shared<PlanarTerrainReceiver>(
+      nh, dynamic_cast<SphereSdfLeggedInterface&>(*leggedInterface_).getSdfPrt(), "/convex_plane_decomposition_ros/planar_terrain");
+  mpc_->getSolverPtr()->addSynchronizedModule(planarTerrainReceiver);
 }
 
 void SphereSdfController::update(const ros::Time& time, const ros::Duration& period) {

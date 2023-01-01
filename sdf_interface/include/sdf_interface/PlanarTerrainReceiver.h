@@ -8,7 +8,9 @@
 
 #include "Sdf.h"
 
-#include <grid_map_msgs/GridMap.h>
+#include <convex_plane_decomposition_msgs/PlanarTerrain.h>
+
+#include <convex_plane_decomposition/PlanarRegion.h>
 #include <ocs2_oc/synchronized_module/SolverSynchronizedModule.h>
 #include <ros/ros.h>
 
@@ -16,9 +18,9 @@ namespace legged {
 
 using namespace ocs2;
 
-class GridMapReceiver : public SolverSynchronizedModule {
+class PlanarTerrainReceiver : public SolverSynchronizedModule {
  public:
-  GridMapReceiver(ros::NodeHandle nh, std::shared_ptr<Sdf> sdfPtr, const std::string& mapTopic);
+  PlanarTerrainReceiver(ros::NodeHandle nh, std::shared_ptr<Sdf> sdfPtr, const std::string& mapTopic);
 
   void preSolverRun(scalar_t initTime, scalar_t finalTime, const vector_t& currentState,
                     const ReferenceManagerInterface& referenceManager) override;
@@ -26,7 +28,7 @@ class GridMapReceiver : public SolverSynchronizedModule {
   void postSolverRun(const PrimalSolution& primalSolution) override{};
 
  private:
-  void gridMapCallback(const grid_map_msgs::GridMap& msg);
+  void planarTerrainCallback(const convex_plane_decomposition_msgs::PlanarTerrain::ConstPtr& msg);
 
   std::shared_ptr<Sdf> sdfPtr_;
 
@@ -35,8 +37,9 @@ class GridMapReceiver : public SolverSynchronizedModule {
   std::string elevationLayer_;
 
   std::mutex mutex_;
-  std::atomic_bool mapUpdated_;
-  grid_map::GridMap map_;
+  std::atomic_bool updated_;
+
+  std::unique_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr_;
 };
 
 }  // namespace legged

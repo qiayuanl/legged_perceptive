@@ -13,6 +13,8 @@
     <build_depend>cmake_clang_tools</build_depend>
     <depend>roscpp</depend>
     <depend>legged_interface</depend>
+    <depend>convex_plane_decomposition_msgs</depend>
+    <depend>convex_plane_decomposition_ros</depend>
     <depend>grid_map_sdf</depend>
     <depend>grid_map_ros</depend>
     <depend>ocs2_sphere_approximation</depend>

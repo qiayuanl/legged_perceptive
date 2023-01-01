@@ -7,6 +7,8 @@ find_package(catkin REQUIRED
         COMPONENTS
         roscpp
         legged_interface
+        convex_plane_decomposition_msgs
+        convex_plane_decomposition_ros
         grid_map_sdf
         grid_map_ros
         ocs2_sphere_approximation
@@ -26,6 +28,8 @@ catkin_package(
         CATKIN_DEPENDS
         roscpp
         legged_interface
+        convex_plane_decomposition_msgs
+        convex_plane_decomposition_ros
         grid_map_sdf
         grid_map_ros
         ocs2_sphere_approximation
@@ -60,7 +64,7 @@ link_directories(
 )
 
 add_library(${PROJECT_NAME}
-        src/GridMapReceiver.cpp
+        src/PlanarTerrainReceiver.cpp
         src/SphereSdfConstraint.cpp
         src/SphereVisualization.cpp
         src/FootPlacementConstraint.cpp
