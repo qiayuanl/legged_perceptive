@@ -63,6 +63,7 @@ add_library(${PROJECT_NAME}
         src/GridMapReceiver.cpp
         src/SphereSdfConstraint.cpp
         src/SphereVisualization.cpp
+        src/FootPlacementConstraint.cpp
         src/LeggedInterface.cpp
         )
 
