@@ -8,6 +8,7 @@ find_package(catkin REQUIRED
         roscpp
         legged_interface
         grid_map_sdf
+        grid_map_ros
         ocs2_sphere_approximation
         visualization_msgs
         )
@@ -26,6 +27,7 @@ catkin_package(
         roscpp
         legged_interface
         grid_map_sdf
+        grid_map_ros
         ocs2_sphere_approximation
         visualization_msgs
         DEPENDS
