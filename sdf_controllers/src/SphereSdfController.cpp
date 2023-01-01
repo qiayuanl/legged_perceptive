@@ -23,8 +23,8 @@ void SphereSdfController::setupMpc() {
   LeggedController::setupMpc();
 
   ros::NodeHandle nh;
-  auto gridMapReceiver =
-      std::make_shared<GridMapReceiver>(nh, dynamic_cast<SphereSdfLeggedInterface&>(*leggedInterface_).getSdfPrt(), "elevation_mapping");
+  auto gridMapReceiver = std::make_shared<GridMapReceiver>(nh, dynamic_cast<SphereSdfLeggedInterface&>(*leggedInterface_).getSdfPrt(),
+                                                           "/convex_plane_decomposition_ros/filtered_map");
   mpc_->getSolverPtr()->addSynchronizedModule(gridMapReceiver);
 }
 

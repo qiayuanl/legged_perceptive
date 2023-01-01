@@ -27,12 +27,6 @@ void GridMapReceiver::preSolverRun(scalar_t /*initTime*/, scalar_t /*finalTime*/
       ROS_WARN("[GridMapReceiver] Map contains NaN values. Will apply inpainting with min value.");
       elevationData = elevationData.unaryExpr([=](float v) { return std::isfinite(v) ? v : inpaint; });
     }
-    map_.atPosition(elevationLayer_, grid_map::Position(1, 0)) = 0.3;
-    map_.atPosition(elevationLayer_, grid_map::Position(1, 0.1)) = 0.3;
-    map_.atPosition(elevationLayer_, grid_map::Position(1, -0.1)) = 0.3;
-    map_.atPosition(elevationLayer_, grid_map::Position(1.1, 0)) = 0.3;
-    map_.atPosition(elevationLayer_, grid_map::Position(1.1, 0.1)) = 0.3;
-    map_.atPosition(elevationLayer_, grid_map::Position(1.1, -0.1)) = 0.3;
     sdfPtr_->update(map_);
   }
 }
@@ -43,6 +37,7 @@ void GridMapReceiver::gridMapCallback(const grid_map_msgs::GridMap& msg) {
   // Convert message to map
   std::vector<std::string> layers{elevationLayer_};
   grid_map::GridMapRosConverter::fromMessage(msg, map_, layers, false, false);
+  mapUpdated_ = true;
 }
 
 }  // namespace legged

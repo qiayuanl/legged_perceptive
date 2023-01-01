@@ -12,7 +12,7 @@ void SphereSdfLeggedInterface::setupOptimalControlProblem(const std::string& tas
                                                           const std::string& referenceFile, bool verbose) {
   LeggedInterface::setupOptimalControlProblem(taskFile, urdfFile, referenceFile, verbose);
 
-  sdfPrt_ = std::make_shared<Sdf>("elevation");
+  sdfPrt_ = std::make_shared<Sdf>("elevation_before_postprocess");
 
   scalar_t thighExcess = 0.025;
   scalar_t calfExcess = 0.02;
