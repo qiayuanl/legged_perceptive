@@ -6,14 +6,18 @@
 
 #include <convex_plane_decomposition_ros/MessageConversion.h>
 #include <grid_map_ros/GridMapRosConverter.hpp>
+#include <utility>
 
 namespace legged {
 
-PlanarTerrainReceiver::PlanarTerrainReceiver(ros::NodeHandle nh, std::shared_ptr<Sdf> sdfPtr, const std::string& mapTopic)
-    : sdfPtr_(std::move(sdfPtr)), elevationLayer_(sdfPtr_->getElevationLayer()), updated_(true) {
-  planarTerrainPtr_ = std::make_unique<convex_plane_decomposition::PlanarTerrain>();
-  planarTerrainPtr_->gridMap.setGeometry(grid_map::Length(5.0, 5.0), 0.03);
-  planarTerrainPtr_->gridMap.add(elevationLayer_, 0);
+PlanarTerrainReceiver::PlanarTerrainReceiver(ros::NodeHandle nh,
+                                             std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr,
+                                             std::shared_ptr<grid_map::SignedDistanceField> sdfPtr, const std::string& mapTopic,
+                                             std::string elevationLayer)
+    : planarTerrainPtr_(std::move(planarTerrainPtr)),
+      sdfPtr_(std::move(sdfPtr)),
+      elevationLayer_(std::move(elevationLayer)),
+      updated_(false) {
   subscriber_ = nh.subscribe(mapTopic, 1, &PlanarTerrainReceiver::planarTerrainCallback, this);
 }
 
@@ -30,16 +34,17 @@ void PlanarTerrainReceiver::preSolverRun(scalar_t /*initTime*/, scalar_t /*final
       ROS_WARN("[PlanarTerrainReceiver] Map contains NaN values. Will apply inpainting with min value.");
       elevationData = elevationData.unaryExpr([=](float v) { return std::isfinite(v) ? v : inpaint; });
     }
-    sdfPtr_->update(planarTerrainPtr_->gridMap);
+    const float heightMargin{0.1};
+    const float minValue{elevationData.minCoeffOfFinites() - heightMargin};
+    const float maxValue{elevationData.maxCoeffOfFinites() + heightMargin};
+
+    *sdfPtr_ = grid_map::SignedDistanceField(planarTerrainPtr_->gridMap, elevationLayer_, minValue, maxValue);
   }
 }
 
 void PlanarTerrainReceiver::planarTerrainCallback(const convex_plane_decomposition_msgs::PlanarTerrain::ConstPtr& msg) {
-  std::unique_ptr<convex_plane_decomposition::PlanarTerrain> newTerrain(
-      new convex_plane_decomposition::PlanarTerrain(convex_plane_decomposition::fromMessage(*msg)));
-
   std::lock_guard<std::mutex> lock(mutex_);
-  planarTerrainPtr_.swap(newTerrain);
+  *planarTerrainPtr_ = convex_plane_decomposition::PlanarTerrain(convex_plane_decomposition::fromMessage(*msg));
   updated_ = true;
 }
 

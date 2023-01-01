@@ -6,12 +6,12 @@
 
 #include <mutex>
 
-#include "Sdf.h"
-
 #include <convex_plane_decomposition_msgs/PlanarTerrain.h>
 
 #include <convex_plane_decomposition/PlanarRegion.h>
 #include <ocs2_oc/synchronized_module/SolverSynchronizedModule.h>
+#include <grid_map_sdf/SignedDistanceField.hpp>
+
 #include <ros/ros.h>
 
 namespace legged {
@@ -20,7 +20,8 @@ using namespace ocs2;
 
 class PlanarTerrainReceiver : public SolverSynchronizedModule {
  public:
-  PlanarTerrainReceiver(ros::NodeHandle nh, std::shared_ptr<Sdf> sdfPtr, const std::string& mapTopic);
+  PlanarTerrainReceiver(ros::NodeHandle nh, std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr,
+                        std::shared_ptr<grid_map::SignedDistanceField> sdfPtr, const std::string& mapTopic, std::string elevationLayer);
 
   void preSolverRun(scalar_t initTime, scalar_t finalTime, const vector_t& currentState,
                     const ReferenceManagerInterface& referenceManager) override;
@@ -30,8 +31,6 @@ class PlanarTerrainReceiver : public SolverSynchronizedModule {
  private:
   void planarTerrainCallback(const convex_plane_decomposition_msgs::PlanarTerrain::ConstPtr& msg);
 
-  std::shared_ptr<Sdf> sdfPtr_;
-
   ros::Subscriber subscriber_;
 
   std::string elevationLayer_;
@@ -39,7 +38,8 @@ class PlanarTerrainReceiver : public SolverSynchronizedModule {
   std::mutex mutex_;
   std::atomic_bool updated_;
 
-  std::unique_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr_;
+  std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr_;
+  std::shared_ptr<grid_map::SignedDistanceField> sdfPtr_;
 };
 
 }  // namespace legged

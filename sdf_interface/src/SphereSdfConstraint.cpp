@@ -9,10 +9,11 @@
 #include <pinocchio/algorithm/frames.hpp>
 
 namespace legged {
-SphereSdfConstraint::SphereSdfConstraint(const PinocchioSphereKinematics& sphereKinematicsPtr, PinocchioInterface& pinocchioInterface,
-                                         const PinocchioStateInputMapping<scalar_t>& mapping, std::shared_ptr<Sdf> sdfPtr)
+SphereSdfConstraint::SphereSdfConstraint(const PinocchioSphereKinematics& sphereKinematics, PinocchioInterface& pinocchioInterface,
+                                         const PinocchioStateInputMapping<scalar_t>& mapping,
+                                         std::shared_ptr<grid_map::SignedDistanceField> sdfPtr)
     : StateConstraint(ConstraintOrder::Linear),
-      sphereKinematicsPtr_(sphereKinematicsPtr.clone()),
+      sphereKinematicsPtr_(sphereKinematics.clone()),
       pinocchioInterface_(pinocchioInterface),
       mappingPtr_(mapping.clone()),
       sdfPtr_(std::move(sdfPtr)),

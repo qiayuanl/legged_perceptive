@@ -12,7 +12,11 @@ void SphereSdfLeggedInterface::setupOptimalControlProblem(const std::string& tas
                                                           const std::string& referenceFile, bool verbose) {
   LeggedInterface::setupOptimalControlProblem(taskFile, urdfFile, referenceFile, verbose);
 
-  sdfPrt_ = std::make_shared<Sdf>("elevation_before_postprocess");
+  std::string elevationLayer = "elevation_before_postprocess";
+  planarTerrainPtr_ = std::make_unique<convex_plane_decomposition::PlanarTerrain>();
+  planarTerrainPtr_->gridMap.setGeometry(grid_map::Length(5.0, 5.0), 0.03);
+  planarTerrainPtr_->gridMap.add(elevationLayer, 0);
+  sdfPrt_ = std::make_shared<grid_map::SignedDistanceField>(planarTerrainPtr_->gridMap, elevationLayer, -0.1, 0.1);
 
   scalar_t thighExcess = 0.025;
   scalar_t calfExcess = 0.02;
