@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "sdf_interface/SphereSdfConstraint.h"
+#include "sdf_interface/constraint/SphereSdfConstraint.h"
 
 #include <convex_plane_decomposition/PlanarRegion.h>
 #include <legged_interface/LeggedInterface.h>

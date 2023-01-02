@@ -4,7 +4,7 @@
 
 #include <pinocchio/fwd.hpp>
 
-#include "sdf_interface/SphereSdfConstraint.h"
+#include "sdf_interface/constraint/SphereSdfConstraint.h"
 
 #include <pinocchio/algorithm/frames.hpp>
 

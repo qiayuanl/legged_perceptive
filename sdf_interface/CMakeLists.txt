@@ -64,12 +64,12 @@ link_directories(
 )
 
 add_library(${PROJECT_NAME}
-        src/PlanarTerrainReceiver.cpp
-        src/SphereSdfConstraint.cpp
+        src/constraint/SphereSdfConstraint.cpp
+        src/constraint/FootPlacementConstraint.cpp
+        src/synchronized_module/PlanarTerrainReceiver.cpp
         src/SphereVisualization.cpp
-        src/FootPlacementConstraint.cpp
-        src/LeggedPrecomputation.cpp
         src/ConvexRegionSelector.cpp
+        src/LeggedPrecomputation.cpp
         src/LeggedInterface.cpp
         )
 

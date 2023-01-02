@@ -2,7 +2,7 @@
 // Created by qiayuan on 23-1-1.
 //
 
-#include "sdf_interface/FootPlacementConstraint.h"
+#include "sdf_interface/constraint/FootPlacementConstraint.h"
 
 namespace legged {
 FootPlacementConstraint::FootPlacementConstraint(const SwitchedModelReferenceManager& referenceManager,
