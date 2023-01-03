@@ -26,13 +26,13 @@ void SphereSdfLeggedInterface::setupOptimalControlProblem(const std::string& tas
   const std::vector<scalar_t>& maxExcesses = {0.05,       thighExcess, thighExcess, thighExcess, thighExcess,
                                               calfExcess, calfExcess,  calfExcess,  calfExcess};
 
-  pinocchioSphereInterfacePrt_ = std::make_shared<PinocchioSphereInterface>(getPinocchioInterface(), collisionLinks, maxExcesses, 0.6);
+  pinocchioSphereInterfacePrt_ = std::make_shared<PinocchioSphereInterface>(*pinocchioInterfacePtr_, collisionLinks, maxExcesses, 0.6);
 
-  CentroidalModelPinocchioMapping pinocchioMapping(getCentroidalModelInfo());
+  CentroidalModelPinocchioMapping pinocchioMapping(centroidalModelInfo_);
   auto sphereKinematicsPtr = std::make_unique<PinocchioSphereKinematics>(*pinocchioSphereInterfacePrt_, pinocchioMapping);
 
   std::unique_ptr<SphereSdfConstraint> sphereSdfConstraint(
-      new SphereSdfConstraint(*sphereKinematicsPtr, getPinocchioInterface(), pinocchioMapping, sdfPrt_));
+      new SphereSdfConstraint(*sphereKinematicsPtr, *pinocchioInterfacePtr_, pinocchioMapping, sdfPrt_));
 
   std::unique_ptr<PenaltyBase> penalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(0.1, 1e-3)));
   getOptimalControlProblem().stateSoftConstraintPtr->add(
