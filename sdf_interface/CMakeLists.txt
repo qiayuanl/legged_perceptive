@@ -67,6 +67,7 @@ add_library(${PROJECT_NAME}
         src/constraint/SphereSdfConstraint.cpp
         src/constraint/FootPlacementConstraint.cpp
         src/synchronized_module/PlanarTerrainReceiver.cpp
+        src/synchronized_module/LeggedReferenceManager.cpp
         src/SphereVisualization.cpp
         src/ConvexRegionSelector.cpp
         src/LeggedPrecomputation.cpp
