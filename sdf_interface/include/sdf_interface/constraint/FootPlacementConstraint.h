@@ -15,26 +15,20 @@ using namespace legged_robot;
 
 class FootPlacementConstraint final : public StateConstraint {
  public:
-  struct Config {
+  struct Parameter {
     matrix_t a;
     vector_t b;
     vector_t s;
   };
 
-  /**
-   * Constructor
-   * @param [in] referenceManager : Switched model ReferenceManager
-   * @param [in] endEffectorKinematics: The kinematic interface to the target end-effector.
-   * @param [in] contactPointIndex : The 3 DoF contact index.
-   */
   FootPlacementConstraint(const SwitchedModelReferenceManager& referenceManager,
-                          const EndEffectorKinematics<scalar_t>& endEffectorKinematics, size_t contactPointIndex);
+                          const EndEffectorKinematics<scalar_t>& endEffectorKinematics, size_t contactPointIndex, size_t numVertices);
 
   ~FootPlacementConstraint() override = default;
   FootPlacementConstraint* clone() const override { return new FootPlacementConstraint(*this); }
 
   bool isActive(scalar_t time) const override;
-  size_t getNumConstraints(scalar_t time) const override { return 1; }
+  size_t getNumConstraints(scalar_t /*time*/) const override { return numVertices_; }
   vector_t getValue(scalar_t time, const vector_t& state, const PreComputation& preComp) const override;
   VectorFunctionLinearApproximation getLinearApproximation(scalar_t time, const vector_t& state,
                                                            const PreComputation& preComp) const override;
@@ -46,6 +40,7 @@ class FootPlacementConstraint final : public StateConstraint {
   std::unique_ptr<EndEffectorKinematics<scalar_t>> endEffectorKinematicsPtr_;
 
   const size_t contactPointIndex_;
+  const size_t numVertices_;
 };
 
 }  // namespace legged

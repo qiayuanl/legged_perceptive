@@ -19,17 +19,19 @@ class LeggedPreComputation : public LeggedRobotPreComputation {
  public:
   LeggedPreComputation(PinocchioInterface pinocchioInterface, const CentroidalModelInfo& info,
                        const SwingTrajectoryPlanner& swingTrajectoryPlanner, ModelSettings settings,
-                       const ConvexRegionSelector& convexRegionSelector, const size_t numberOfVertices);
+                       const ConvexRegionSelector& convexRegionSelector, size_t numVertices);
   ~LeggedPreComputation() override = default;
 
   void request(RequestSet request, scalar_t t, const vector_t& x, const vector_t& u) override;
 
+  const std::vector<FootPlacementConstraint::Parameter>& getFootPlacementConParameters() const { return footPlacementConParameters_; }
+
  private:
   std::pair<matrix_t, vector_t> getPolygonConstraint(const convex_plane_decomposition::CgalPolygon2d& polygon) const;
 
-  size_t numberOfVertices_;
+  size_t numVertices_;
   const ConvexRegionSelector* convexRegionSelectorPtr_;
-  std::vector<FootPlacementConstraint::Config> footPlacementConConfigs_;
+  std::vector<FootPlacementConstraint::Parameter> footPlacementConParameters_;
 };
 
 }  // namespace legged
