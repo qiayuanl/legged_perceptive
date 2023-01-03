@@ -4,7 +4,7 @@
 
 #include "sdf_controllers/SphereSdfController.h"
 #include "sdf_interface/LeggedInterface.h"
-#include "sdf_interface/PlanarTerrainReceiver.h"
+#include "sdf_interface/synchronized_module/PlanarTerrainReceiver.h"
 
 #include <pluginlib/class_list_macros.hpp>
 
