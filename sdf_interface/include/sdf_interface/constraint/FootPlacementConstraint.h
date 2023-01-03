@@ -15,6 +15,12 @@ using namespace legged_robot;
 
 class FootPlacementConstraint final : public StateConstraint {
  public:
+  struct Config {
+    matrix_t a;
+    vector_t b;
+    vector_t s;
+  };
+
   /**
    * Constructor
    * @param [in] referenceManager : Switched model ReferenceManager

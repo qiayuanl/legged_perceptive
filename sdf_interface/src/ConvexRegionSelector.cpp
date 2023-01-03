@@ -3,7 +3,6 @@
 //
 #include "sdf_interface/ConvexRegionSelector.h"
 
-#include <convex_plane_decomposition/ConvexRegionGrowing.h>
 #include <ocs2_centroidal_model/AccessHelperFunctions.h>
 #include <ocs2_core/misc/Lookup.h>
 #include <ocs2_legged_robot/gait/MotionPhaseDefinition.h>
