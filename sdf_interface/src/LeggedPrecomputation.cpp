@@ -56,7 +56,7 @@ void LeggedPreComputation::request(RequestSet request, scalar_t t, const vector_
 
       auto projection = convexRegionSelectorPtr_->getProjection(i, t);
       if (projection.regionPtr == nullptr) {  // Swing leg
-        break;
+        continue;
       }
 
       scalar_t growthFactor = 1.05;

@@ -33,11 +33,12 @@ void FootPlacementVisualization::update(const SystemObservation& observation) {
     size_t i = 0;
     for (int leg = 0; leg < numFoot_; ++leg) {
       auto middleTimes = convexRegionSelector_.getMiddleTimes(leg);
-      for (double middleTime : middleTimes) {
-        if (middleTime < observation.time) {
+
+      for (int k = 1; k < middleTimes.size(); ++k) {
+        if (observation.time < middleTimes[k - 1] || observation.time > middleTimes[k]) {
           continue;
         }
-        const auto projection = convexRegionSelector_.getProjection(leg, middleTime);
+        const auto projection = convexRegionSelector_.getProjection(leg, middleTimes[k]);
         if (projection.regionPtr == nullptr) {
           continue;
         }
@@ -60,7 +61,7 @@ void FootPlacementVisualization::update(const SystemObservation& observation) {
         makerArray.markers.push_back(to3dRosMarker(convexRegion, projection.regionPtr->transformPlaneToWorld, header, color, i));
 
         // Nominal Footholds
-        const auto nominal = convexRegionSelector_.getNominalFootholds(leg, middleTime);
+        const auto nominal = convexRegionSelector_.getNominalFootholds(leg, middleTimes[k]);
         auto nominalMarker = getFootMarker(nominal, true, color, footMarkerDiameter_, 1.);
         nominalMarker.header = header;
         nominalMarker.ns = "Nominal Footholds";
