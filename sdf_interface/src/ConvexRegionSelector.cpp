@@ -51,33 +51,18 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, const vector
         const int standFinalIndex = finalIndices[leg][i];
         const scalar_t standStartTime = eventTimes[standStartIndex];
         const scalar_t standFinalTime = eventTimes[standFinalIndex];
-        const scalar_t standMiddleTime = standFinalTime - standStartTime;
+        const scalar_t standMiddleTime = standStartTime + (standFinalTime - standStartTime) / 2;
 
-        if (numerics::almost_eq(standMiddleTime, lastStandMiddleTime)) {
+        if (!numerics::almost_eq(standMiddleTime, lastStandMiddleTime)) {
           lastStandMiddleTime = standMiddleTime;
 
           vector3_t query = getNominalFoothold(leg, standMiddleTime, initState, targetTrajectories);
           auto penaltyFunction = [](const vector3_t& /*projectedPoint*/) { return 0.0; };
           const auto projection = getBestPlanarRegionAtPositionInWorld(query, planarTerrainPtr_->planarRegions, penaltyFunction);
+
           feetProjections_[leg][i] = projection;
         } else {
           feetProjections_[leg][i] = feetProjections_[leg][i - 1];
-        }
-      }
-    }
-    // Swing leg (for shrinking)
-    for (size_t i = 0; i < numPhases; ++i) {
-      if (!contactFlagStocks[leg][i]) {
-        const int nextStandIndex = startIndices[leg][i] + 1;
-        if (nextStandIndex != numPhases) {
-          feetProjections_[leg][i] = feetProjections_[leg][nextStandIndex];
-        } else {  // end with swing, try to use the projection of last stand
-          const int lastStandIndex = startIndices[leg][numPhases - 1];
-          if (lastStandIndex != -1) {
-            feetProjections_[leg][i] = feetProjections_[leg][lastStandIndex];
-          } else {  // swing in the whole of horizon
-            feetProjections_[leg][i].regionPtr = nullptr;
-          }
         }
       }
     }
@@ -103,8 +88,12 @@ feet_array_t<std::vector<bool>> ConvexRegionSelector::extractContactFlags(const 
 std::pair<int, int> ConvexRegionSelector::findIndex(size_t index, const std::vector<bool>& contactFlagStock) {
   const size_t numPhases = contactFlagStock.size();
 
+  if (!contactFlagStock[index]) {
+    return {0, 0};
+  }
+
   // find the starting time
-  int startTimesIndex = -1;
+  int startTimesIndex = 0;
   for (int ip = index - 1; ip >= 0; ip--) {
     if (!contactFlagStock[ip]) {
       startTimesIndex = ip;
@@ -112,7 +101,7 @@ std::pair<int, int> ConvexRegionSelector::findIndex(size_t index, const std::vec
     }
   }
   // find the final time
-  int finalTimesIndex = numPhases - 1;
+  int finalTimesIndex = numPhases - 2;
   for (size_t ip = index + 1; ip < numPhases; ip++) {
     if (!contactFlagStock[ip]) {
       finalTimesIndex = ip - 1;
@@ -127,7 +116,7 @@ vector3_t ConvexRegionSelector::getNominalFoothold(size_t /*leg*/, scalar_t time
   vector_t desiredState = targetTrajectories.getDesiredState(time);
   vector_t pose = centroidal_model::getBasePose(desiredState, info_);
 
-  return {pose(0), pose(1), pose(2) - 0.3};
+  return {pose(0), pose(1), pose(2)};
 }
 
 }  // namespace legged
