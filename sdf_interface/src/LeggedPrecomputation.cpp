@@ -12,17 +12,41 @@ namespace legged {
 LeggedPreComputation::LeggedPreComputation(PinocchioInterface pinocchioInterface, const CentroidalModelInfo& info,
                                            const SwingTrajectoryPlanner& swingTrajectoryPlanner, ModelSettings settings,
                                            const ConvexRegionSelector& convexRegionSelector, size_t numVertices)
-    : LeggedRobotPreComputation(std::move(pinocchioInterface), info, swingTrajectoryPlanner, std::move(settings)),
+    : pinocchioInterface_(std::move(pinocchioInterface)),
+      info_(info),
+      swingTrajectoryPlannerPtr_(&swingTrajectoryPlanner),
+      settings_(std::move(settings)),
       convexRegionSelectorPtr_(&convexRegionSelector),
       numVertices_(numVertices) {
-  footPlacementConParameters_.resize(info.numThreeDofContacts);
+  eeNormalVelConConfigs_.resize(info_.numThreeDofContacts);
+  footPlacementConParameters_.resize(info_.numThreeDofContacts);
+}
+
+LeggedPreComputation* LeggedPreComputation::clone() const {
+  return new LeggedPreComputation(*this);
 }
 
 void LeggedPreComputation::request(RequestSet request, scalar_t t, const vector_t& x, const vector_t& u) {
-  LeggedRobotPreComputation::request(request, t, x, u);
-
   if (!request.containsAny(Request::Cost + Request::Constraint + Request::SoftConstraint)) {
     return;
+  }
+
+  // lambda to set config for normal velocity constraints
+  auto eeNormalVelConConfig = [&](size_t footIndex) {
+    EndEffectorLinearConstraint::Config config;
+    config.b = (vector_t(1) << -swingTrajectoryPlannerPtr_->getZvelocityConstraint(footIndex, t)).finished();
+    config.Av = (matrix_t(1, 3) << 0.0, 0.0, 1.0).finished();
+    if (!numerics::almost_eq(settings_.positionErrorGain, 0.0)) {
+      config.b(0) -= settings_.positionErrorGain * swingTrajectoryPlannerPtr_->getZpositionConstraint(footIndex, t);
+      config.Ax = (matrix_t(1, 3) << 0.0, 0.0, settings_.positionErrorGain).finished();
+    }
+    return config;
+  };
+
+  if (request.contains(Request::Constraint)) {
+    for (size_t i = 0; i < info_.numThreeDofContacts; i++) {
+      eeNormalVelConConfigs_[i] = eeNormalVelConConfig(i);
+    }
   }
 
   // lambda to set config for foot placement constraints
@@ -30,6 +54,11 @@ void LeggedPreComputation::request(RequestSet request, scalar_t t, const vector_
     FootPlacementConstraint::Parameter params;
 
     auto projection = convexRegionSelectorPtr_->getProjection(footIndex, t);
+
+    if (projection.regionPtr == nullptr) {  // Swing
+      return params;
+    }
+
     scalar_t growthFactor = 1.05;
     const auto convexRegion = convex_plane_decomposition::growConvexPolygonInsideShape(
         projection.regionPtr->boundaryWithInset.boundary, projection.positionInTerrainFrame, numVertices_, growthFactor);
@@ -56,7 +85,6 @@ std::pair<matrix_t, vector_t> LeggedPreComputation::getPolygonConstraint(const c
   matrix_t polytopeA = matrix_t::Zero(numVertices_, 2);
   vector_t polytopeB = vector_t::Zero(numVertices_);
 
-  const auto vertices = polygon.vertices_begin();
   for (size_t i = 0; i < numVertices_; i++) {
     size_t j = i + 1;
     if (j == numVertices_) {
@@ -72,7 +100,7 @@ std::pair<matrix_t, vector_t> LeggedPreComputation::getPolygonConstraint(const c
 
     polytopeA.row(i) << point_b.y() - point_a.y(), point_a.x() - point_b.x();
     polytopeB(i) = point_a.y() * point_b.x() - point_a.x() * point_b.y();
-    if ((polytopeA.row(i) * (vector_t(2) << point_c.x(), point_c.y()).finished())(0) > polytopeB(i)) {
+    if (polytopeA.row(i) * (vector_t(2) << point_c.x(), point_c.y()).finished() + polytopeB(i) < 0) {
       polytopeA.row(i) *= -1;
       polytopeB(i) *= -1;
     }
