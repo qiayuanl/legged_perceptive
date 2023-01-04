@@ -44,7 +44,8 @@ void FootPlacementVisualization::update(const SystemObservation& observation) {
         auto color = feetColorMap_[leg];
 
         // Projections
-        auto projectionMaker = getArrowAtPointMsg(vector3_t(0, 0, 0.1), projection.positionInWorld, color);
+        auto projectionMaker = getArrowAtPointMsg(projection.regionPtr->transformPlaneToWorld.linear() * vector3_t(0, 0, 0.1),
+                                                  projection.positionInWorld, color);
         projectionMaker.header = header;
         projectionMaker.ns = "Projections";
         projectionMaker.id = i;

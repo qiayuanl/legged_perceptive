@@ -11,8 +11,9 @@
 
 namespace legged {
 ConvexRegionSelector::ConvexRegionSelector(CentroidalModelInfo info,
-                                           std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr)
-    : info_(std::move(info)), planarTerrainPtr_(std::move(planarTerrainPtr)) {}
+                                           std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr,
+                                           const EndEffectorKinematics<scalar_t>& endEffectorKinematics)
+    : info_(std::move(info)), planarTerrainPtr_(std::move(planarTerrainPtr)), endEffectorKinematicsPtr_(endEffectorKinematics.clone()) {}
 
 convex_plane_decomposition::PlanarTerrainProjection ConvexRegionSelector::getProjection(size_t leg, scalar_t time) const {
   const auto index = lookup::findIndexInTimeArray(timeEvents_[leg], time);
@@ -123,12 +124,11 @@ std::pair<int, int> ConvexRegionSelector::findIndex(size_t index, const std::vec
   return {startTimesIndex, finalTimesIndex};
 }
 
-vector3_t ConvexRegionSelector::getNominalFoothold(size_t /*leg*/, scalar_t time, const vector_t& /*initState*/,
+vector3_t ConvexRegionSelector::getNominalFoothold(size_t leg, scalar_t time, const vector_t& /*initState*/,
                                                    TargetTrajectories& targetTrajectories) {
-  vector_t desiredState = targetTrajectories.getDesiredState(time);
-  vector_t pose = centroidal_model::getBasePose(desiredState, info_);
-
-  return {pose(0), pose(1), pose(2)};
+  //  vector_t desiredState = targetTrajectories.getDesiredState(time);
+  //  vector_t pose = centroidal_model::getBasePose(desiredState, info_);
+  return endEffectorKinematicsPtr_->getPosition(targetTrajectories.getDesiredState(time))[leg];
 }
 
 }  // namespace legged

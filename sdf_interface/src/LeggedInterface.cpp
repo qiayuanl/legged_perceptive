@@ -53,13 +53,18 @@ void FootPlacementLeggedInterface::setupOptimalControlProblem(const std::string&
   plannerRegion.transformPlaneToWorld.setIdentity();
   scalar_t bound = 1;
   plannerRegion.bbox2d = convex_plane_decomposition::CgalBbox2d(-bound, -bound, bound, bound);
-  convex_plane_decomposition::CgalPolygonWithHoles2d polygon;
-  polygon.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(-bound, -bound));
-  polygon.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(bound, -bound));
-  polygon.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(bound, bound));
-  polygon.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(-bound, bound));
-  plannerRegion.boundaryWithInset.boundary = polygon;
-  //  plannerRegion.boundaryWithInset.insets.push_back(polygon);
+  convex_plane_decomposition::CgalPolygonWithHoles2d boundary;
+  boundary.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(-bound, -bound));
+  boundary.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(bound, -bound));
+  boundary.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(bound, bound));
+  boundary.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(-bound, bound));
+  plannerRegion.boundaryWithInset.boundary = boundary;
+  convex_plane_decomposition::CgalPolygonWithHoles2d insets;
+  insets.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(-bound + 0.01, -bound + 0.01));
+  insets.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(bound - 0.01, -bound + 0.01));
+  insets.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(bound - 0.01, bound - 0.01));
+  insets.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(-bound + 0.01, bound - 0.01));
+  plannerRegion.boundaryWithInset.insets.push_back(insets);
   planarTerrainPtr_->planarRegions.push_back(plannerRegion);
 
   std::string elevationLayer = "elevation_before_postprocess";
@@ -71,7 +76,7 @@ void FootPlacementLeggedInterface::setupOptimalControlProblem(const std::string&
 
   for (size_t i = 0; i < centroidalModelInfo_.numThreeDofContacts; i++) {
     const std::string& footName = modelSettings().contactNames3DoF[i];
-    std::unique_ptr<EndEffectorKinematics<scalar_t>> eeKinematicsPtr = getEeKinematicsPtr(footName);
+    std::unique_ptr<EndEffectorKinematics<scalar_t>> eeKinematicsPtr = getEeKinematicsPtr({footName}, footName);
 
     std::unique_ptr<FootPlacementConstraint> footPlacementConstraint(
         new FootPlacementConstraint(*referenceManagerPtr_, *eeKinematicsPtr, i, numVertices_));
@@ -81,17 +86,20 @@ void FootPlacementLeggedInterface::setupOptimalControlProblem(const std::string&
   }
 }
 
-void FootPlacementLeggedInterface::setupReferenceManager(const std::string& taskFile, const std::string& urdfFile,
+void FootPlacementLeggedInterface::setupReferenceManager(const std::string& taskFile, const std::string& /*urdfFile*/,
                                                          const std::string& referenceFile, bool verbose) {
   auto swingTrajectoryPlanner =
       std::make_unique<SwingTrajectoryPlanner>(loadSwingTrajectorySettings(taskFile, "swing_trajectory_config", verbose), 4);
-  auto convexRegionSelector = std::make_unique<ConvexRegionSelector>(centroidalModelInfo_, planarTerrainPtr_);
+
+  std::unique_ptr<EndEffectorKinematics<scalar_t>> eeKinematicsPtr = getEeKinematicsPtr({modelSettings_.contactNames3DoF}, "ALL_FOOT");
+  auto convexRegionSelector = std::make_unique<ConvexRegionSelector>(centroidalModelInfo_, planarTerrainPtr_, *eeKinematicsPtr);
+
   referenceManagerPtr_.reset(new LeggedReferenceManager(loadGaitSchedule(referenceFile, verbose), std::move(swingTrajectoryPlanner),
                                                         std::move(convexRegionSelector)));
 }
 
-void FootPlacementLeggedInterface::setupPreComputation(const std::string& taskFile, const std::string& urdfFile,
-                                                       const std::string& referenceFile, bool verbose) {
+void FootPlacementLeggedInterface::setupPreComputation(const std::string& /*taskFile*/, const std::string& /*urdfFile*/,
+                                                       const std::string& /*referenceFile*/, bool /*verbose*/) {
   problemPtr_->preComputationPtr = std::make_unique<LeggedPreComputation>(
       *pinocchioInterfacePtr_, centroidalModelInfo_, *referenceManagerPtr_->getSwingTrajectoryPlanner(), modelSettings(),
       *dynamic_cast<LeggedReferenceManager&>(*referenceManagerPtr_).getConvexRegionSelectorPtr(), numVertices_);

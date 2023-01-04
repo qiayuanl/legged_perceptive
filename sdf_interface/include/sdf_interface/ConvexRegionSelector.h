@@ -20,7 +20,8 @@ using namespace legged_robot;
 
 class ConvexRegionSelector {
  public:
-  ConvexRegionSelector(CentroidalModelInfo info, std::shared_ptr<convex_plane_decomposition::PlanarTerrain> PlanarTerrainPtr);
+  ConvexRegionSelector(CentroidalModelInfo info, std::shared_ptr<convex_plane_decomposition::PlanarTerrain> PlanarTerrainPtr,
+                       const EndEffectorKinematics<scalar_t>& endEffectorKinematics);
 
   void update(const ModeSchedule& modeSchedule, const vector_t& initState, TargetTrajectories& targetTrajectories);
 
@@ -45,6 +46,6 @@ class ConvexRegionSelector {
   const CentroidalModelInfo info_;
 
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr_;
-  std::unique_ptr<EndEffectorKinematics<scalar_t>> kinematicsPtr_;
+  std::unique_ptr<EndEffectorKinematics<scalar_t>> endEffectorKinematicsPtr_;
 };
 }  // namespace legged
