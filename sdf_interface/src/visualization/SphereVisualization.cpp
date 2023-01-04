@@ -7,7 +7,7 @@
 #include <pinocchio/algorithm/kinematics.hpp>
 #include <utility>
 
-#include "sdf_interface/SphereVisualization.h"
+#include "sdf_interface/visualization/SphereVisualization.h"
 
 #include <ocs2_centroidal_model/AccessHelperFunctions.h>
 #include <ocs2_ros_interfaces/common/RosMsgHelpers.h>

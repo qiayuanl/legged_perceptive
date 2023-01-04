@@ -27,7 +27,7 @@ LeggedPreComputation* LeggedPreComputation::clone() const {
   return new LeggedPreComputation(*this);
 }
 
-void LeggedPreComputation::request(RequestSet request, scalar_t t, const vector_t& x, const vector_t& u) {
+void LeggedPreComputation::request(RequestSet request, scalar_t t, const vector_t& /*x*/, const vector_t& /*u*/) {
   if (!request.containsAny(Request::Cost + Request::Constraint + Request::SoftConstraint)) {
     return;
   }

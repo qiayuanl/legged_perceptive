@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "sdf_interface/SphereVisualization.h"
+#include "sdf_interface/visualization/SphereVisualization.h"
 
 #include <legged_controllers/LeggedController.h>
 
