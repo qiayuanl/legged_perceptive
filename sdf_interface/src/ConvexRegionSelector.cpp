@@ -15,8 +15,13 @@ ConvexRegionSelector::ConvexRegionSelector(CentroidalModelInfo info,
     : info_(std::move(info)), planarTerrainPtr_(std::move(planarTerrainPtr)) {}
 
 convex_plane_decomposition::PlanarTerrainProjection ConvexRegionSelector::getProjection(size_t leg, scalar_t time) const {
-  const auto index = lookup::findIndexInTimeArray(feetProjectionEvents_[leg], time);
+  const auto index = lookup::findIndexInTimeArray(timeEvents_[leg], time);
   return feetProjections_[leg][index];
+}
+
+vector3_t ConvexRegionSelector::getNominalFootholds(size_t leg, scalar_t time) const {
+  const auto index = lookup::findIndexInTimeArray(timeEvents_[leg], time);
+  return nominalFootholds_[leg][index];
 }
 
 void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, const vector_t& initState, TargetTrajectories& targetTrajectories) {
@@ -42,7 +47,11 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, const vector
 
   for (size_t leg = 0; leg < info_.numThreeDofContacts; leg++) {
     feetProjections_[leg].clear();
+    nominalFootholds_[leg].clear();
     feetProjections_[leg].resize(numPhases);
+    nominalFootholds_[leg].resize(numPhases);
+    middleTimes_[leg].clear();
+
     scalar_t lastStandMiddleTime = NAN;
     // Stand leg foot
     for (size_t i = 0; i < numPhases; ++i) {
@@ -56,17 +65,20 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, const vector
         if (!numerics::almost_eq(standMiddleTime, lastStandMiddleTime)) {
           lastStandMiddleTime = standMiddleTime;
 
-          vector3_t query = getNominalFoothold(leg, standMiddleTime, initState, targetTrajectories);
+          vector3_t nominal = getNominalFoothold(leg, standMiddleTime, initState, targetTrajectories);
           auto penaltyFunction = [](const vector3_t& /*projectedPoint*/) { return 0.0; };
-          const auto projection = getBestPlanarRegionAtPositionInWorld(query, planarTerrainPtr_->planarRegions, penaltyFunction);
+          const auto projection = getBestPlanarRegionAtPositionInWorld(nominal, planarTerrainPtr_->planarRegions, penaltyFunction);
 
           feetProjections_[leg][i] = projection;
+          nominalFootholds_[leg][i] = nominal;
+          middleTimes_[leg].push_back(standMiddleTime);
         } else {
           feetProjections_[leg][i] = feetProjections_[leg][i - 1];
+          nominalFootholds_[leg][i] = nominalFootholds_[leg][i - 1];
         }
       }
     }
-    feetProjectionEvents_[leg] = eventTimes;
+    timeEvents_[leg] = eventTimes;
   }
 }
 

@@ -30,18 +30,25 @@ void FootPlacementVisualization::update(const SystemObservation& observation) {
 
     visualization_msgs::MarkerArray makerArray;
 
-    for (int i = 0; i < numFoot_; ++i) {
-      const auto projection = convexRegionSelector_.getProjection(i, observation.time);
-      if (projection.regionPtr == nullptr) {
-        break;
-      }
-      double growthFactor = 1.05;
-      const auto convexRegion = convex_plane_decomposition::growConvexPolygonInsideShape(
-          projection.regionPtr->boundaryWithInset.boundary, projection.positionInTerrainFrame, numVertices_, growthFactor);
-      auto convexRegionMsg = convex_plane_decomposition::to3dRosPolygon(convexRegion, projection.regionPtr->transformPlaneToWorld, header);
+    size_t i = 0;
+    for (int leg = 0; leg < numFoot_; ++leg) {
+      auto middleTimes = convexRegionSelector_.getMiddleTimes(leg);
+      for (double middleTime : middleTimes) {
+        if (middleTime < observation.time) {
+          continue;
+        }
+        const auto projection = convexRegionSelector_.getProjection(leg, middleTime);
+        if (projection.regionPtr == nullptr) {
+          continue;
+        }
+        double growthFactor = 1.05;
+        const auto convexRegion = convex_plane_decomposition::growConvexPolygonInsideShape(
+            projection.regionPtr->boundaryWithInset.boundary, projection.positionInTerrainFrame, numVertices_, growthFactor);
+        auto convexRegionMsg =
+            convex_plane_decomposition::to3dRosPolygon(convexRegion, projection.regionPtr->transformPlaneToWorld, header);
 
-      auto marker = to3dRosMarker(convexRegion, projection.regionPtr->transformPlaneToWorld, header, i);
-      makerArray.markers.push_back(marker);
+        makerArray.markers.push_back(to3dRosMarker(convexRegion, projection.regionPtr->transformPlaneToWorld, header, leg, ++i));
+      }
     }
 
     markerPublisher_.publish(makerArray);
@@ -50,13 +57,14 @@ void FootPlacementVisualization::update(const SystemObservation& observation) {
 
 visualization_msgs::Marker FootPlacementVisualization::to3dRosMarker(const convex_plane_decomposition::CgalPolygon2d& polygon,
                                                                      const Eigen::Isometry3d& transformPlaneToWorld,
-                                                                     const std_msgs::Header& header, int id) {
+                                                                     const std_msgs::Header& header, size_t leg, size_t i) {
   visualization_msgs::Marker marker;
-  marker.id = id;
+  marker.ns = "Convex Regions";
+  marker.id = i;
   marker.header = header;
   marker.type = visualization_msgs::Marker::LINE_STRIP;
   marker.scale.x = lineWidth_;
-  marker.color = getColor(feetColorMap_[id]);
+  marker.color = getColor(feetColorMap_[leg]);
   if (!polygon.is_empty()) {
     marker.points.reserve(polygon.size() + 1);
     for (const auto& point : polygon) {

@@ -26,7 +26,9 @@ class ConvexRegionSelector {
 
   convex_plane_decomposition::PlanarTerrainProjection getProjection(size_t leg, scalar_t time) const;
 
-  std::shared_ptr<convex_plane_decomposition::PlanarTerrain> getPlanarTerrainPtr() const { return planarTerrainPtr_; }
+  vector3_t getNominalFootholds(size_t leg, scalar_t time) const;
+
+  std::vector<scalar_t> getMiddleTimes(size_t leg) const { return middleTimes_[leg]; }
 
  private:
   feet_array_t<std::vector<bool>> extractContactFlags(const std::vector<size_t>& phaseIDsStock) const;
@@ -35,7 +37,10 @@ class ConvexRegionSelector {
   vector3_t getNominalFoothold(size_t leg, scalar_t time, const vector_t& initState, TargetTrajectories& targetTrajectories);
 
   feet_array_t<std::vector<convex_plane_decomposition::PlanarTerrainProjection>> feetProjections_;
-  feet_array_t<std::vector<scalar_t>> feetProjectionEvents_;
+  feet_array_t<std::vector<vector3_t>> nominalFootholds_;
+  feet_array_t<std::vector<scalar_t>> middleTimes_;
+
+  feet_array_t<std::vector<scalar_t>> timeEvents_;
 
   const CentroidalModelInfo info_;
 
