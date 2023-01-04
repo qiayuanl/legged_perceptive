@@ -124,10 +124,16 @@ std::pair<int, int> ConvexRegionSelector::findIndex(size_t index, const std::vec
   return {startTimesIndex, finalTimesIndex};
 }
 
-vector3_t ConvexRegionSelector::getNominalFoothold(size_t leg, scalar_t time, const vector_t& /*initState*/,
+vector3_t ConvexRegionSelector::getNominalFoothold(size_t leg, scalar_t time, const vector_t& initState,
                                                    TargetTrajectories& targetTrajectories) {
   //  vector_t desiredState = targetTrajectories.getDesiredState(time);
-  //  vector_t pose = centroidal_model::getBasePose(desiredState, info_);
+  //
+  //  vector3_t desiredPos = centroidal_model::getBasePose(desiredState, info_).head(3);
+  //  vector3_t desiredVel = centroidal_model::getNormalizedMomentum(desiredState, info_).head(3);
+  //  vector3_t measuredVel = centroidal_model::getNormalizedMomentum(initState, info_).head(3);
+  //
+  //  auto feedback = (vector3_t() << (std::sqrt(desiredPos(2) / 9.81) * (measuredVel - desiredVel)).head(2), 0).finished();
+  //  return endEffectorKinematicsPtr_->getPosition(targetTrajectories.getDesiredState(time))[leg] + feedback;
   return endEffectorKinematicsPtr_->getPosition(targetTrajectories.getDesiredState(time))[leg];
 }
 
