@@ -32,7 +32,7 @@ class PlanarTerrainReceiver : public SolverSynchronizedModule {
   void planarTerrainCallback(const convex_plane_decomposition_msgs::PlanarTerrain::ConstPtr& msg);
 
   ros::Subscriber subscriber_;
-
+  convex_plane_decomposition::PlanarTerrain planarTerrain_;
   std::string elevationLayer_;
 
   std::mutex mutex_;

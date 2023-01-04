@@ -27,24 +27,26 @@ void PlanarTerrainReceiver::preSolverRun(scalar_t /*initTime*/, scalar_t /*final
     std::lock_guard<std::mutex> lock(mutex_);
     updated_ = false;
 
-    auto& elevationData = planarTerrainPtr_->gridMap.get(elevationLayer_);
-    // Inpaint if needed.
-    if (elevationData.hasNaN()) {
-      const float inpaint{elevationData.minCoeffOfFinites()};
-      ROS_WARN("[PlanarTerrainReceiver] Map contains NaN values. Will apply inpainting with min value.");
-      elevationData = elevationData.unaryExpr([=](float v) { return std::isfinite(v) ? v : inpaint; });
-    }
-    const float heightMargin{0.1};
-    const float minValue{elevationData.minCoeffOfFinites() - heightMargin};
-    const float maxValue{elevationData.maxCoeffOfFinites() + heightMargin};
+    *planarTerrainPtr_ = planarTerrain_;
 
-    *sdfPtr_ = grid_map::SignedDistanceField(planarTerrainPtr_->gridMap, elevationLayer_, minValue, maxValue);
+    //    auto& elevationData = planarTerrainPtr_->gridMap.get(elevationLayer_);
+    //    // Inpaint if needed.
+    //    if (elevationData.hasNaN()) {
+    //      const float inpaint{elevationData.minCoeffOfFinites()};
+    //      ROS_WARN("[PlanarTerrainReceiver] Map contains NaN values. Will apply inpainting with min value.");
+    //      elevationData = elevationData.unaryExpr([=](float v) { return std::isfinite(v) ? v : inpaint; });
+    //    }
+    //    const float heightMargin{0.1};
+    //    const float minValue{elevationData.minCoeffOfFinites() - heightMargin};
+    //    const float maxValue{elevationData.maxCoeffOfFinites() + heightMargin};
+    //
+    //    *sdfPtr_ = grid_map::SignedDistanceField(planarTerrainPtr_->gridMap, elevationLayer_, minValue, maxValue);
   }
 }
 
 void PlanarTerrainReceiver::planarTerrainCallback(const convex_plane_decomposition_msgs::PlanarTerrain::ConstPtr& msg) {
   std::lock_guard<std::mutex> lock(mutex_);
-  *planarTerrainPtr_ = convex_plane_decomposition::PlanarTerrain(convex_plane_decomposition::fromMessage(*msg));
+  planarTerrain_ = convex_plane_decomposition::PlanarTerrain(convex_plane_decomposition::fromMessage(*msg));
   updated_ = true;
 }
 
