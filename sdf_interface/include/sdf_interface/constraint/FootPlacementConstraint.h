@@ -18,7 +18,6 @@ class FootPlacementConstraint final : public StateConstraint {
   struct Parameter {
     matrix_t a;
     vector_t b;
-    vector_t s;
   };
 
   FootPlacementConstraint(const SwitchedModelReferenceManager& referenceManager,

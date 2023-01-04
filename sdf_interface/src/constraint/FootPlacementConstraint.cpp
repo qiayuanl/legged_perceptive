@@ -37,7 +37,7 @@ VectorFunctionLinearApproximation FootPlacementConstraint::getLinearApproximatio
   const auto param = cast<LeggedPreComputation>(preComp).getFootPlacementConParameters()[contactPointIndex_];
 
   const auto positionApprox = endEffectorKinematicsPtr_->getPositionLinearApproximation(state).front();
-  approx.f.noalias() += param.a * positionApprox.f;
+  approx.f.noalias() += param.a * positionApprox.f + param.b;
   approx.dfdx.noalias() += param.a * positionApprox.dfdx;
   return approx;
 }
