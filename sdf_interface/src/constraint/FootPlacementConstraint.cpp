@@ -28,7 +28,7 @@ bool FootPlacementConstraint::isActive(scalar_t time) const {
 
 vector_t FootPlacementConstraint::getValue(scalar_t /*time*/, const vector_t& state, const PreComputation& preComp) const {
   const auto param = cast<LeggedPreComputation>(preComp).getFootPlacementConParameters()[contactPointIndex_];
-  return param.a * endEffectorKinematicsPtr_->getPosition(state)[contactPointIndex_] + param.b;
+  return param.a * endEffectorKinematicsPtr_->getPosition(state).front() + param.b;
 }
 
 VectorFunctionLinearApproximation FootPlacementConstraint::getLinearApproximation(scalar_t /*time*/, const vector_t& state,
