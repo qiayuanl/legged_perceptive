@@ -25,10 +25,11 @@ class FootPlacementVisualization {
 
  private:
   visualization_msgs::Marker to3dRosMarker(const convex_plane_decomposition::CgalPolygon2d& polygon,
-                                           const Eigen::Isometry3d& transformPlaneToWorld, const std_msgs::Header& header, size_t leg,
+                                           const Eigen::Isometry3d& transformPlaneToWorld, const std_msgs::Header& header, Color color,
                                            size_t i);
 
-  scalar_t lineWidth_ = 0.01;  // LineThickness for trajectories
+  scalar_t lineWidth_ = 0.01;
+  scalar_t footMarkerDiameter_ = 0.02;
   std::vector<Color> feetColorMap_ = {Color::blue, Color::orange, Color::yellow, Color::purple};
 
   const ConvexRegionSelector& convexRegionSelector_;
