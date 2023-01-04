@@ -7,4 +7,10 @@
         </description>
     </class>
 
+    <class name="legged/FootPlacementController"
+           type="legged::FootPlacementController"
+           base_class_type="controller_interface::ControllerBase">
+        <description>
+        </description>
+    </class>
 </library>
