@@ -9,17 +9,18 @@
 #include <convex_plane_decomposition/ConvexRegionGrowing.h>
 
 namespace legged {
-LeggedPreComputation::LeggedPreComputation(PinocchioInterface pinocchioInterface, const CentroidalModelInfo& info,
+LeggedPreComputation::LeggedPreComputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
                                            const SwingTrajectoryPlanner& swingTrajectoryPlanner, ModelSettings settings,
                                            const ConvexRegionSelector& convexRegionSelector, size_t numVertices)
     : pinocchioInterface_(std::move(pinocchioInterface)),
-      info_(info),
+      info_(std::move(info)),
       swingTrajectoryPlannerPtr_(&swingTrajectoryPlanner),
       settings_(std::move(settings)),
       convexRegionSelectorPtr_(&convexRegionSelector),
       numVertices_(numVertices) {
   eeNormalVelConConfigs_.resize(info_.numThreeDofContacts);
   footPlacementConParameters_.resize(info_.numThreeDofContacts);
+  convexRegions_.resize(info_.numThreeDofContacts);
 }
 
 LeggedPreComputation* LeggedPreComputation::clone() const {
@@ -49,34 +50,30 @@ void LeggedPreComputation::request(RequestSet request, scalar_t t, const vector_
     }
   }
 
-  // lambda to set config for foot placement constraints
-  auto footPlacementConParameter = [&](size_t footIndex) {
-    FootPlacementConstraint::Parameter params;
+  if (request.contains(Request::Constraint)) {
+    for (size_t i = 0; i < info_.numThreeDofContacts; i++) {
+      FootPlacementConstraint::Parameter params;
 
-    auto projection = convexRegionSelectorPtr_->getProjection(footIndex, t);
+      auto projection = convexRegionSelectorPtr_->getProjection(i, t);
+      if (projection.regionPtr == nullptr) {  // Swing leg
+        break;
+      }
 
-    if (projection.regionPtr == nullptr) {  // Swing
-      return params;
-    }
+      scalar_t growthFactor = 1.05;
+      const auto convexRegion = convex_plane_decomposition::growConvexPolygonInsideShape(
+          projection.regionPtr->boundaryWithInset.boundary, projection.positionInTerrainFrame, numVertices_, growthFactor);
 
-    scalar_t growthFactor = 1.05;
-    const auto convexRegion = convex_plane_decomposition::growConvexPolygonInsideShape(
-        projection.regionPtr->boundaryWithInset.boundary, projection.positionInTerrainFrame, numVertices_, growthFactor);
-
-    matrix_t polytopeA;
-    vector_t polytopeB;
-    std::tie(polytopeA, polytopeB) = getPolygonConstraint(convexRegion);
-    matrix_t p = (matrix_t(2, 3) <<  // clang-format off
+      matrix_t polytopeA;
+      vector_t polytopeB;
+      std::tie(polytopeA, polytopeB) = getPolygonConstraint(convexRegion);
+      matrix_t p = (matrix_t(2, 3) <<  // clang-format off
                         1, 0, 0,
                         0, 1, 0).finished();  // clang-format on
-    params.a = polytopeA * p * projection.regionPtr->transformPlaneToWorld.inverse().linear();
-    params.b = polytopeB + polytopeA * projection.regionPtr->transformPlaneToWorld.inverse().translation().head(2);
-    return params;
-  };
+      params.a = polytopeA * p * projection.regionPtr->transformPlaneToWorld.inverse().linear();
+      params.b = polytopeB + polytopeA * projection.regionPtr->transformPlaneToWorld.inverse().translation().head(2);
 
-  if (request.contains(Request::Constraint)) {
-    for (size_t i = 0; i < footPlacementConParameters_.size(); i++) {
-      footPlacementConParameters_[i] = footPlacementConParameter(i);
+      footPlacementConParameters_[i] = params;
+      convexRegions_[i] = convexRegion;
     }
   }
 }

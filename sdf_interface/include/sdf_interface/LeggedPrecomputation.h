@@ -17,7 +17,7 @@ using namespace legged_robot;
 /** Callback for caching and reference update */
 class LeggedPreComputation : public PreComputation {
  public:
-  LeggedPreComputation(PinocchioInterface pinocchioInterface, const CentroidalModelInfo& info,
+  LeggedPreComputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
                        const SwingTrajectoryPlanner& swingTrajectoryPlanner, ModelSettings settings,
                        const ConvexRegionSelector& convexRegionSelector, size_t numVertices);
   ~LeggedPreComputation() override = default;
@@ -29,6 +29,8 @@ class LeggedPreComputation : public PreComputation {
   const std::vector<EndEffectorLinearConstraint::Config>& getEeNormalVelocityConstraintConfigs() const { return eeNormalVelConConfigs_; }
 
   const std::vector<FootPlacementConstraint::Parameter>& getFootPlacementConParameters() const { return footPlacementConParameters_; }
+
+  const std::vector<convex_plane_decomposition::CgalPolygon2d>& getConvexRegions() const { return convexRegions_; }
 
   LeggedPreComputation(const LeggedPreComputation& other) = default;
 
@@ -48,6 +50,7 @@ class LeggedPreComputation : public PreComputation {
   const ConvexRegionSelector* convexRegionSelectorPtr_;
 
   std::vector<FootPlacementConstraint::Parameter> footPlacementConParameters_;
+  std::vector<convex_plane_decomposition::CgalPolygon2d> convexRegions_;
 };
 
 }  // namespace legged
