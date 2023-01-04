@@ -69,6 +69,7 @@ add_library(${PROJECT_NAME}
         src/synchronized_module/PlanarTerrainReceiver.cpp
         src/synchronized_module/LeggedReferenceManager.cpp
         src/visualization/SphereVisualization.cpp
+        src/visualization/FootPlacementVisualization.cpp
         src/ConvexRegionSelector.cpp
         src/LeggedPrecomputation.cpp
         src/LeggedInterface.cpp

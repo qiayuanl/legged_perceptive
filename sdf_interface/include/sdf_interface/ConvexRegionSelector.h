@@ -26,6 +26,8 @@ class ConvexRegionSelector {
 
   convex_plane_decomposition::PlanarTerrainProjection getProjection(size_t leg, scalar_t time) const;
 
+  std::shared_ptr<convex_plane_decomposition::PlanarTerrain> getPlanarTerrainPtr() const { return planarTerrainPtr_; }
+
  private:
   feet_array_t<std::vector<bool>> extractContactFlags(const std::vector<size_t>& phaseIDsStock) const;
   static std::pair<int, int> findIndex(size_t index, const std::vector<bool>& contactFlagStock);

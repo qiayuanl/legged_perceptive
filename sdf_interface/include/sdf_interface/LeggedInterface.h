@@ -45,6 +45,8 @@ class FootPlacementLeggedInterface : public legged::LeggedInterface {
 
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> getPlanarTerrainPtr() const { return planarTerrainPtr_; }
 
+  size_t getNumVertices() const { return numVertices_; }
+
  private:
   size_t numVertices_ = 16;
 

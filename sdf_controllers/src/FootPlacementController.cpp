@@ -4,6 +4,7 @@
 
 #include "sdf_controllers/FootPlacementController.h"
 #include "sdf_interface/LeggedInterface.h"
+#include "sdf_interface/synchronized_module/LeggedReferenceManager.h"
 #include "sdf_interface/synchronized_module/PlanarTerrainReceiver.h"
 
 #include <pluginlib/class_list_macros.hpp>
@@ -13,6 +14,12 @@ void FootPlacementController::setupLeggedInterface(const std::string& task_file,
                                                    const std::string& reference_file, bool verbose) {
   leggedInterface_ = std::make_shared<FootPlacementLeggedInterface>(task_file, urdf_file, reference_file, verbose);
   leggedInterface_->setupOptimalControlProblem(task_file, urdf_file, reference_file, verbose);
+
+  ros::NodeHandle nh;
+  footPlacementVisualizationPtr_ = std::make_shared<FootPlacementVisualization>(
+      *dynamic_cast<LeggedReferenceManager&>(*leggedInterface_->getReferenceManagerPtr()).getConvexRegionSelectorPtr(),
+      leggedInterface_->getCentroidalModelInfo().numThreeDofContacts,
+      dynamic_cast<FootPlacementLeggedInterface&>(*leggedInterface_).getNumVertices(), nh);
 }
 
 void FootPlacementController::setupMpc() {
@@ -24,6 +31,11 @@ void FootPlacementController::setupMpc() {
                                               dynamic_cast<FootPlacementLeggedInterface&>(*leggedInterface_).getSdfPrt(),
                                               "/convex_plane_decomposition_ros/planar_terrain", "elevation_before_postprocess");
   mpc_->getSolverPtr()->addSynchronizedModule(planarTerrainReceiver);
+}
+
+void FootPlacementController::update(const ros::Time& time, const ros::Duration& period) {
+  LeggedController::update(time, period);
+  footPlacementVisualizationPtr_->update(currentObservation_);
 }
 
 }  // namespace legged

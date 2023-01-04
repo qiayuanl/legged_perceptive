@@ -21,7 +21,7 @@ SphereVisualization::SphereVisualization(PinocchioInterface pinocchioInterface, 
     : pinocchioInterface_(std::move(pinocchioInterface)),
       centroidalModelInfo_(std::move(centroidalModelInfo)),
       sphereInterface_(sphereInterface),
-      markerPublisher_(nh.advertise<visualization_msgs::MarkerArray>("/sphere_markers", 1)),
+      markerPublisher_(nh.advertise<visualization_msgs::MarkerArray>("sphere_markers", 1)),
       lastTime_(std::numeric_limits<scalar_t>::lowest()),
       minPublishTimeDifference_(1.0 / maxUpdateFrequency) {}
 

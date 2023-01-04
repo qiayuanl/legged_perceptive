@@ -2,6 +2,8 @@
 // Created by qiayuan on 23-1-3.
 //
 
+#include "sdf_interface/visualization/FootPlacementVisualization.h"
+
 #include <legged_controllers/LeggedController.h>
 
 namespace legged {
@@ -14,6 +16,11 @@ class FootPlacementController : public legged::LeggedController {
                             bool verbose) override;
 
   void setupMpc() override;
+
+  void update(const ros::Time& time, const ros::Duration& period) override;
+
+ private:
+  std::shared_ptr<FootPlacementVisualization> footPlacementVisualizationPtr_;
 };
 
 }  // namespace legged
