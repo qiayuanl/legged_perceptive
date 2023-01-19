@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-    <name>sdf_controllers</name>
+    <name>legged_perceptive_controllers</name>
     <version>0.0.0</version>
-    <description>sdf_controllers</description>
+    <description>legged_perceptive_controllers</description>
     <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
 
     <license>BSD</license>
@@ -18,6 +18,6 @@
     <depend>legged_controllers</depend>
 
     <export>
-        <controller_interface plugin="${prefix}/sdf_controllers_plugins.xml"/>
+        <controller_interface plugin="${prefix}/legged_perceptive_controllers_plugins.xml"/>
     </export>
 </package>

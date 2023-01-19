@@ -2,7 +2,7 @@
 // Created by qiayuan on 23-1-3.
 //
 
-#include "sdf_controllers/FootPlacementController.h"
+#include "legged_perceptive_controllers/FootPlacementController.h"
 #include "legged_perceptive_interface/LeggedInterface.h"
 #include "legged_perceptive_interface/synchronized_module/LeggedReferenceManager.h"
 #include "legged_perceptive_interface/synchronized_module/PlanarTerrainReceiver.h"

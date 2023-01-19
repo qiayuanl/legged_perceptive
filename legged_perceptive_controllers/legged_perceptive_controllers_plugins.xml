@@ -1,4 +1,4 @@
-<library path="lib/libsdf_controllers">
+<library path="lib/liblegged_perceptive_controllers">
 
     <class name="legged/SphereSdfController"
            type="legged::SphereSdfController"

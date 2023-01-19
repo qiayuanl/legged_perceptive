@@ -12,7 +12,7 @@
     <param name="urdf_file" value="$(arg urdf_file)"/>
 
     <param name="gaitCommandFile" value="$(arg gait_file)"/>
-    <rosparam file="$(find sdf_controllers)/config/default.yaml" command="load"/>
+    <rosparam file="$(find legged_perceptive_controllers)/config/default.yaml" command="load"/>
 
     <node name="controller_loader" pkg="controller_manager" type="controller_manager"
           output="screen" args="load

@@ -2,7 +2,7 @@
 // Created by qiayuan on 22-12-27.
 //
 
-#include "sdf_controllers/SphereSdfController.h"
+#include "legged_perceptive_controllers/SphereSdfController.h"
 #include "legged_perceptive_interface/LeggedInterface.h"
 #include "legged_perceptive_interface/synchronized_module/PlanarTerrainReceiver.h"
 
