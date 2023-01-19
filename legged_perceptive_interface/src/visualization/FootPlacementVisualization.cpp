@@ -2,7 +2,7 @@
 // Created by qiayuan on 22-12-30.
 //
 
-#include "sdf_interface/visualization/FootPlacementVisualization.h"
+#include "legged_perceptive_interface/visualization/FootPlacementVisualization.h"
 
 #include <visualization_msgs/MarkerArray.h>
 

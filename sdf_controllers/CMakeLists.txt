@@ -7,7 +7,7 @@ find_package(catkin REQUIRED
         COMPONENTS
         roscpp
         controller_interface
-        sdf_interface
+        legged_perceptive_interface
         legged_controllers
         )
 
@@ -19,7 +19,7 @@ catkin_package(
         CATKIN_DEPENDS
         roscpp
         controller_interface
-        sdf_interface
+        legged_perceptive_interface
         legged_controllers
 )
 

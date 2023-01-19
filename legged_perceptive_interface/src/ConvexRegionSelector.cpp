@@ -1,7 +1,7 @@
 //
 // Created by qiayuan on 23-1-2.
 //
-#include "sdf_interface/ConvexRegionSelector.h"
+#include "legged_perceptive_interface/ConvexRegionSelector.h"
 
 #include <ocs2_centroidal_model/AccessHelperFunctions.h>
 #include <ocs2_core/misc/Lookup.h>

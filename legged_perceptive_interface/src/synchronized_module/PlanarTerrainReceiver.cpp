@@ -2,7 +2,7 @@
 // Created by qiayuan on 22-12-24.
 //
 
-#include "sdf_interface/synchronized_module/PlanarTerrainReceiver.h"
+#include "legged_perceptive_interface/synchronized_module/PlanarTerrainReceiver.h"
 
 #include <convex_plane_decomposition_ros/MessageConversion.h>
 #include <grid_map_ros/GridMapRosConverter.hpp>

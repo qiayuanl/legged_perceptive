@@ -14,7 +14,7 @@
     <build_depend>cmake_clang_tools</build_depend>
     <depend>roscpp</depend>
     <depend>controller_interface</depend>
-    <depend>sdf_interface</depend>
+    <depend>legged_perceptive_interface</depend>
     <depend>legged_controllers</depend>
 
     <export>

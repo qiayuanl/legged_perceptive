@@ -4,7 +4,7 @@
 
 #include <utility>
 
-#include "sdf_interface/LeggedPrecomputation.h"
+#include "legged_perceptive_interface/LeggedPrecomputation.h"
 
 #include <convex_plane_decomposition/ConvexRegionGrowing.h>
 

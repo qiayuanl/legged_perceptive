@@ -2,10 +2,10 @@
 // Created by qiayuan on 22-12-27.
 //
 
-#include "sdf_interface/LeggedInterface.h"
-#include "sdf_interface/ConvexRegionSelector.h"
-#include "sdf_interface/LeggedPrecomputation.h"
-#include "sdf_interface/synchronized_module/LeggedReferenceManager.h"
+#include "legged_perceptive_interface/LeggedInterface.h"
+#include "legged_perceptive_interface/ConvexRegionSelector.h"
+#include "legged_perceptive_interface/LeggedPrecomputation.h"
+#include "legged_perceptive_interface/synchronized_module/LeggedReferenceManager.h"
 
 #include <ocs2_core/soft_constraint/StateSoftConstraint.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematicsCppAd.h>

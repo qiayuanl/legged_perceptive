@@ -2,7 +2,7 @@
 // Created by qiayuan on 23-1-3.
 //
 
-#include "sdf_interface/visualization/FootPlacementVisualization.h"
+#include "legged_perceptive_interface/visualization/FootPlacementVisualization.h"
 
 #include <legged_controllers/LeggedController.h>
 

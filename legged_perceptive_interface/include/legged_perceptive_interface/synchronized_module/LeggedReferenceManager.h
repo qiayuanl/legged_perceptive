@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#include "sdf_interface/ConvexRegionSelector.h"
+#include "legged_perceptive_interface/ConvexRegionSelector.h"
 
 #include <ocs2_legged_robot/reference_manager/SwitchedModelReferenceManager.h>
 

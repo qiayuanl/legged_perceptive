@@ -2,8 +2,8 @@
 // Created by qiayuan on 23-1-1.
 //
 
-#include "sdf_interface/constraint/FootPlacementConstraint.h"
-#include "sdf_interface/LeggedPrecomputation.h"
+#include "legged_perceptive_interface/constraint/FootPlacementConstraint.h"
+#include "legged_perceptive_interface/LeggedPrecomputation.h"
 
 namespace legged {
 FootPlacementConstraint::FootPlacementConstraint(const SwitchedModelReferenceManager& referenceManager,

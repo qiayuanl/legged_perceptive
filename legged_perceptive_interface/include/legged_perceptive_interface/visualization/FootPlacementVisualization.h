@@ -5,8 +5,8 @@
 #pragma once
 #include <ros/ros.h>
 
-#include "sdf_interface/ConvexRegionSelector.h"
-#include "sdf_interface/LeggedPrecomputation.h"
+#include "legged_perceptive_interface/ConvexRegionSelector.h"
+#include "legged_perceptive_interface/LeggedPrecomputation.h"
 
 #include <visualization_msgs/Marker.h>
 

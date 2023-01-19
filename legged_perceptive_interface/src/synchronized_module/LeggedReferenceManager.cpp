@@ -3,7 +3,7 @@
 //
 #include <utility>
 
-#include "sdf_interface/synchronized_module/LeggedReferenceManager.h"
+#include "legged_perceptive_interface/synchronized_module/LeggedReferenceManager.h"
 
 namespace legged {
 
