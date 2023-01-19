@@ -7,7 +7,7 @@
 #include <pinocchio/algorithm/kinematics.hpp>
 #include <utility>
 
-#include "legged_perceptive_interface/visualization/SphereVisualization.h"
+#include "legged_perceptive_controllers/visualization/SphereVisualization.h"
 
 #include <ocs2_centroidal_model/AccessHelperFunctions.h>
 #include <ocs2_ros_interfaces/common/RosMsgHelpers.h>

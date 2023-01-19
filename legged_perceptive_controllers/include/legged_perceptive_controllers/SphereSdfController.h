@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "legged_perceptive_interface/visualization/SphereVisualization.h"
+#include "legged_perceptive_controllers/visualization/SphereVisualization.h"
 
 #include <legged_controllers/LeggedController.h>
 

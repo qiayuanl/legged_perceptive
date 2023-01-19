@@ -47,6 +47,8 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
+        src/visualization/SphereVisualization.cpp
+        src/visualization/FootPlacementVisualization.cpp
         src/SphereSdfController.cpp
         src/FootPlacementController.cpp
         )
