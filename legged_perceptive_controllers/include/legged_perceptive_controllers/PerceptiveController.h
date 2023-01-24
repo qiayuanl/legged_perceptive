@@ -1,8 +1,8 @@
 //
-// Created by qiayuan on 22-12-27.
+// Created by qiayuan on 23-1-3.
 //
 
-#pragma once
+#include "legged_perceptive_controllers/visualization/FootPlacementVisualization.h"
 #include "legged_perceptive_controllers/visualization/SphereVisualization.h"
 
 #include <legged_controllers/LeggedController.h>
@@ -11,7 +11,7 @@ namespace legged {
 using namespace ocs2;
 using namespace legged_robot;
 
-class SphereSdfController : public legged::LeggedController {
+class PerceptiveController : public legged::LeggedController {
  protected:
   void setupLeggedInterface(const std::string& task_file, const std::string& urdf_file, const std::string& reference_file,
                             bool verbose) override;
@@ -21,6 +21,7 @@ class SphereSdfController : public legged::LeggedController {
   void update(const ros::Time& time, const ros::Duration& period) override;
 
  private:
+  std::shared_ptr<FootPlacementVisualization> footPlacementVisualizationPtr_;
   std::shared_ptr<SphereVisualization> sphereVisualizationPtr_;
 };
 

@@ -2,7 +2,5 @@ controllers:
   joint_state_controller:
     type: joint_state_controller/JointStateController
     publish_rate: 100
-  sphere_sdf_controller:
-    type: legged/SphereSdfController
-  foot_placement_controller:
-    type: legged/FootPlacementController
+  perceptive_controller:
+    type: legged/PerceptiveController

@@ -49,7 +49,7 @@ include_directories(
 add_library(${PROJECT_NAME}
         src/visualization/FootPlacementVisualization.cpp
         src/visualization/SphereVisualization.cpp
-        src/FootPlacementController.cpp
+        src/PerceptiveController.cpp
         )
 
 target_link_libraries(${PROJECT_NAME}

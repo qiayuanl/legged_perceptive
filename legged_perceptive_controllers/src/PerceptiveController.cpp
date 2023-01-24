@@ -2,7 +2,7 @@
 // Created by qiayuan on 23-1-3.
 //
 
-#include "legged_perceptive_controllers/FootPlacementController.h"
+#include "legged_perceptive_controllers/PerceptiveController.h"
 #include "legged_perceptive_interface/LeggedInterface.h"
 #include "legged_perceptive_interface/synchronized_module/LeggedReferenceManager.h"
 #include "legged_perceptive_interface/synchronized_module/PlanarTerrainReceiver.h"
@@ -10,8 +10,8 @@
 #include <pluginlib/class_list_macros.hpp>
 
 namespace legged {
-void FootPlacementController::setupLeggedInterface(const std::string& task_file, const std::string& urdf_file,
-                                                   const std::string& reference_file, bool verbose) {
+void PerceptiveController::setupLeggedInterface(const std::string& task_file, const std::string& urdf_file,
+                                                const std::string& reference_file, bool verbose) {
   leggedInterface_ = std::make_shared<FootPlacementLeggedInterface>(task_file, urdf_file, reference_file, verbose);
   leggedInterface_->setupOptimalControlProblem(task_file, urdf_file, reference_file, verbose);
 
@@ -26,7 +26,7 @@ void FootPlacementController::setupLeggedInterface(const std::string& task_file,
       *dynamic_cast<FootPlacementLeggedInterface&>(*leggedInterface_).getPinocchioSphereInterfacePrt(), nh);
 }
 
-void FootPlacementController::setupMpc() {
+void PerceptiveController::setupMpc() {
   LeggedController::setupMpc();
 
   ros::NodeHandle nh;
@@ -37,7 +37,7 @@ void FootPlacementController::setupMpc() {
   mpc_->getSolverPtr()->addSynchronizedModule(planarTerrainReceiver);
 }
 
-void FootPlacementController::update(const ros::Time& time, const ros::Duration& period) {
+void PerceptiveController::update(const ros::Time& time, const ros::Duration& period) {
   LeggedController::update(time, period);
   footPlacementVisualizationPtr_->update(currentObservation_);
   sphereVisualizationPtr_->update(currentObservation_);
@@ -45,4 +45,4 @@ void FootPlacementController::update(const ros::Time& time, const ros::Duration&
 
 }  // namespace legged
 
-PLUGINLIB_EXPORT_CLASS(legged::FootPlacementController, controller_interface::ControllerBase)
+PLUGINLIB_EXPORT_CLASS(legged::PerceptiveController, controller_interface::ControllerBase)
