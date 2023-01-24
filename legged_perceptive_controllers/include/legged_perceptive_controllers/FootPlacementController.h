@@ -3,6 +3,7 @@
 //
 
 #include "legged_perceptive_controllers/visualization/FootPlacementVisualization.h"
+#include "legged_perceptive_controllers/visualization/SphereVisualization.h"
 
 #include <legged_controllers/LeggedController.h>
 
@@ -21,6 +22,7 @@ class FootPlacementController : public legged::LeggedController {
 
  private:
   std::shared_ptr<FootPlacementVisualization> footPlacementVisualizationPtr_;
+  std::shared_ptr<SphereVisualization> sphereVisualizationPtr_;
 };
 
 }  // namespace legged

@@ -14,35 +14,6 @@
 #include <memory>
 
 namespace legged {
-void SphereSdfLeggedInterface::setupOptimalControlProblem(const std::string& taskFile, const std::string& urdfFile,
-                                                          const std::string& referenceFile, bool verbose) {
-  LeggedInterface::setupOptimalControlProblem(taskFile, urdfFile, referenceFile, verbose);
-
-  std::string elevationLayer = "elevation_before_postprocess";
-  planarTerrainPtr_ = std::make_unique<convex_plane_decomposition::PlanarTerrain>();
-  planarTerrainPtr_->gridMap.setGeometry(grid_map::Length(5.0, 5.0), 0.03);
-  planarTerrainPtr_->gridMap.add(elevationLayer, 0);
-  signedDistanceFieldPtr_ = std::make_shared<grid_map::SignedDistanceField>(planarTerrainPtr_->gridMap, elevationLayer, -0.1, 0.1);
-
-  scalar_t thighExcess = 0.025;
-  scalar_t calfExcess = 0.02;
-
-  std::vector<std::string> collisionLinks = {"base"};
-  const std::vector<scalar_t>& maxExcesses = {0.05,       thighExcess, thighExcess, thighExcess, thighExcess,
-                                              calfExcess, calfExcess,  calfExcess,  calfExcess};
-
-  pinocchioSphereInterfacePrt_ = std::make_shared<PinocchioSphereInterface>(*pinocchioInterfacePtr_, collisionLinks, maxExcesses, 0.6);
-
-  CentroidalModelPinocchioMapping pinocchioMapping(centroidalModelInfo_);
-  auto sphereKinematicsPtr = std::make_unique<PinocchioSphereKinematics>(*pinocchioSphereInterfacePrt_, pinocchioMapping);
-
-  std::unique_ptr<SphereSdfConstraint> sphereSdfConstraint(
-      new SphereSdfConstraint(*sphereKinematicsPtr, *pinocchioInterfacePtr_, pinocchioMapping, signedDistanceFieldPtr_));
-
-  std::unique_ptr<PenaltyBase> penalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(0.1, 1e-3)));
-  problemPtr_->stateSoftConstraintPtr->add(
-      "sdfConstraint", std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(sphereSdfConstraint), std::move(penalty))));
-}
 
 void FootPlacementLeggedInterface::setupOptimalControlProblem(const std::string& taskFile, const std::string& urdfFile,
                                                               const std::string& referenceFile, bool verbose) {
@@ -76,6 +47,7 @@ void FootPlacementLeggedInterface::setupOptimalControlProblem(const std::string&
 
   LeggedInterface::setupOptimalControlProblem(taskFile, urdfFile, referenceFile, verbose);
 
+  // For foot placement
   for (size_t i = 0; i < centroidalModelInfo_.numThreeDofContacts; i++) {
     const std::string& footName = modelSettings().contactNames3DoF[i];
     std::unique_ptr<EndEffectorKinematics<scalar_t>> eeKinematicsPtr = getEeKinematicsPtr({footName}, footName);
@@ -86,6 +58,26 @@ void FootPlacementLeggedInterface::setupOptimalControlProblem(const std::string&
     problemPtr_->stateSoftConstraintPtr->add(footName + "_footPlacement", std::unique_ptr<StateCost>(new StateSoftConstraint(
                                                                               std::move(footPlacementConstraint), std::move(penalty))));
   }
+
+  // For collision avoidance
+  scalar_t thighExcess = 0.025;
+  scalar_t calfExcess = 0.02;
+
+  std::vector<std::string> collisionLinks = {"base"};
+  const std::vector<scalar_t>& maxExcesses = {0.05,       thighExcess, thighExcess, thighExcess, thighExcess,
+                                              calfExcess, calfExcess,  calfExcess,  calfExcess};
+
+  pinocchioSphereInterfacePrt_ = std::make_shared<PinocchioSphereInterface>(*pinocchioInterfacePtr_, collisionLinks, maxExcesses, 0.6);
+
+  CentroidalModelPinocchioMapping pinocchioMapping(centroidalModelInfo_);
+  auto sphereKinematicsPtr = std::make_unique<PinocchioSphereKinematics>(*pinocchioSphereInterfacePrt_, pinocchioMapping);
+
+  std::unique_ptr<SphereSdfConstraint> sphereSdfConstraint(
+      new SphereSdfConstraint(*sphereKinematicsPtr, *pinocchioInterfacePtr_, pinocchioMapping, signedDistanceFieldPtr_));
+
+  std::unique_ptr<PenaltyBase> penalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(0.1, 1e-3)));
+  problemPtr_->stateSoftConstraintPtr->add(
+      "sdfConstraint", std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(sphereSdfConstraint), std::move(penalty))));
 }
 
 void FootPlacementLeggedInterface::setupReferenceManager(const std::string& taskFile, const std::string& /*urdfFile*/,

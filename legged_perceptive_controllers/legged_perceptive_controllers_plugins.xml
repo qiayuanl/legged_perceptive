@@ -1,16 +1,10 @@
 <library path="lib/liblegged_perceptive_controllers">
 
-    <class name="legged/SphereSdfController"
-           type="legged::SphereSdfController"
-           base_class_type="controller_interface::ControllerBase">
-        <description>
-        </description>
-    </class>
-
     <class name="legged/FootPlacementController"
            type="legged::FootPlacementController"
            base_class_type="controller_interface::ControllerBase">
         <description>
         </description>
     </class>
+
 </library>

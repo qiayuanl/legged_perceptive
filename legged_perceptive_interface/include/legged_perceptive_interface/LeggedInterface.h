@@ -11,23 +11,6 @@
 
 namespace legged {
 
-class SphereSdfLeggedInterface : public legged::LeggedInterface {
- public:
-  using LeggedInterface::LeggedInterface;
-
-  void setupOptimalControlProblem(const std::string& taskFile, const std::string& urdfFile, const std::string& referenceFile,
-                                  bool verbose) override;
-
-  std::shared_ptr<convex_plane_decomposition::PlanarTerrain> getPlanarTerrainPtr() const { return planarTerrainPtr_; }
-  std::shared_ptr<grid_map::SignedDistanceField> getSignedDistanceFieldPtr() const { return signedDistanceFieldPtr_; }
-  std::shared_ptr<PinocchioSphereInterface> getPinocchioSphereInterfacePrt() const { return pinocchioSphereInterfacePrt_; }
-
- private:
-  std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr_;
-  std::shared_ptr<grid_map::SignedDistanceField> signedDistanceFieldPtr_;
-  std::shared_ptr<PinocchioSphereInterface> pinocchioSphereInterfacePrt_;
-};
-
 class FootPlacementLeggedInterface : public legged::LeggedInterface {
  public:
   using LeggedInterface::LeggedInterface;
@@ -45,6 +28,8 @@ class FootPlacementLeggedInterface : public legged::LeggedInterface {
 
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> getPlanarTerrainPtr() const { return planarTerrainPtr_; }
 
+  std::shared_ptr<PinocchioSphereInterface> getPinocchioSphereInterfacePrt() const { return pinocchioSphereInterfacePrt_; }
+
   size_t getNumVertices() const { return numVertices_; }
 
  private:
@@ -52,6 +37,7 @@ class FootPlacementLeggedInterface : public legged::LeggedInterface {
 
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr_;
   std::shared_ptr<grid_map::SignedDistanceField> signedDistanceFieldPtr_;
+  std::shared_ptr<PinocchioSphereInterface> pinocchioSphereInterfacePrt_;
 };
 
 }  // namespace legged
