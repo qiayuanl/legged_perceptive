@@ -21,7 +21,8 @@ using namespace ocs2;
 class PlanarTerrainReceiver : public SolverSynchronizedModule {
  public:
   PlanarTerrainReceiver(ros::NodeHandle nh, std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr,
-                        std::shared_ptr<grid_map::SignedDistanceField> sdfPtr, const std::string& mapTopic, std::string elevationLayer);
+                        std::shared_ptr<grid_map::SignedDistanceField> signedDistanceFieldPtr, const std::string& mapTopic,
+                        std::string elevationLayer);
 
   void preSolverRun(scalar_t initTime, scalar_t finalTime, const vector_t& currentState,
                     const ReferenceManagerInterface& referenceManager) override;
@@ -33,6 +34,8 @@ class PlanarTerrainReceiver : public SolverSynchronizedModule {
 
   ros::Subscriber subscriber_;
   convex_plane_decomposition::PlanarTerrain planarTerrain_;
+  grid_map::SignedDistanceField signedDistanceField_;
+
   std::string elevationLayer_;
 
   std::mutex mutex_;

@@ -19,12 +19,12 @@ class SphereSdfLeggedInterface : public legged::LeggedInterface {
                                   bool verbose) override;
 
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> getPlanarTerrainPtr() const { return planarTerrainPtr_; }
-  std::shared_ptr<grid_map::SignedDistanceField> getSdfPrt() const { return sdfPrt_; }
+  std::shared_ptr<grid_map::SignedDistanceField> getSignedDistanceFieldPtr() const { return signedDistanceFieldPtr_; }
   std::shared_ptr<PinocchioSphereInterface> getPinocchioSphereInterfacePrt() const { return pinocchioSphereInterfacePrt_; }
 
  private:
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr_;
-  std::shared_ptr<grid_map::SignedDistanceField> sdfPrt_;
+  std::shared_ptr<grid_map::SignedDistanceField> signedDistanceFieldPtr_;
   std::shared_ptr<PinocchioSphereInterface> pinocchioSphereInterfacePrt_;
 };
 
@@ -41,7 +41,7 @@ class FootPlacementLeggedInterface : public legged::LeggedInterface {
   void setupPreComputation(const std::string& taskFile, const std::string& urdfFile, const std::string& referenceFile,
                            bool verbose) override;
 
-  std::shared_ptr<grid_map::SignedDistanceField> getSdfPrt() const { return sdfPrt_; }
+  std::shared_ptr<grid_map::SignedDistanceField> getSignedDistanceFieldPtr() const { return signedDistanceFieldPtr_; }
 
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> getPlanarTerrainPtr() const { return planarTerrainPtr_; }
 
@@ -51,7 +51,7 @@ class FootPlacementLeggedInterface : public legged::LeggedInterface {
   size_t numVertices_ = 16;
 
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr_;
-  std::shared_ptr<grid_map::SignedDistanceField> sdfPrt_;
+  std::shared_ptr<grid_map::SignedDistanceField> signedDistanceFieldPtr_;
 };
 
 }  // namespace legged

@@ -25,7 +25,7 @@ void SphereSdfController::setupMpc() {
   ros::NodeHandle nh;
   auto planarTerrainReceiver =
       std::make_shared<PlanarTerrainReceiver>(nh, dynamic_cast<SphereSdfLeggedInterface&>(*leggedInterface_).getPlanarTerrainPtr(),
-                                              dynamic_cast<SphereSdfLeggedInterface&>(*leggedInterface_).getSdfPrt(),
+                                              dynamic_cast<SphereSdfLeggedInterface&>(*leggedInterface_).getSignedDistanceFieldPtr(),
                                               "/convex_plane_decomposition_ros/planar_terrain", "elevation_before_postprocess");
   mpc_->getSolverPtr()->addSynchronizedModule(planarTerrainReceiver);
 }

@@ -28,7 +28,7 @@ void FootPlacementController::setupMpc() {
   ros::NodeHandle nh;
   auto planarTerrainReceiver =
       std::make_shared<PlanarTerrainReceiver>(nh, dynamic_cast<FootPlacementLeggedInterface&>(*leggedInterface_).getPlanarTerrainPtr(),
-                                              dynamic_cast<FootPlacementLeggedInterface&>(*leggedInterface_).getSdfPrt(),
+                                              dynamic_cast<FootPlacementLeggedInterface&>(*leggedInterface_).getSignedDistanceFieldPtr(),
                                               "/convex_plane_decomposition_ros/planar_terrain", "elevation_before_postprocess");
   mpc_->getSolverPtr()->addSynchronizedModule(planarTerrainReceiver);
 }
