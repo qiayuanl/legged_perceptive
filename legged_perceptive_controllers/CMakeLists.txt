@@ -9,6 +9,7 @@ find_package(catkin REQUIRED
         controller_interface
         legged_perceptive_interface
         legged_controllers
+        grid_map_ros
         )
 
 catkin_package(
@@ -21,6 +22,7 @@ catkin_package(
         controller_interface
         legged_perceptive_interface
         legged_controllers
+        grid_map_ros
 )
 
 #########################
@@ -47,6 +49,7 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
+        src/synchronized_module/PlanarTerrainReceiver.cpp
         src/visualization/FootPlacementVisualization.cpp
         src/visualization/SphereVisualization.cpp
         src/PerceptiveController.cpp

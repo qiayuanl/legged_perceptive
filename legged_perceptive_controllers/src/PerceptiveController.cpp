@@ -3,9 +3,10 @@
 //
 
 #include "legged_perceptive_controllers/PerceptiveController.h"
+
+#include "legged_perceptive_controllers/synchronized_module/PlanarTerrainReceiver.h"
+#include "legged_perceptive_interface/LeggedReferenceManager.h"
 #include "legged_perceptive_interface/PerceptiveLeggedInterface.h"
-#include "legged_perceptive_interface/synchronized_module/LeggedReferenceManager.h"
-#include "legged_perceptive_interface/synchronized_module/PlanarTerrainReceiver.h"
 
 #include <pluginlib/class_list_macros.hpp>
 

@@ -4,8 +4,8 @@
 
 #include "legged_perceptive_interface/PerceptiveLeggedInterface.h"
 #include "legged_perceptive_interface/ConvexRegionSelector.h"
+#include "legged_perceptive_interface/LeggedReferenceManager.h"
 #include "legged_perceptive_interface/PerceptiveLeggedPrecomputation.h"
-#include "legged_perceptive_interface/synchronized_module/LeggedReferenceManager.h"
 
 #include <ocs2_core/soft_constraint/StateSoftConstraint.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematicsCppAd.h>

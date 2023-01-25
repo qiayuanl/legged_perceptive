@@ -10,7 +10,6 @@ find_package(catkin REQUIRED
         convex_plane_decomposition_msgs
         convex_plane_decomposition_ros
         grid_map_sdf
-        grid_map_ros
         ocs2_sphere_approximation
         visualization_msgs
         )
@@ -31,7 +30,6 @@ catkin_package(
         convex_plane_decomposition_msgs
         convex_plane_decomposition_ros
         grid_map_sdf
-        grid_map_ros
         ocs2_sphere_approximation
         visualization_msgs
         DEPENDS
@@ -66,8 +64,7 @@ link_directories(
 add_library(${PROJECT_NAME}
         src/constraint/SphereSdfConstraint.cpp
         src/constraint/FootPlacementConstraint.cpp
-        src/synchronized_module/PlanarTerrainReceiver.cpp
-        src/synchronized_module/LeggedReferenceManager.cpp
+        src/LeggedReferenceManager.cpp
         src/ConvexRegionSelector.cpp
         src/PerceptiveLeggedPrecomputation.cpp
         src/PerceptiveLeggedInterface.cpp

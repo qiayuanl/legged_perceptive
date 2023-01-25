@@ -5,10 +5,11 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Global Options1
+        - /FilteredMap1
         - /FilteredMap1/Status1
         - /FootPlacement1
         - /FootPlacement1/Namespaces1
-      Splitter Ratio: 0.41637009382247925
+      Splitter Ratio: 0.41779497265815735
     Tree Height: 763
   - Class: rviz/Selection
     Name: Selection
@@ -78,7 +79,7 @@ Visualization Manager:
       Invert ColorMap: false
       Max Color: 255; 255; 255
       Max Intensity: 10
-      Min Color: 52; 101; 164
+      Min Color: 114; 159; 207
       Min Intensity: 0
       Name: FilteredMap
       Show Grid Lines: true
@@ -228,7 +229,7 @@ Visualization Manager:
       Marker Topic: /sphere_markers
       Name: sphere_markers
       Namespaces:
-        { }
+        "": true
       Queue Size: 100
       Value: true
   Enabled: true
@@ -259,7 +260,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 2.209623336791992
+      Distance: 2.7010385990142822
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -267,17 +268,17 @@ Visualization Manager:
         Value: false
       Field of View: 0.7853981852531433
       Focal Point:
-        X: 0.35866779088974
-        Y: -0.21017713844776154
-        Z: 0.3829370141029358
+        X: -0.11580176651477814
+        Y: 0.029560508206486702
+        Z: -0.17535783350467682
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6347979307174683
+      Pitch: 0.9547971487045288
       Target Frame: <Fixed Frame>
-      Yaw: 4.614217281341553
+      Yaw: 3.1929738521575928
     Saved: ~
 Window Geometry:
   Displays:
