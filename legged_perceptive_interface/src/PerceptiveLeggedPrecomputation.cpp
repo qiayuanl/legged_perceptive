@@ -4,14 +4,14 @@
 
 #include <utility>
 
-#include "legged_perceptive_interface/LeggedPrecomputation.h"
+#include "legged_perceptive_interface/PerceptiveLeggedPrecomputation.h"
 
 #include <convex_plane_decomposition/ConvexRegionGrowing.h>
 
 namespace legged {
-LeggedPreComputation::LeggedPreComputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
-                                           const SwingTrajectoryPlanner& swingTrajectoryPlanner, ModelSettings settings,
-                                           const ConvexRegionSelector& convexRegionSelector, size_t numVertices)
+PerceptiveLeggedPrecomputation::PerceptiveLeggedPrecomputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
+                                                               const SwingTrajectoryPlanner& swingTrajectoryPlanner, ModelSettings settings,
+                                                               const ConvexRegionSelector& convexRegionSelector, size_t numVertices)
     : pinocchioInterface_(std::move(pinocchioInterface)),
       info_(std::move(info)),
       swingTrajectoryPlannerPtr_(&swingTrajectoryPlanner),
@@ -23,11 +23,11 @@ LeggedPreComputation::LeggedPreComputation(PinocchioInterface pinocchioInterface
   convexRegions_.resize(info_.numThreeDofContacts);
 }
 
-LeggedPreComputation* LeggedPreComputation::clone() const {
-  return new LeggedPreComputation(*this);
+PerceptiveLeggedPrecomputation* PerceptiveLeggedPrecomputation::clone() const {
+  return new PerceptiveLeggedPrecomputation(*this);
 }
 
-void LeggedPreComputation::request(RequestSet request, scalar_t t, const vector_t& /*x*/, const vector_t& /*u*/) {
+void PerceptiveLeggedPrecomputation::request(RequestSet request, scalar_t t, const vector_t& /*x*/, const vector_t& /*u*/) {
   if (!request.containsAny(Request::Cost + Request::Constraint + Request::SoftConstraint)) {
     return;
   }
@@ -78,7 +78,8 @@ void LeggedPreComputation::request(RequestSet request, scalar_t t, const vector_
   }
 }
 
-std::pair<matrix_t, vector_t> LeggedPreComputation::getPolygonConstraint(const convex_plane_decomposition::CgalPolygon2d& polygon) const {
+std::pair<matrix_t, vector_t> PerceptiveLeggedPrecomputation::getPolygonConstraint(
+    const convex_plane_decomposition::CgalPolygon2d& polygon) const {
   matrix_t polytopeA = matrix_t::Zero(numVertices_, 2);
   vector_t polytopeB = vector_t::Zero(numVertices_);
 

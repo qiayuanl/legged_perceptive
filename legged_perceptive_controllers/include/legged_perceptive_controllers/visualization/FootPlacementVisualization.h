@@ -6,7 +6,7 @@
 #include <ros/ros.h>
 
 #include "legged_perceptive_interface/ConvexRegionSelector.h"
-#include "legged_perceptive_interface/LeggedPrecomputation.h"
+#include "legged_perceptive_interface/PerceptiveLeggedPrecomputation.h"
 
 #include <visualization_msgs/Marker.h>
 

@@ -11,7 +11,7 @@
 
 namespace legged {
 
-class FootPlacementLeggedInterface : public legged::LeggedInterface {
+class PerceptiveLeggedInterface : public legged::LeggedInterface {
  public:
   using LeggedInterface::LeggedInterface;
 

@@ -3,7 +3,7 @@
 //
 
 #include "legged_perceptive_interface/constraint/FootPlacementConstraint.h"
-#include "legged_perceptive_interface/LeggedPrecomputation.h"
+#include "legged_perceptive_interface/PerceptiveLeggedPrecomputation.h"
 
 namespace legged {
 FootPlacementConstraint::FootPlacementConstraint(const SwitchedModelReferenceManager& referenceManager,
@@ -27,14 +27,14 @@ bool FootPlacementConstraint::isActive(scalar_t time) const {
 }
 
 vector_t FootPlacementConstraint::getValue(scalar_t /*time*/, const vector_t& state, const PreComputation& preComp) const {
-  const auto param = cast<LeggedPreComputation>(preComp).getFootPlacementConParameters()[contactPointIndex_];
+  const auto param = cast<PerceptiveLeggedPrecomputation>(preComp).getFootPlacementConParameters()[contactPointIndex_];
   return param.a * endEffectorKinematicsPtr_->getPosition(state).front() + param.b;
 }
 
 VectorFunctionLinearApproximation FootPlacementConstraint::getLinearApproximation(scalar_t /*time*/, const vector_t& state,
                                                                                   const PreComputation& preComp) const {
   VectorFunctionLinearApproximation approx = VectorFunctionLinearApproximation::Zero(numVertices_, state.size(), 0);
-  const auto param = cast<LeggedPreComputation>(preComp).getFootPlacementConParameters()[contactPointIndex_];
+  const auto param = cast<PerceptiveLeggedPrecomputation>(preComp).getFootPlacementConParameters()[contactPointIndex_];
 
   const auto positionApprox = endEffectorKinematicsPtr_->getPositionLinearApproximation(state).front();
   approx.f = param.a * positionApprox.f + param.b;

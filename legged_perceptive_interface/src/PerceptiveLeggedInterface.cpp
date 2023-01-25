@@ -2,9 +2,9 @@
 // Created by qiayuan on 22-12-27.
 //
 
-#include "legged_perceptive_interface/LeggedInterface.h"
+#include "legged_perceptive_interface/PerceptiveLeggedInterface.h"
 #include "legged_perceptive_interface/ConvexRegionSelector.h"
-#include "legged_perceptive_interface/LeggedPrecomputation.h"
+#include "legged_perceptive_interface/PerceptiveLeggedPrecomputation.h"
 #include "legged_perceptive_interface/synchronized_module/LeggedReferenceManager.h"
 
 #include <ocs2_core/soft_constraint/StateSoftConstraint.h>
@@ -15,8 +15,8 @@
 
 namespace legged {
 
-void FootPlacementLeggedInterface::setupOptimalControlProblem(const std::string& taskFile, const std::string& urdfFile,
-                                                              const std::string& referenceFile, bool verbose) {
+void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& taskFile, const std::string& urdfFile,
+                                                           const std::string& referenceFile, bool verbose) {
   planarTerrainPtr_ = std::make_shared<convex_plane_decomposition::PlanarTerrain>();
 
   double width{0.8}, height{0.15}, offset{0.3};
@@ -80,8 +80,8 @@ void FootPlacementLeggedInterface::setupOptimalControlProblem(const std::string&
       "sdfConstraint", std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(sphereSdfConstraint), std::move(penalty))));
 }
 
-void FootPlacementLeggedInterface::setupReferenceManager(const std::string& taskFile, const std::string& /*urdfFile*/,
-                                                         const std::string& referenceFile, bool verbose) {
+void PerceptiveLeggedInterface::setupReferenceManager(const std::string& taskFile, const std::string& /*urdfFile*/,
+                                                      const std::string& referenceFile, bool verbose) {
   auto swingTrajectoryPlanner =
       std::make_unique<SwingTrajectoryPlanner>(loadSwingTrajectorySettings(taskFile, "swing_trajectory_config", verbose), 4);
 
@@ -92,9 +92,9 @@ void FootPlacementLeggedInterface::setupReferenceManager(const std::string& task
                                                         std::move(convexRegionSelector)));
 }
 
-void FootPlacementLeggedInterface::setupPreComputation(const std::string& /*taskFile*/, const std::string& /*urdfFile*/,
-                                                       const std::string& /*referenceFile*/, bool /*verbose*/) {
-  problemPtr_->preComputationPtr = std::make_unique<LeggedPreComputation>(
+void PerceptiveLeggedInterface::setupPreComputation(const std::string& /*taskFile*/, const std::string& /*urdfFile*/,
+                                                    const std::string& /*referenceFile*/, bool /*verbose*/) {
+  problemPtr_->preComputationPtr = std::make_unique<PerceptiveLeggedPrecomputation>(
       *pinocchioInterfacePtr_, centroidalModelInfo_, *referenceManagerPtr_->getSwingTrajectoryPlanner(), modelSettings(),
       *dynamic_cast<LeggedReferenceManager&>(*referenceManagerPtr_).getConvexRegionSelectorPtr(), numVertices_);
 }

@@ -69,8 +69,8 @@ add_library(${PROJECT_NAME}
         src/synchronized_module/PlanarTerrainReceiver.cpp
         src/synchronized_module/LeggedReferenceManager.cpp
         src/ConvexRegionSelector.cpp
-        src/LeggedPrecomputation.cpp
-        src/LeggedInterface.cpp
+        src/PerceptiveLeggedPrecomputation.cpp
+        src/PerceptiveLeggedInterface.cpp
         )
 
 target_link_libraries(${PROJECT_NAME}

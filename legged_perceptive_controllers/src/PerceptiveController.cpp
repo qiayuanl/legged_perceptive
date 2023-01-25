@@ -3,7 +3,7 @@
 //
 
 #include "legged_perceptive_controllers/PerceptiveController.h"
-#include "legged_perceptive_interface/LeggedInterface.h"
+#include "legged_perceptive_interface/PerceptiveLeggedInterface.h"
 #include "legged_perceptive_interface/synchronized_module/LeggedReferenceManager.h"
 #include "legged_perceptive_interface/synchronized_module/PlanarTerrainReceiver.h"
 
@@ -12,18 +12,18 @@
 namespace legged {
 void PerceptiveController::setupLeggedInterface(const std::string& task_file, const std::string& urdf_file,
                                                 const std::string& reference_file, bool verbose) {
-  leggedInterface_ = std::make_shared<FootPlacementLeggedInterface>(task_file, urdf_file, reference_file, verbose);
+  leggedInterface_ = std::make_shared<PerceptiveLeggedInterface>(task_file, urdf_file, reference_file, verbose);
   leggedInterface_->setupOptimalControlProblem(task_file, urdf_file, reference_file, verbose);
 
   ros::NodeHandle nh;
   footPlacementVisualizationPtr_ = std::make_shared<FootPlacementVisualization>(
       *dynamic_cast<LeggedReferenceManager&>(*leggedInterface_->getReferenceManagerPtr()).getConvexRegionSelectorPtr(),
       leggedInterface_->getCentroidalModelInfo().numThreeDofContacts,
-      dynamic_cast<FootPlacementLeggedInterface&>(*leggedInterface_).getNumVertices(), nh);
+      dynamic_cast<PerceptiveLeggedInterface&>(*leggedInterface_).getNumVertices(), nh);
 
   sphereVisualizationPtr_ = std::make_shared<SphereVisualization>(
       leggedInterface_->getPinocchioInterface(), leggedInterface_->getCentroidalModelInfo(),
-      *dynamic_cast<FootPlacementLeggedInterface&>(*leggedInterface_).getPinocchioSphereInterfacePrt(), nh);
+      *dynamic_cast<PerceptiveLeggedInterface&>(*leggedInterface_).getPinocchioSphereInterfacePrt(), nh);
 }
 
 void PerceptiveController::setupMpc() {
@@ -31,8 +31,8 @@ void PerceptiveController::setupMpc() {
 
   ros::NodeHandle nh;
   auto planarTerrainReceiver =
-      std::make_shared<PlanarTerrainReceiver>(nh, dynamic_cast<FootPlacementLeggedInterface&>(*leggedInterface_).getPlanarTerrainPtr(),
-                                              dynamic_cast<FootPlacementLeggedInterface&>(*leggedInterface_).getSignedDistanceFieldPtr(),
+      std::make_shared<PlanarTerrainReceiver>(nh, dynamic_cast<PerceptiveLeggedInterface&>(*leggedInterface_).getPlanarTerrainPtr(),
+                                              dynamic_cast<PerceptiveLeggedInterface&>(*leggedInterface_).getSignedDistanceFieldPtr(),
                                               "/convex_plane_decomposition_ros/planar_terrain", "elevation_before_postprocess");
   mpc_->getSolverPtr()->addSynchronizedModule(planarTerrainReceiver);
 }
