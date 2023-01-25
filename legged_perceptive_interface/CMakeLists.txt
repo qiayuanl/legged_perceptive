@@ -62,8 +62,9 @@ link_directories(
 )
 
 add_library(${PROJECT_NAME}
-        src/constraint/SphereSdfConstraint.cpp
+        src/constraint/FootCollisionConstraint.cpp
         src/constraint/FootPlacementConstraint.cpp
+        src/constraint/SphereSdfConstraint.cpp
         src/LeggedReferenceManager.cpp
         src/ConvexRegionSelector.cpp
         src/PerceptiveLeggedPrecomputation.cpp

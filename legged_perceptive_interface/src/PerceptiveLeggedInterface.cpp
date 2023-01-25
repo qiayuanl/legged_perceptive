@@ -2,9 +2,12 @@
 // Created by qiayuan on 22-12-27.
 //
 
-#include "legged_perceptive_interface/PerceptiveLeggedInterface.h"
+#include "legged_perceptive_interface/constraint/FootCollisionConstraint.h"
+#include "legged_perceptive_interface/constraint/SphereSdfConstraint.h"
+
 #include "legged_perceptive_interface/ConvexRegionSelector.h"
 #include "legged_perceptive_interface/LeggedReferenceManager.h"
+#include "legged_perceptive_interface/PerceptiveLeggedInterface.h"
 #include "legged_perceptive_interface/PerceptiveLeggedPrecomputation.h"
 
 #include <ocs2_core/soft_constraint/StateSoftConstraint.h>
@@ -47,16 +50,25 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
 
   LeggedInterface::setupOptimalControlProblem(taskFile, urdfFile, referenceFile, verbose);
 
-  // For foot placement
   for (size_t i = 0; i < centroidalModelInfo_.numThreeDofContacts; i++) {
     const std::string& footName = modelSettings().contactNames3DoF[i];
     std::unique_ptr<EndEffectorKinematics<scalar_t>> eeKinematicsPtr = getEeKinematicsPtr({footName}, footName);
 
+    std::unique_ptr<PenaltyBase> placementPenalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(0.1, 1e-3)));
+    std::unique_ptr<PenaltyBase> collisionPenalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(0.1, 1e-2)));
+
+    // For foot placement
     std::unique_ptr<FootPlacementConstraint> footPlacementConstraint(
         new FootPlacementConstraint(*referenceManagerPtr_, *eeKinematicsPtr, i, numVertices_));
-    std::unique_ptr<PenaltyBase> penalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(0.1, 1e-3)));
-    problemPtr_->stateSoftConstraintPtr->add(footName + "_footPlacement", std::unique_ptr<StateCost>(new StateSoftConstraint(
-                                                                              std::move(footPlacementConstraint), std::move(penalty))));
+    problemPtr_->stateSoftConstraintPtr->add(
+        footName + "_footPlacement",
+        std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(footPlacementConstraint), std::move(placementPenalty))));
+
+    std::unique_ptr<FootCollisionConstraint> footCollisionConstraint(
+        new FootCollisionConstraint(*referenceManagerPtr_, *eeKinematicsPtr, signedDistanceFieldPtr_, i, 0.02));
+    problemPtr_->stateSoftConstraintPtr->add(
+        footName + "_footCollision",
+        std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(footCollisionConstraint), std::move(collisionPenalty))));
   }
 
   // For collision avoidance
@@ -75,9 +87,9 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
   std::unique_ptr<SphereSdfConstraint> sphereSdfConstraint(
       new SphereSdfConstraint(*sphereKinematicsPtr, *pinocchioInterfacePtr_, pinocchioMapping, signedDistanceFieldPtr_));
 
-  std::unique_ptr<PenaltyBase> penalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(0.1, 1e-3)));
-  problemPtr_->stateSoftConstraintPtr->add(
-      "sdfConstraint", std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(sphereSdfConstraint), std::move(penalty))));
+  //  std::unique_ptr<PenaltyBase> penalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(0.1, 1e-3)));
+  //  problemPtr_->stateSoftConstraintPtr->add(
+  //      "sdfConstraint", std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(sphereSdfConstraint), std::move(penalty))));
 }
 
 void PerceptiveLeggedInterface::setupReferenceManager(const std::string& taskFile, const std::string& /*urdfFile*/,

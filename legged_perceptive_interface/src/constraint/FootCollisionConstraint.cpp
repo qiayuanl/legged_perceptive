@@ -1,0 +1,45 @@
+//
+// Created by qiayuan on 23-1-26.
+//
+#include "legged_perceptive_interface/constraint/FootCollisionConstraint.h"
+
+namespace legged {
+FootCollisionConstraint::FootCollisionConstraint(const SwitchedModelReferenceManager& referenceManager,
+                                                 const EndEffectorKinematics<scalar_t>& endEffectorKinematics,
+                                                 std::shared_ptr<grid_map::SignedDistanceField> sdfPtr, size_t contactPointIndex,
+                                                 scalar_t clearance)
+    : StateConstraint(ConstraintOrder::Linear),
+      referenceManagerPtr_(&referenceManager),
+      endEffectorKinematicsPtr_(endEffectorKinematics.clone()),
+      sdfPtr_(std::move(sdfPtr)),
+      contactPointIndex_(contactPointIndex),
+      clearance_(clearance) {}
+
+FootCollisionConstraint::FootCollisionConstraint(const FootCollisionConstraint& rhs)
+    : StateConstraint(ConstraintOrder::Linear),
+      referenceManagerPtr_(rhs.referenceManagerPtr_),
+      endEffectorKinematicsPtr_(rhs.endEffectorKinematicsPtr_->clone()),
+      sdfPtr_(rhs.sdfPtr_),
+      contactPointIndex_(rhs.contactPointIndex_),
+      clearance_(rhs.clearance_) {}
+
+bool FootCollisionConstraint::isActive(scalar_t time) const {
+  return !referenceManagerPtr_->getContactFlags(time)[contactPointIndex_];
+}
+
+vector_t FootCollisionConstraint::getValue(scalar_t /*time*/, const vector_t& state, const PreComputation& /*preComp*/) const {
+  vector_t value(1);
+  value(1) = sdfPtr_->value(grid_map::Position3(endEffectorKinematicsPtr_->getPosition(state).front())) - clearance_;
+  return value;
+}
+
+VectorFunctionLinearApproximation FootCollisionConstraint::getLinearApproximation(scalar_t time, const vector_t& state,
+                                                                                  const PreComputation& preComp) const {
+  VectorFunctionLinearApproximation approx = VectorFunctionLinearApproximation::Zero(1, state.size(), 0);
+  approx.f = getValue(time, state, preComp);
+  approx.dfdx = sdfPtr_->derivative(grid_map::Position3(endEffectorKinematicsPtr_->getPosition(state).front())).transpose() *
+                endEffectorKinematicsPtr_->getPositionLinearApproximation(state).front().dfdx;
+  return approx;
+}
+
+}  // namespace legged

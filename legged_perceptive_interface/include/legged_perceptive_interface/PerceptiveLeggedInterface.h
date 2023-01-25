@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "legged_perceptive_interface/constraint/SphereSdfConstraint.h"
-
 #include <convex_plane_decomposition/PlanarRegion.h>
 #include <legged_interface/LeggedInterface.h>
 
