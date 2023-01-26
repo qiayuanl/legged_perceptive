@@ -3,14 +3,16 @@
 //
 #include <utility>
 
+#include <ocs2_centroidal_model/AccessHelperFunctions.h>
 #include "legged_perceptive_interface/LeggedReferenceManager.h"
 
 namespace legged {
 
-LeggedReferenceManager::LeggedReferenceManager(std::shared_ptr<GaitSchedule> gaitSchedulePtr,
+LeggedReferenceManager::LeggedReferenceManager(CentroidalModelInfo info, std::shared_ptr<GaitSchedule> gaitSchedulePtr,
                                                std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr,
                                                std::shared_ptr<ConvexRegionSelector> convexRegionSelectorPtr)
-    : SwitchedModelReferenceManager(std::move(gaitSchedulePtr), std::move(swingTrajectoryPtr)),
+    : info_(std::move(info)),
+      SwitchedModelReferenceManager(std::move(gaitSchedulePtr), std::move(swingTrajectoryPtr)),
       convexRegionSelectorPtr_(std::move(convexRegionSelectorPtr)) {}
 
 void LeggedReferenceManager::modifyReferences(scalar_t initTime, scalar_t finalTime, const vector_t& initState,
@@ -21,6 +23,12 @@ void LeggedReferenceManager::modifyReferences(scalar_t initTime, scalar_t finalT
   getSwingTrajectoryPlanner()->update(modeSchedule, terrainHeight);
 
   convexRegionSelectorPtr_->update(modeSchedule, initState, targetTrajectories);
+
+  for (size_t i = 0; i < targetTrajectories.size(); ++i) {
+    vector_t pos = centroidal_model::getBasePose(targetTrajectories.stateTrajectory[i], info_).head(3);
+    centroidal_model::getBasePose(targetTrajectories.stateTrajectory[i], info_)(2) +=
+        convexRegionSelectorPtr_->getPlanarTerrainPtr()->gridMap.atPosition("smooth_planar", pos);
+  }
 }
 
 }  // namespace legged

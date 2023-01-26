@@ -31,6 +31,8 @@ class ConvexRegionSelector {
 
   std::vector<scalar_t> getMiddleTimes(size_t leg) const { return middleTimes_[leg]; }
 
+  std::shared_ptr<convex_plane_decomposition::PlanarTerrain> getPlanarTerrainPtr() { return planarTerrainPtr_; }
+
  private:
   feet_array_t<std::vector<bool>> extractContactFlags(const std::vector<size_t>& phaseIDsStock) const;
   static std::pair<int, int> findIndex(size_t index, const std::vector<bool>& contactFlagStock);

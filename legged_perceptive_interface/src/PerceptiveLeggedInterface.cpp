@@ -43,10 +43,11 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
     planarTerrainPtr_->planarRegions.push_back(plannerRegion);
   }
 
-  std::string elevationLayer = "elevation_before_postprocess";
+  std::string sdfLayer = "elevation_before_postprocess";
   planarTerrainPtr_->gridMap.setGeometry(grid_map::Length(5.0, 5.0), 0.03);
-  planarTerrainPtr_->gridMap.add(elevationLayer, 0);
-  signedDistanceFieldPtr_ = std::make_shared<grid_map::SignedDistanceField>(planarTerrainPtr_->gridMap, elevationLayer, -0.1, 0.1);
+  planarTerrainPtr_->gridMap.add(sdfLayer, 0);
+  planarTerrainPtr_->gridMap.add("smooth_planar", 0);
+  signedDistanceFieldPtr_ = std::make_shared<grid_map::SignedDistanceField>(planarTerrainPtr_->gridMap, sdfLayer, -0.1, 0.1);
 
   LeggedInterface::setupOptimalControlProblem(taskFile, urdfFile, referenceFile, verbose);
 
@@ -100,8 +101,8 @@ void PerceptiveLeggedInterface::setupReferenceManager(const std::string& taskFil
   std::unique_ptr<EndEffectorKinematics<scalar_t>> eeKinematicsPtr = getEeKinematicsPtr({modelSettings_.contactNames3DoF}, "ALL_FOOT");
   auto convexRegionSelector = std::make_unique<ConvexRegionSelector>(centroidalModelInfo_, planarTerrainPtr_, *eeKinematicsPtr);
 
-  referenceManagerPtr_.reset(new LeggedReferenceManager(loadGaitSchedule(referenceFile, verbose), std::move(swingTrajectoryPlanner),
-                                                        std::move(convexRegionSelector)));
+  referenceManagerPtr_.reset(new LeggedReferenceManager(centroidalModelInfo_, loadGaitSchedule(referenceFile, verbose),
+                                                        std::move(swingTrajectoryPlanner), std::move(convexRegionSelector)));
 }
 
 void PerceptiveLeggedInterface::setupPreComputation(const std::string& /*taskFile*/, const std::string& /*urdfFile*/,

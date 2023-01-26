@@ -16,7 +16,8 @@ using namespace legged_robot;
 
 class LeggedReferenceManager : public SwitchedModelReferenceManager {
  public:
-  LeggedReferenceManager(std::shared_ptr<GaitSchedule> gaitSchedulePtr, std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr,
+  LeggedReferenceManager(CentroidalModelInfo info, std::shared_ptr<GaitSchedule> gaitSchedulePtr,
+                         std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr,
                          std::shared_ptr<ConvexRegionSelector> convexRegionSelectorPtr);
 
   const std::shared_ptr<ConvexRegionSelector>& getConvexRegionSelectorPtr() { return convexRegionSelectorPtr_; }
@@ -24,6 +25,8 @@ class LeggedReferenceManager : public SwitchedModelReferenceManager {
  private:
   void modifyReferences(scalar_t initTime, scalar_t finalTime, const vector_t& initState, TargetTrajectories& targetTrajectories,
                         ModeSchedule& modeSchedule) override;
+
+  const CentroidalModelInfo info_;
 
   std::shared_ptr<ConvexRegionSelector> convexRegionSelectorPtr_;
 };
