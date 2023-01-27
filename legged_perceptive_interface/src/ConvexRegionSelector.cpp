@@ -81,6 +81,29 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, const vector
     }
     timeEvents_[leg] = eventTimes;
   }
+
+  for (size_t leg = 0; leg < info_.numThreeDofContacts; leg++) {
+    liftOffHeights_[leg].clear();
+    touchDownHeights_[leg].clear();
+    liftOffHeights_[leg].resize(numPhases);
+    touchDownHeights_[leg].resize(numPhases);
+    liftOffHeights_[leg][0] = feetProjections_[leg][0].regionPtr != nullptr ? feetProjections_[leg][0].positionInWorld.z() : 0;
+    touchDownHeights_[leg][numPhases - 1] =
+        feetProjections_[leg][numPhases - 1].regionPtr != nullptr ? feetProjections_[leg][numPhases - 1].positionInWorld.z() : 0;
+
+    for (size_t i = 1; i < numPhases; ++i) {
+      if (!contactFlagStocks[leg][i]) {
+        liftOffHeights_[leg][i] = feetProjections_[leg][i - 1].regionPtr != nullptr ? feetProjections_[leg][i - 1].positionInWorld.z()
+                                                                                    : liftOffHeights_[leg][i - 1];
+      }
+    }
+    for (int i = numPhases - 2; i >= 0; --i) {
+      if (!contactFlagStocks[leg][i]) {
+        touchDownHeights_[leg][i] = feetProjections_[leg][i + 1].regionPtr != nullptr ? feetProjections_[leg][i + 1].positionInWorld.z()
+                                                                                      : touchDownHeights_[leg][i + 1];
+      }
+    }
+  }
 }
 
 feet_array_t<std::vector<bool>> ConvexRegionSelector::extractContactFlags(const std::vector<size_t>& phaseIDsStock) const {

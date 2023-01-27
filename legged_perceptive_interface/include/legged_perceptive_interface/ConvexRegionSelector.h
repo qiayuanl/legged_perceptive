@@ -33,6 +33,8 @@ class ConvexRegionSelector {
 
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> getPlanarTerrainPtr() { return planarTerrainPtr_; }
 
+  std::pair<feet_array_t<scalar_array_t>, feet_array_t<scalar_array_t>> getHeight() { return {liftOffHeights_, touchDownHeights_}; }
+
  private:
   feet_array_t<std::vector<bool>> extractContactFlags(const std::vector<size_t>& phaseIDsStock) const;
   static std::pair<int, int> findIndex(size_t index, const std::vector<bool>& contactFlagStock);
@@ -42,6 +44,8 @@ class ConvexRegionSelector {
   feet_array_t<std::vector<convex_plane_decomposition::PlanarTerrainProjection>> feetProjections_;
   feet_array_t<std::vector<vector3_t>> nominalFootholds_;
   feet_array_t<std::vector<scalar_t>> middleTimes_;
+
+  feet_array_t<scalar_array_t> liftOffHeights_, touchDownHeights_;
 
   feet_array_t<std::vector<scalar_t>> timeEvents_;
 

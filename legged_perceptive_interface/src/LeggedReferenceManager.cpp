@@ -19,15 +19,19 @@ void LeggedReferenceManager::modifyReferences(scalar_t initTime, scalar_t finalT
                                               TargetTrajectories& targetTrajectories, ModeSchedule& modeSchedule) {
   const auto timeHorizon = finalTime - initTime;
   modeSchedule = getGaitSchedule()->getModeSchedule(initTime - timeHorizon, finalTime + timeHorizon);
-  const scalar_t terrainHeight = 0.0;
-  getSwingTrajectoryPlanner()->update(modeSchedule, terrainHeight);
 
   convexRegionSelectorPtr_->update(modeSchedule, initState, targetTrajectories);
 
+  // Swing trajectory
+  feet_array_t<scalar_array_t> liftOffHeightSequence, touchDownHeightSequence;
+  std::tie(liftOffHeightSequence, touchDownHeightSequence) = convexRegionSelectorPtr_->getHeight();
+  getSwingTrajectoryPlanner()->update(modeSchedule, liftOffHeightSequence, touchDownHeightSequence);
+
+  // Z Position
   for (size_t i = 0; i < targetTrajectories.size(); ++i) {
     vector_t pos = centroidal_model::getBasePose(targetTrajectories.stateTrajectory[i], info_).head(3);
-    centroidal_model::getBasePose(targetTrajectories.stateTrajectory[i], info_)(2) +=
-        convexRegionSelectorPtr_->getPlanarTerrainPtr()->gridMap.atPosition("smooth_planar", pos);
+    centroidal_model::getBasePose(targetTrajectories.stateTrajectory[i], info_)(2) =
+        convexRegionSelectorPtr_->getPlanarTerrainPtr()->gridMap.atPosition("smooth_planar", pos) + 0.3;
   }
 }
 
