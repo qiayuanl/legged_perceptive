@@ -4,15 +4,7 @@
 
 #pragma once
 
-#include <memory>
-#include <string>
-
-#include <ocs2_core/PreComputation.h>
-#include <ocs2_pinocchio_interface/PinocchioInterface.h>
-
-#include <ocs2_legged_robot/common/ModelSettings.h>
-#include <ocs2_legged_robot/constraint/EndEffectorLinearConstraint.h>
-#include <ocs2_legged_robot/foot_planner/SwingTrajectoryPlanner.h>
+#include <legged_interface/LeggedRobotPreComputation.h>
 
 #include <convex_plane_decomposition/PlanarRegion.h>
 #include <convex_plane_decomposition/PolygonTypes.h>
@@ -24,35 +16,28 @@ using namespace ocs2;
 using namespace legged_robot;
 
 /** Callback for caching and reference update */
-class PerceptiveLeggedPrecomputation : public PreComputation {
+class PerceptiveLeggedPrecomputation : public LeggedRobotPreComputation {
  public:
   PerceptiveLeggedPrecomputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
                                  const SwingTrajectoryPlanner& swingTrajectoryPlanner, ModelSettings settings,
                                  const ConvexRegionSelector& convexRegionSelector, size_t numVertices);
   ~PerceptiveLeggedPrecomputation() override = default;
 
-  PerceptiveLeggedPrecomputation* clone() const override;
+  PerceptiveLeggedPrecomputation* clone() const override { return new PerceptiveLeggedPrecomputation(*this); }
 
   void request(RequestSet request, scalar_t t, const vector_t& x, const vector_t& u) override;
-
-  const std::vector<EndEffectorLinearConstraint::Config>& getEeNormalVelocityConstraintConfigs() const { return eeNormalVelConConfigs_; }
 
   const std::vector<FootPlacementConstraint::Parameter>& getFootPlacementConParameters() const { return footPlacementConParameters_; }
 
   const std::vector<convex_plane_decomposition::CgalPolygon2d>& getConvexRegions() const { return convexRegions_; }
 
-  PerceptiveLeggedPrecomputation(const PerceptiveLeggedPrecomputation& other) = default;
+  PerceptiveLeggedPrecomputation(const PerceptiveLeggedPrecomputation& rhs);
 
  private:
   std::pair<matrix_t, vector_t> getPolygonConstraint(const convex_plane_decomposition::CgalPolygon2d& polygon) const;
 
-  // SwingTrajectoryPlanner
-  PinocchioInterface pinocchioInterface_;
   CentroidalModelInfo info_;
-  const SwingTrajectoryPlanner* swingTrajectoryPlannerPtr_;
-  const ModelSettings settings_;
-
-  std::vector<EndEffectorLinearConstraint::Config> eeNormalVelConConfigs_;
+  std::unique_ptr<PinocchioStateInputMapping<scalar_t>> mappingPtr_;
 
   // ConvexRegionSelector
   size_t numVertices_;

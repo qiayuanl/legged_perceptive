@@ -10,6 +10,7 @@
 #include "legged_perceptive_interface/PerceptiveLeggedInterface.h"
 #include "legged_perceptive_interface/PerceptiveLeggedPrecomputation.h"
 
+#include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
 #include <ocs2_core/soft_constraint/StateSoftConstraint.h>
 #include <ocs2_pinocchio_interface/PinocchioEndEffectorKinematicsCppAd.h>
 #include <ocs2_sphere_approximation/PinocchioSphereKinematics.h>
@@ -85,12 +86,11 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
   CentroidalModelPinocchioMapping pinocchioMapping(centroidalModelInfo_);
   auto sphereKinematicsPtr = std::make_unique<PinocchioSphereKinematics>(*pinocchioSphereInterfacePrt_, pinocchioMapping);
 
-  std::unique_ptr<SphereSdfConstraint> sphereSdfConstraint(
-      new SphereSdfConstraint(*sphereKinematicsPtr, *pinocchioInterfacePtr_, pinocchioMapping, signedDistanceFieldPtr_));
+  std::unique_ptr<SphereSdfConstraint> sphereSdfConstraint(new SphereSdfConstraint(*sphereKinematicsPtr, signedDistanceFieldPtr_));
 
-  //  std::unique_ptr<PenaltyBase> penalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(0.1, 1e-3)));
-  //  problemPtr_->stateSoftConstraintPtr->add(
-  //      "sdfConstraint", std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(sphereSdfConstraint), std::move(penalty))));
+  std::unique_ptr<PenaltyBase> penalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(0.1, 1e-3)));
+  problemPtr_->stateSoftConstraintPtr->add(
+      "sdfConstraint", std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(sphereSdfConstraint), std::move(penalty))));
 }
 
 void PerceptiveLeggedInterface::setupReferenceManager(const std::string& taskFile, const std::string& /*urdfFile*/,
@@ -108,7 +108,7 @@ void PerceptiveLeggedInterface::setupReferenceManager(const std::string& taskFil
 void PerceptiveLeggedInterface::setupPreComputation(const std::string& /*taskFile*/, const std::string& /*urdfFile*/,
                                                     const std::string& /*referenceFile*/, bool /*verbose*/) {
   problemPtr_->preComputationPtr = std::make_unique<PerceptiveLeggedPrecomputation>(
-      *pinocchioInterfacePtr_, centroidalModelInfo_, *referenceManagerPtr_->getSwingTrajectoryPlanner(), modelSettings(),
+      *pinocchioInterfacePtr_, centroidalModelInfo_, *referenceManagerPtr_->getSwingTrajectoryPlanner(), modelSettings_,
       *dynamic_cast<LeggedReferenceManager&>(*referenceManagerPtr_).getConvexRegionSelectorPtr(), numVertices_);
 }
 

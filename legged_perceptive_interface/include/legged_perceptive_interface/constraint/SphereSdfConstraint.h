@@ -6,8 +6,6 @@
 
 #include <memory>
 
-#include <ocs2_centroidal_model/AccessHelperFunctions.h>
-#include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
 #include <ocs2_core/constraint/StateConstraint.h>
 #include <ocs2_sphere_approximation/PinocchioSphereKinematics.h>
 #include <grid_map_sdf/SignedDistanceField.hpp>
@@ -18,8 +16,7 @@ using namespace ocs2;
 
 class SphereSdfConstraint final : public ocs2::StateConstraint {
  public:
-  SphereSdfConstraint(const PinocchioSphereKinematics& sphereKinematics, PinocchioInterface& pinocchioInterface,
-                      const PinocchioStateInputMapping<scalar_t>& mapping, std::shared_ptr<grid_map::SignedDistanceField> sdfPtr);
+  SphereSdfConstraint(const PinocchioSphereKinematics& sphereKinematics, std::shared_ptr<grid_map::SignedDistanceField> sdfPtr);
 
   /** Default destructor */
   ~SphereSdfConstraint() override = default;
@@ -36,8 +33,6 @@ class SphereSdfConstraint final : public ocs2::StateConstraint {
   SphereSdfConstraint(const SphereSdfConstraint& rhs);
 
   std::unique_ptr<PinocchioSphereKinematics> sphereKinematicsPtr_;
-  PinocchioInterface& pinocchioInterface_;
-  std::unique_ptr<PinocchioStateInputMapping<scalar_t>> mappingPtr_;
   std::shared_ptr<grid_map::SignedDistanceField> sdfPtr_;
   size_t numConstraints_{};
 };
