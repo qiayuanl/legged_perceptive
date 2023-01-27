@@ -20,7 +20,7 @@ class PerceptiveLeggedPrecomputation : public LeggedRobotPreComputation {
  public:
   PerceptiveLeggedPrecomputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
                                  const SwingTrajectoryPlanner& swingTrajectoryPlanner, ModelSettings settings,
-                                 const ConvexRegionSelector& convexRegionSelector, size_t numVertices);
+                                 const ConvexRegionSelector& convexRegionSelector);
   ~PerceptiveLeggedPrecomputation() override = default;
 
   PerceptiveLeggedPrecomputation* clone() const override { return new PerceptiveLeggedPrecomputation(*this); }
@@ -29,8 +29,6 @@ class PerceptiveLeggedPrecomputation : public LeggedRobotPreComputation {
 
   const std::vector<FootPlacementConstraint::Parameter>& getFootPlacementConParameters() const { return footPlacementConParameters_; }
 
-  const std::vector<convex_plane_decomposition::CgalPolygon2d>& getConvexRegions() const { return convexRegions_; }
-
   PerceptiveLeggedPrecomputation(const PerceptiveLeggedPrecomputation& rhs);
 
  private:
@@ -38,13 +36,9 @@ class PerceptiveLeggedPrecomputation : public LeggedRobotPreComputation {
 
   CentroidalModelInfo info_;
   std::unique_ptr<PinocchioStateInputMapping<scalar_t>> mappingPtr_;
-
-  // ConvexRegionSelector
-  size_t numVertices_;
   const ConvexRegionSelector* convexRegionSelectorPtr_;
 
   std::vector<FootPlacementConstraint::Parameter> footPlacementConParameters_;
-  std::vector<convex_plane_decomposition::CgalPolygon2d> convexRegions_;
 };
 
 }  // namespace legged

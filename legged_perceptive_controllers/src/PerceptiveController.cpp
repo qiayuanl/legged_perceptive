@@ -19,8 +19,7 @@ void PerceptiveController::setupLeggedInterface(const std::string& task_file, co
   ros::NodeHandle nh;
   footPlacementVisualizationPtr_ = std::make_shared<FootPlacementVisualization>(
       *dynamic_cast<LeggedReferenceManager&>(*leggedInterface_->getReferenceManagerPtr()).getConvexRegionSelectorPtr(),
-      leggedInterface_->getCentroidalModelInfo().numThreeDofContacts,
-      dynamic_cast<PerceptiveLeggedInterface&>(*leggedInterface_).getNumVertices(), nh);
+      leggedInterface_->getCentroidalModelInfo().numThreeDofContacts, nh);
 
   sphereVisualizationPtr_ = std::make_shared<SphereVisualization>(
       leggedInterface_->getPinocchioInterface(), leggedInterface_->getCentroidalModelInfo(),

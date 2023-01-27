@@ -21,11 +21,13 @@ using namespace legged_robot;
 class ConvexRegionSelector {
  public:
   ConvexRegionSelector(CentroidalModelInfo info, std::shared_ptr<convex_plane_decomposition::PlanarTerrain> PlanarTerrainPtr,
-                       const EndEffectorKinematics<scalar_t>& endEffectorKinematics);
+                       const EndEffectorKinematics<scalar_t>& endEffectorKinematics, size_t numVertices);
 
   void update(const ModeSchedule& modeSchedule, const vector_t& initState, TargetTrajectories& targetTrajectories);
 
   convex_plane_decomposition::PlanarTerrainProjection getProjection(size_t leg, scalar_t time) const;
+
+  convex_plane_decomposition::CgalPolygon2d getConvexPolygon(size_t leg, scalar_t time) const;
 
   vector3_t getNominalFootholds(size_t leg, scalar_t time) const;
 
@@ -42,6 +44,8 @@ class ConvexRegionSelector {
   vector3_t getNominalFoothold(size_t leg, scalar_t time, const vector_t& initState, TargetTrajectories& targetTrajectories);
 
   feet_array_t<std::vector<convex_plane_decomposition::PlanarTerrainProjection>> feetProjections_;
+  feet_array_t<std::vector<convex_plane_decomposition::CgalPolygon2d>> convexPolygons_;
+
   feet_array_t<std::vector<vector3_t>> nominalFootholds_;
   feet_array_t<std::vector<scalar_t>> middleTimes_;
 
@@ -50,6 +54,7 @@ class ConvexRegionSelector {
   feet_array_t<std::vector<scalar_t>> timeEvents_;
 
   const CentroidalModelInfo info_;
+  size_t numVertices_;
 
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr_;
   std::unique_ptr<EndEffectorKinematics<scalar_t>> endEffectorKinematicsPtr_;

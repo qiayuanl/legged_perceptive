@@ -11,11 +11,10 @@
 #include <ocs2_ros_interfaces/visualization/VisualizationHelpers.h>
 
 namespace legged {
-FootPlacementVisualization::FootPlacementVisualization(const ConvexRegionSelector& convexRegionSelector, size_t numFoot, size_t numVertices,
+FootPlacementVisualization::FootPlacementVisualization(const ConvexRegionSelector& convexRegionSelector, size_t numFoot,
                                                        ros::NodeHandle& nh, scalar_t maxUpdateFrequency)
     : convexRegionSelector_(convexRegionSelector),
       numFoot_(numFoot),
-      numVertices_(numVertices),
       markerPublisher_(nh.advertise<visualization_msgs::MarkerArray>("foot_placement", 1)),
       lastTime_(std::numeric_limits<scalar_t>::lowest()),
       minPublishTimeDifference_(1.0 / maxUpdateFrequency) {}
@@ -53,9 +52,7 @@ void FootPlacementVisualization::update(const SystemObservation& observation) {
         makerArray.markers.push_back(projectionMaker);
 
         // Convex Region
-        double growthFactor = 1.05;
-        const auto convexRegion = convex_plane_decomposition::growConvexPolygonInsideShape(
-            projection.regionPtr->boundaryWithInset.boundary, projection.positionInTerrainFrame, numVertices_, growthFactor);
+        const auto convexRegion = convexRegionSelector_.getConvexPolygon(leg, middleTimes[k]);
         auto convexRegionMsg =
             convex_plane_decomposition::to3dRosPolygon(convexRegion, projection.regionPtr->transformPlaneToWorld, header);
         makerArray.markers.push_back(to3dRosMarker(convexRegion, projection.regionPtr->transformPlaneToWorld, header, color, i));

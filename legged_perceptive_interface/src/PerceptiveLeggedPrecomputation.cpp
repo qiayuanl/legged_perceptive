@@ -7,36 +7,30 @@
 #include <pinocchio/algorithm/frames.hpp>
 #include <pinocchio/algorithm/jacobian.hpp>
 #include <pinocchio/algorithm/kinematics.hpp>
-#include <utility>
 
 #include "legged_perceptive_interface/PerceptiveLeggedPrecomputation.h"
 
-#include <convex_plane_decomposition/ConvexRegionGrowing.h>
 #include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
 
 namespace legged {
 PerceptiveLeggedPrecomputation::PerceptiveLeggedPrecomputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
                                                                const SwingTrajectoryPlanner& swingTrajectoryPlanner, ModelSettings settings,
-                                                               const ConvexRegionSelector& convexRegionSelector, size_t numVertices)
+                                                               const ConvexRegionSelector& convexRegionSelector)
     : LeggedRobotPreComputation(std::move(pinocchioInterface), info, swingTrajectoryPlanner, std::move(settings)),
       info_(std::move(info)),
       mappingPtr_(new CentroidalModelPinocchioMapping(info_)),
-      convexRegionSelectorPtr_(&convexRegionSelector),
-      numVertices_(numVertices) {
+      convexRegionSelectorPtr_(&convexRegionSelector) {
   mappingPtr_->setPinocchioInterface(getPinocchioInterface());
   footPlacementConParameters_.resize(info_.numThreeDofContacts);
-  convexRegions_.resize(info_.numThreeDofContacts);
 }
 
 PerceptiveLeggedPrecomputation::PerceptiveLeggedPrecomputation(const PerceptiveLeggedPrecomputation& rhs)
     : LeggedRobotPreComputation(rhs),
       info_(rhs.info_),
       mappingPtr_(rhs.mappingPtr_->clone()),
-      convexRegionSelectorPtr_(rhs.convexRegionSelectorPtr_),
-      numVertices_(rhs.numVertices_) {
+      convexRegionSelectorPtr_(rhs.convexRegionSelectorPtr_) {
   mappingPtr_->setPinocchioInterface(getPinocchioInterface());
   footPlacementConParameters_.resize(info_.numThreeDofContacts);
-  convexRegions_.resize(info_.numThreeDofContacts);
 }
 
 void PerceptiveLeggedPrecomputation::request(RequestSet request, scalar_t t, const vector_t& x, const vector_t& u) {
@@ -54,13 +48,9 @@ void PerceptiveLeggedPrecomputation::request(RequestSet request, scalar_t t, con
         continue;
       }
 
-      scalar_t growthFactor = 1.05;
-      const auto convexRegion = convex_plane_decomposition::growConvexPolygonInsideShape(
-          projection.regionPtr->boundaryWithInset.boundary, projection.positionInTerrainFrame, numVertices_, growthFactor);
-
       matrix_t polytopeA;
       vector_t polytopeB;
-      std::tie(polytopeA, polytopeB) = getPolygonConstraint(convexRegion);
+      std::tie(polytopeA, polytopeB) = getPolygonConstraint(convexRegionSelectorPtr_->getConvexPolygon(i, t));
       matrix_t p = (matrix_t(2, 3) <<  // clang-format off
                         1, 0, 0,
                         0, 1, 0).finished();  // clang-format on
@@ -68,7 +58,6 @@ void PerceptiveLeggedPrecomputation::request(RequestSet request, scalar_t t, con
       params.b = polytopeB + polytopeA * projection.regionPtr->transformPlaneToWorld.inverse().translation().head(2);
 
       footPlacementConParameters_[i] = params;
-      convexRegions_[i] = convexRegion;
     }
   }
 
@@ -90,16 +79,17 @@ void PerceptiveLeggedPrecomputation::request(RequestSet request, scalar_t t, con
 
 std::pair<matrix_t, vector_t> PerceptiveLeggedPrecomputation::getPolygonConstraint(
     const convex_plane_decomposition::CgalPolygon2d& polygon) const {
-  matrix_t polytopeA = matrix_t::Zero(numVertices_, 2);
-  vector_t polytopeB = vector_t::Zero(numVertices_);
+  size_t numVertices = polygon.size();
+  matrix_t polytopeA = matrix_t::Zero(numVertices, 2);
+  vector_t polytopeB = vector_t::Zero(numVertices);
 
-  for (size_t i = 0; i < numVertices_; i++) {
+  for (size_t i = 0; i < numVertices; i++) {
     size_t j = i + 1;
-    if (j == numVertices_) {
+    if (j == numVertices) {
       j = 0;
     }
     size_t k = j + 1;
-    if (k == numVertices_) {
+    if (k == numVertices) {
       k = 0;
     }
     const auto point_a = polygon.vertex(i);

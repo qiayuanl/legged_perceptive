@@ -7,17 +7,25 @@
 #include <ocs2_core/misc/Lookup.h>
 #include <ocs2_legged_robot/gait/MotionPhaseDefinition.h>
 
-#include <utility>
+#include <convex_plane_decomposition/ConvexRegionGrowing.h>
 
 namespace legged {
 ConvexRegionSelector::ConvexRegionSelector(CentroidalModelInfo info,
                                            std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr,
-                                           const EndEffectorKinematics<scalar_t>& endEffectorKinematics)
-    : info_(std::move(info)), planarTerrainPtr_(std::move(planarTerrainPtr)), endEffectorKinematicsPtr_(endEffectorKinematics.clone()) {}
+                                           const EndEffectorKinematics<scalar_t>& endEffectorKinematics, size_t numVertices)
+    : info_(std::move(info)),
+      numVertices_(numVertices),
+      planarTerrainPtr_(std::move(planarTerrainPtr)),
+      endEffectorKinematicsPtr_(endEffectorKinematics.clone()) {}
 
 convex_plane_decomposition::PlanarTerrainProjection ConvexRegionSelector::getProjection(size_t leg, scalar_t time) const {
   const auto index = lookup::findIndexInTimeArray(timeEvents_[leg], time);
   return feetProjections_[leg][index];
+}
+
+convex_plane_decomposition::CgalPolygon2d ConvexRegionSelector::getConvexPolygon(size_t leg, scalar_t time) const {
+  const auto index = lookup::findIndexInTimeArray(timeEvents_[leg], time);
+  return convexPolygons_[leg][index];
 }
 
 vector3_t ConvexRegionSelector::getNominalFootholds(size_t leg, scalar_t time) const {
@@ -48,8 +56,10 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, const vector
 
   for (size_t leg = 0; leg < info_.numThreeDofContacts; leg++) {
     feetProjections_[leg].clear();
+    convexPolygons_[leg].clear();
     nominalFootholds_[leg].clear();
     feetProjections_[leg].resize(numPhases);
+    convexPolygons_[leg].resize(numPhases);
     nominalFootholds_[leg].resize(numPhases);
     middleTimes_[leg].clear();
 
@@ -69,12 +79,17 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, const vector
           vector3_t nominal = getNominalFoothold(leg, standMiddleTime, initState, targetTrajectories);
           auto penaltyFunction = [](const vector3_t& /*projectedPoint*/) { return 0.0; };
           const auto projection = getBestPlanarRegionAtPositionInWorld(nominal, planarTerrainPtr_->planarRegions, penaltyFunction);
+          scalar_t growthFactor = 1.05;
+          const auto convexRegion = convex_plane_decomposition::growConvexPolygonInsideShape(
+              projection.regionPtr->boundaryWithInset.boundary, projection.positionInTerrainFrame, numVertices_, growthFactor);
 
           feetProjections_[leg][i] = projection;
+          convexPolygons_[leg][i] = convexRegion;
           nominalFootholds_[leg][i] = nominal;
           middleTimes_[leg].push_back(standMiddleTime);
         } else {
           feetProjections_[leg][i] = feetProjections_[leg][i - 1];
+          convexPolygons_[leg][i] = convexPolygons_[leg][i - 1];
           nominalFootholds_[leg][i] = nominalFootholds_[leg][i - 1];
         }
       }

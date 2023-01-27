@@ -66,11 +66,12 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
         footName + "_footPlacement",
         std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(footPlacementConstraint), std::move(placementPenalty))));
 
-    std::unique_ptr<FootCollisionConstraint> footCollisionConstraint(
-        new FootCollisionConstraint(*referenceManagerPtr_, *eeKinematicsPtr, signedDistanceFieldPtr_, i, 0.02));
-    problemPtr_->stateSoftConstraintPtr->add(
-        footName + "_footCollision",
-        std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(footCollisionConstraint), std::move(collisionPenalty))));
+    // For foot Collision
+    //    std::unique_ptr<FootCollisionConstraint> footCollisionConstraint(
+    //        new FootCollisionConstraint(*referenceManagerPtr_, *eeKinematicsPtr, signedDistanceFieldPtr_, i, 0.02));
+    //    problemPtr_->stateSoftConstraintPtr->add(
+    //        footName + "_footCollision",
+    //        std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(footCollisionConstraint), std::move(collisionPenalty))));
   }
 
   // For collision avoidance
@@ -99,7 +100,8 @@ void PerceptiveLeggedInterface::setupReferenceManager(const std::string& taskFil
       std::make_unique<SwingTrajectoryPlanner>(loadSwingTrajectorySettings(taskFile, "swing_trajectory_config", verbose), 4);
 
   std::unique_ptr<EndEffectorKinematics<scalar_t>> eeKinematicsPtr = getEeKinematicsPtr({modelSettings_.contactNames3DoF}, "ALL_FOOT");
-  auto convexRegionSelector = std::make_unique<ConvexRegionSelector>(centroidalModelInfo_, planarTerrainPtr_, *eeKinematicsPtr);
+  auto convexRegionSelector =
+      std::make_unique<ConvexRegionSelector>(centroidalModelInfo_, planarTerrainPtr_, *eeKinematicsPtr, numVertices_);
 
   referenceManagerPtr_.reset(new LeggedReferenceManager(centroidalModelInfo_, loadGaitSchedule(referenceFile, verbose),
                                                         std::move(swingTrajectoryPlanner), std::move(convexRegionSelector)));
@@ -109,7 +111,7 @@ void PerceptiveLeggedInterface::setupPreComputation(const std::string& /*taskFil
                                                     const std::string& /*referenceFile*/, bool /*verbose*/) {
   problemPtr_->preComputationPtr = std::make_unique<PerceptiveLeggedPrecomputation>(
       *pinocchioInterfacePtr_, centroidalModelInfo_, *referenceManagerPtr_->getSwingTrajectoryPlanner(), modelSettings_,
-      *dynamic_cast<LeggedReferenceManager&>(*referenceManagerPtr_).getConvexRegionSelectorPtr(), numVertices_);
+      *dynamic_cast<LeggedReferenceManager&>(*referenceManagerPtr_).getConvexRegionSelectorPtr());
 }
 
 }  // namespace legged

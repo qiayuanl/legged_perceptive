@@ -18,7 +18,7 @@ using namespace ocs2;
 
 class FootPlacementVisualization {
  public:
-  FootPlacementVisualization(const ConvexRegionSelector& convexRegionSelector, size_t numFoot, size_t numVertices, ros::NodeHandle& nh,
+  FootPlacementVisualization(const ConvexRegionSelector& convexRegionSelector, size_t numFoot, ros::NodeHandle& nh,
                              scalar_t maxUpdateFrequency = 20.0);
 
   void update(const SystemObservation& observation);
@@ -34,7 +34,7 @@ class FootPlacementVisualization {
 
   const ConvexRegionSelector& convexRegionSelector_;
 
-  size_t numFoot_, numVertices_;
+  size_t numFoot_;
   ros::Publisher markerPublisher_;
   scalar_t lastTime_;
   scalar_t minPublishTimeDifference_;
