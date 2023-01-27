@@ -27,12 +27,23 @@ void LeggedReferenceManager::modifyReferences(scalar_t initTime, scalar_t finalT
   std::tie(liftOffHeightSequence, touchDownHeightSequence) = convexRegionSelectorPtr_->getHeight();
   getSwingTrajectoryPlanner()->update(modeSchedule, liftOffHeightSequence, touchDownHeightSequence);
 
-  // Z Position
-  for (size_t i = 0; i < targetTrajectories.size(); ++i) {
-    vector_t pos = centroidal_model::getBasePose(targetTrajectories.stateTrajectory[i], info_).head(3);
-    centroidal_model::getBasePose(targetTrajectories.stateTrajectory[i], info_)(2) =
+  // Base Z Position
+  TargetTrajectories newTargetTrajectories;
+  int nodeNum = 11;
+  for (size_t i = 0; i < nodeNum; ++i) {
+    scalar_t time = initTime + static_cast<double>(i) * timeHorizon / (nodeNum - 1);
+    vector_t state = targetTrajectories.getDesiredState(time);
+    vector_t input = targetTrajectories.getDesiredState(time);
+
+    vector_t pos = centroidal_model::getBasePose(state, info_).head(3);
+    centroidal_model::getBasePose(state, info_)(2) =
         convexRegionSelectorPtr_->getPlanarTerrainPtr()->gridMap.atPosition("smooth_planar", pos) + 0.3;
+
+    newTargetTrajectories.timeTrajectory.push_back(time);
+    newTargetTrajectories.stateTrajectory.push_back(state);
+    newTargetTrajectories.inputTrajectory.push_back(input);
   }
+  targetTrajectories = newTargetTrajectories;
 }
 
 }  // namespace legged
