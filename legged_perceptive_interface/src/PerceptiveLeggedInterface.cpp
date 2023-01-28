@@ -67,11 +67,11 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
         std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(footPlacementConstraint), std::move(placementPenalty))));
 
     // For foot Collision
-    //    std::unique_ptr<FootCollisionConstraint> footCollisionConstraint(
-    //        new FootCollisionConstraint(*referenceManagerPtr_, *eeKinematicsPtr, signedDistanceFieldPtr_, i, 0.02));
-    //    problemPtr_->stateSoftConstraintPtr->add(
-    //        footName + "_footCollision",
-    //        std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(footCollisionConstraint), std::move(collisionPenalty))));
+    std::unique_ptr<FootCollisionConstraint> footCollisionConstraint(
+        new FootCollisionConstraint(*referenceManagerPtr_, *eeKinematicsPtr, signedDistanceFieldPtr_, i, 0.02));
+    problemPtr_->stateSoftConstraintPtr->add(
+        footName + "_footCollision",
+        std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(footCollisionConstraint), std::move(collisionPenalty))));
   }
 
   // For collision avoidance
