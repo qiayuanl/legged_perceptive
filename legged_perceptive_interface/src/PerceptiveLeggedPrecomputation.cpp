@@ -2,35 +2,22 @@
 // Created by qiayuan on 23-1-1.
 //
 
-#include <pinocchio/fwd.hpp>
-
-#include <pinocchio/algorithm/frames.hpp>
-#include <pinocchio/algorithm/jacobian.hpp>
-#include <pinocchio/algorithm/kinematics.hpp>
-
 #include "legged_perceptive_interface/PerceptiveLeggedPrecomputation.h"
 
 #include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
 
 namespace legged {
-PerceptiveLeggedPrecomputation::PerceptiveLeggedPrecomputation(PinocchioInterface pinocchioInterface, CentroidalModelInfo info,
+PerceptiveLeggedPrecomputation::PerceptiveLeggedPrecomputation(PinocchioInterface pinocchioInterface, const CentroidalModelInfo& info,
                                                                const SwingTrajectoryPlanner& swingTrajectoryPlanner, ModelSettings settings,
                                                                const ConvexRegionSelector& convexRegionSelector)
     : LeggedRobotPreComputation(std::move(pinocchioInterface), info, swingTrajectoryPlanner, std::move(settings)),
-      info_(std::move(info)),
-      mappingPtr_(new CentroidalModelPinocchioMapping(info_)),
       convexRegionSelectorPtr_(&convexRegionSelector) {
-  mappingPtr_->setPinocchioInterface(getPinocchioInterface());
-  footPlacementConParameters_.resize(info_.numThreeDofContacts);
+  footPlacementConParameters_.resize(info.numThreeDofContacts);
 }
 
 PerceptiveLeggedPrecomputation::PerceptiveLeggedPrecomputation(const PerceptiveLeggedPrecomputation& rhs)
-    : LeggedRobotPreComputation(rhs),
-      info_(rhs.info_),
-      mappingPtr_(rhs.mappingPtr_->clone()),
-      convexRegionSelectorPtr_(rhs.convexRegionSelectorPtr_) {
-  mappingPtr_->setPinocchioInterface(getPinocchioInterface());
-  footPlacementConParameters_.resize(info_.numThreeDofContacts);
+    : LeggedRobotPreComputation(rhs), convexRegionSelectorPtr_(rhs.convexRegionSelectorPtr_) {
+  footPlacementConParameters_.resize(rhs.footPlacementConParameters_.size());
 }
 
 void PerceptiveLeggedPrecomputation::request(RequestSet request, scalar_t t, const vector_t& x, const vector_t& u) {
@@ -40,7 +27,7 @@ void PerceptiveLeggedPrecomputation::request(RequestSet request, scalar_t t, con
   LeggedRobotPreComputation::request(request, t, x, u);
 
   if (request.contains(Request::Constraint)) {
-    for (size_t i = 0; i < info_.numThreeDofContacts; i++) {
+    for (size_t i = 0; i < footPlacementConParameters_.size(); i++) {
       FootPlacementConstraint::Parameter params;
 
       auto projection = convexRegionSelectorPtr_->getProjection(i, t);
@@ -59,21 +46,6 @@ void PerceptiveLeggedPrecomputation::request(RequestSet request, scalar_t t, con
 
       footPlacementConParameters_[i] = params;
     }
-  }
-
-  // For SDF constraints
-  const auto& model = getPinocchioInterface().getModel();
-  auto& data = getPinocchioInterface().getData();
-  vector_t q = mappingPtr_->getPinocchioJointPosition(x);
-
-  if (request.contains(Request::Approximation)) {
-    pinocchio::forwardKinematics(model, data, q);
-    pinocchio::updateFramePlacements(model, data);
-    pinocchio::computeJointJacobians(model, data);
-    //    pinocchio::updateGlobalPlacements(model, data);
-  } else {
-    pinocchio::forwardKinematics(model, data, q);
-    pinocchio::updateFramePlacements(model, data);
   }
 }
 
