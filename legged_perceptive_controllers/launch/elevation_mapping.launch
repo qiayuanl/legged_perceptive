@@ -1,0 +1,14 @@
+<launch>
+    <!-- Elevation mapping node -->
+    <node pkg="elevation_mapping" type="elevation_mapping" name="elevation_mapping" output="screen">
+        <rosparam command="load" file="$(find legged_perceptive_controllers)/config/elevation_mapping.yaml"/>
+        <!--        <rosparam command="load"-->
+        <!--                  file="$(find elevation_mapping_demos)/config/postprocessing/postprocessor_pipeline.yaml"/>-->
+    </node>
+
+    <include file="$(find convex_plane_decomposition_ros)/launch/convex_plane_decomposition.launch">
+    </include>
+
+    <node pkg="tf2_ros" type="static_transform_publisher" name="odom_tf_publisher"
+          args="0 0 0 0 0 0 1 map odom"/>
+</launch>
