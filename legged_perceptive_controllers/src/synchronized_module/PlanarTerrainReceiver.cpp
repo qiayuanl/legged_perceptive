@@ -39,7 +39,7 @@ void PlanarTerrainReceiver::planarTerrainCallback(const convex_plane_decompositi
 
   planarTerrain_ = convex_plane_decomposition::PlanarTerrain(convex_plane_decomposition::fromMessage(*msg));
 
-  auto& elevationData = planarTerrainPtr_->gridMap.get(elevationLayer_);
+  auto& elevationData = planarTerrain_.gridMap.get(elevationLayer_);
   if (elevationData.hasNaN()) {
     const float inpaint{elevationData.minCoeffOfFinites()};
     ROS_WARN("[PlanarTerrainReceiver] Map contains NaN values. Will apply inpainting with min value.");
@@ -48,7 +48,7 @@ void PlanarTerrainReceiver::planarTerrainCallback(const convex_plane_decompositi
   const float heightMargin{0.1};
   const float minValue{elevationData.minCoeffOfFinites() - heightMargin};
   const float maxValue{elevationData.maxCoeffOfFinites() + heightMargin};
-  signedDistanceField_ = grid_map::SignedDistanceField(planarTerrainPtr_->gridMap, elevationLayer_, minValue, maxValue);
+  signedDistanceField_ = grid_map::SignedDistanceField(planarTerrain_.gridMap, elevationLayer_, minValue, maxValue);
 }
 
 }  // namespace legged
