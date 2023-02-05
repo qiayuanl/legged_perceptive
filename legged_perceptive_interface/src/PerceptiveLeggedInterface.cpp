@@ -82,10 +82,10 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
   const std::vector<scalar_t>& maxExcesses = {0.05,       thighExcess, thighExcess, thighExcess, thighExcess,
                                               calfExcess, calfExcess,  calfExcess,  calfExcess};
 
-  pinocchioSphereInterfacePrt_ = std::make_shared<PinocchioSphereInterface>(*pinocchioInterfacePtr_, collisionLinks, maxExcesses, 0.6);
+  pinocchioSphereInterfacePtr_ = std::make_shared<PinocchioSphereInterface>(*pinocchioInterfacePtr_, collisionLinks, maxExcesses, 0.6);
 
   CentroidalModelPinocchioMapping pinocchioMapping(centroidalModelInfo_);
-  auto sphereKinematicsPtr = std::make_unique<PinocchioSphereKinematics>(*pinocchioSphereInterfacePrt_, pinocchioMapping);
+  auto sphereKinematicsPtr = std::make_unique<PinocchioSphereKinematics>(*pinocchioSphereInterfacePtr_, pinocchioMapping);
 
   std::unique_ptr<SphereSdfConstraint> sphereSdfConstraint(new SphereSdfConstraint(*sphereKinematicsPtr, signedDistanceFieldPtr_));
 

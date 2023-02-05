@@ -26,7 +26,7 @@ class PerceptiveLeggedInterface : public legged::LeggedInterface {
 
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> getPlanarTerrainPtr() const { return planarTerrainPtr_; }
 
-  std::shared_ptr<PinocchioSphereInterface> getPinocchioSphereInterfacePrt() const { return pinocchioSphereInterfacePrt_; }
+  std::shared_ptr<PinocchioSphereInterface> getPinocchioSphereInterfacePtr() const { return pinocchioSphereInterfacePtr_; }
 
   size_t getNumVertices() const { return numVertices_; }
 
@@ -35,7 +35,7 @@ class PerceptiveLeggedInterface : public legged::LeggedInterface {
 
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr_;
   std::shared_ptr<grid_map::SignedDistanceField> signedDistanceFieldPtr_;
-  std::shared_ptr<PinocchioSphereInterface> pinocchioSphereInterfacePrt_;
+  std::shared_ptr<PinocchioSphereInterface> pinocchioSphereInterfacePtr_;
 };
 
 }  // namespace legged

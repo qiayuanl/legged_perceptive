@@ -23,7 +23,7 @@ void PerceptiveController::setupLeggedInterface(const std::string& task_file, co
 
   sphereVisualizationPtr_ = std::make_shared<SphereVisualization>(
       leggedInterface_->getPinocchioInterface(), leggedInterface_->getCentroidalModelInfo(),
-      *dynamic_cast<PerceptiveLeggedInterface&>(*leggedInterface_).getPinocchioSphereInterfacePrt(), nh);
+      *dynamic_cast<PerceptiveLeggedInterface&>(*leggedInterface_).getPinocchioSphereInterfacePtr(), nh);
 }
 
 void PerceptiveController::setupMpc() {
