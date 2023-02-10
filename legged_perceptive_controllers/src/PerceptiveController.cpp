@@ -11,10 +11,10 @@
 #include <pluginlib/class_list_macros.hpp>
 
 namespace legged {
-void PerceptiveController::setupLeggedInterface(const std::string& task_file, const std::string& urdf_file,
-                                                const std::string& reference_file, bool verbose) {
-  leggedInterface_ = std::make_shared<PerceptiveLeggedInterface>(task_file, urdf_file, reference_file, verbose);
-  leggedInterface_->setupOptimalControlProblem(task_file, urdf_file, reference_file, verbose);
+void PerceptiveController::setupLeggedInterface(const std::string& taskFile, const std::string& urdfFile, const std::string& referenceFile,
+                                                bool verbose) {
+  leggedInterface_ = std::make_shared<PerceptiveLeggedInterface>(taskFile, urdfFile, referenceFile, verbose);
+  leggedInterface_->setupOptimalControlProblem(taskFile, urdfFile, referenceFile, verbose);
 
   ros::NodeHandle nh;
   footPlacementVisualizationPtr_ = std::make_shared<FootPlacementVisualization>(

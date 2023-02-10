@@ -13,7 +13,7 @@ using namespace legged_robot;
 
 class PerceptiveController : public legged::LeggedController {
  protected:
-  void setupLeggedInterface(const std::string& task_file, const std::string& urdf_file, const std::string& reference_file,
+  void setupLeggedInterface(const std::string& taskFile, const std::string& urdfFile, const std::string& referenceFile,
                             bool verbose) override;
 
   void setupMpc() override;
