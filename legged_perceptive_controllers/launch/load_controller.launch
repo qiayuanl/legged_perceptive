@@ -1,9 +1,12 @@
 <?xml version="1.0" ?>
 
 <launch>
-    <arg name="task_file" default="$(find legged_controllers)/config/task.info"/>
-    <arg name="reference_file" default="$(find legged_controllers)/config/reference.info"/>
-    <arg name="urdf_file" default="$(find legged_unitree_description)/urdf/a1.urdf"/>
+    <arg name="robot_type" default="$(env ROBOT_TYPE)" doc="Robot type: [a1, aliengo, go1, laikago]"/>
+
+    <arg name="urdf_file" default="$(find legged_unitree_description)/urdf/$(arg robot_type).urdf"/>
+
+    <arg name="task_file" default="$(find legged_controllers)/config/task/$(arg robot_type).info"/>
+    <arg name="reference_file" default="$(find legged_controllers)/config/reference/$(arg robot_type).info"/>
     <arg name="gait_file" default="$(find legged_controllers)/config/gait.info"/>
 
     <!-- make the files into global parameters -->
@@ -25,4 +28,7 @@
 
     <node pkg="legged_controllers" type="legged_target_trajectories_publisher" name="legged_robot_target"
           output="screen"/>
+
+    <!--    <include file="$(find legged_perceptive_controllers)/launch/elevation_mapping.launch">-->
+    <!--    </include>-->
 </launch>
