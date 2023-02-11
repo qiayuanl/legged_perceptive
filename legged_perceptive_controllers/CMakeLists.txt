@@ -61,6 +61,12 @@ target_link_libraries(${PROJECT_NAME}
 
 target_compile_options(${PROJECT_NAME} PUBLIC ${OCS2_CXX_FLAGS})
 
+add_executable(grid_map_publisher
+        test/MapPublisher.cpp)
+target_link_libraries(grid_map_publisher
+        ${catkin_LIBRARIES}
+        )
+
 #############
 ## Install ##
 #############
