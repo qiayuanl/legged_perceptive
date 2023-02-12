@@ -29,7 +29,7 @@ bool FootCollisionConstraint::isActive(scalar_t time) const {
 
 vector_t FootCollisionConstraint::getValue(scalar_t /*time*/, const vector_t& state, const PreComputation& /*preComp*/) const {
   vector_t value(1);
-  value(1) = sdfPtr_->value(grid_map::Position3(endEffectorKinematicsPtr_->getPosition(state).front())) - clearance_;
+  value(0) = sdfPtr_->value(grid_map::Position3(endEffectorKinematicsPtr_->getPosition(state).front())) - clearance_;
   return value;
 }
 
