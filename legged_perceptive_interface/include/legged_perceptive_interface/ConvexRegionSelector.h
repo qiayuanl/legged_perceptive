@@ -23,7 +23,7 @@ class ConvexRegionSelector {
   ConvexRegionSelector(CentroidalModelInfo info, std::shared_ptr<convex_plane_decomposition::PlanarTerrain> PlanarTerrainPtr,
                        const EndEffectorKinematics<scalar_t>& endEffectorKinematics, size_t numVertices);
 
-  void update(const ModeSchedule& modeSchedule, const vector_t& initState, TargetTrajectories& targetTrajectories);
+  void update(const ModeSchedule& modeSchedule, scalar_t initTime, const vector_t& initState, TargetTrajectories& targetTrajectories);
 
   convex_plane_decomposition::PlanarTerrainProjection getProjection(size_t leg, scalar_t time) const;
 

@@ -33,7 +33,8 @@ vector3_t ConvexRegionSelector::getNominalFootholds(size_t leg, scalar_t time) c
   return nominalFootholds_[leg][index];
 }
 
-void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, const vector_t& initState, TargetTrajectories& targetTrajectories) {
+void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, scalar_t initTime, const vector_t& initState,
+                                  TargetTrajectories& targetTrajectories) {
   const auto& modeSequence = modeSchedule.modeSequence;
   const auto& eventTimes = modeSchedule.eventTimes;
   const auto contactFlagStocks = extractContactFlags(modeSequence);
@@ -43,6 +44,7 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, const vector
   feet_array_t<std::vector<int>> startIndices;
   feet_array_t<std::vector<int>> finalIndices;
   for (size_t leg = 0; leg < info_.numThreeDofContacts; leg++) {
+    timeEvents_[leg] = eventTimes;
     startIndices[leg] = std::vector<int>(numPhases, 0);
     finalIndices[leg] = std::vector<int>(numPhases, 0);
     // find the startTime and finalTime indices for swing feet
@@ -75,17 +77,21 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, const vector
 
         if (!numerics::almost_eq(standMiddleTime, lastStandMiddleTime)) {
           lastStandMiddleTime = standMiddleTime;
-
-          vector3_t nominal = getNominalFoothold(leg, standMiddleTime, initState, targetTrajectories);
+          vector3_t foot_pos;
+          if (standStartTime < initTime && initTime < standFinalTime) {
+            foot_pos = endEffectorKinematicsPtr_->getPosition(targetTrajectories.getDesiredState(initTime))[leg];
+          } else {
+            foot_pos = getNominalFoothold(leg, standMiddleTime, initState, targetTrajectories);
+          }
           auto penaltyFunction = [](const vector3_t& /*projectedPoint*/) { return 0.0; };
-          const auto projection = getBestPlanarRegionAtPositionInWorld(nominal, planarTerrainPtr_->planarRegions, penaltyFunction);
+          const auto projection = getBestPlanarRegionAtPositionInWorld(foot_pos, planarTerrainPtr_->planarRegions, penaltyFunction);
           scalar_t growthFactor = 1.05;
           const auto convexRegion = convex_plane_decomposition::growConvexPolygonInsideShape(
               projection.regionPtr->boundaryWithInset.boundary, projection.positionInTerrainFrame, numVertices_, growthFactor);
 
           feetProjections_[leg][i] = projection;
           convexPolygons_[leg][i] = convexRegion;
-          nominalFootholds_[leg][i] = nominal;
+          nominalFootholds_[leg][i] = foot_pos;
           middleTimes_[leg].push_back(standMiddleTime);
         } else {
           feetProjections_[leg][i] = feetProjections_[leg][i - 1];
@@ -94,7 +100,6 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, const vector
         }
       }
     }
-    timeEvents_[leg] = eventTimes;
   }
 
   for (size_t leg = 0; leg < info_.numThreeDofContacts; leg++) {
@@ -169,7 +174,7 @@ vector3_t ConvexRegionSelector::getNominalFoothold(size_t leg, scalar_t time, co
   vector3_t desiredVel = centroidal_model::getNormalizedMomentum(desiredState, info_).head(3);
   vector3_t measuredVel = centroidal_model::getNormalizedMomentum(initState, info_).head(3);
 
-  auto feedback = (vector3_t() << (std::sqrt(desiredPos(2) / 9.81) * (measuredVel - desiredVel)).head(2), 0).finished();
+  auto feedback = (vector3_t() << (std::sqrt(0.4 / 9.81) * (measuredVel - desiredVel)).head(2), 0).finished();
 
   return endEffectorKinematicsPtr_->getPosition(targetTrajectories.getDesiredState(time))[leg] + feedback;
 }
