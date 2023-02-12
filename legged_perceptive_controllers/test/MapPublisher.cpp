@@ -21,18 +21,18 @@ int main(int argc, char** argv) {
   // Create grid map.
   GridMap map({"elevation"});
   map.setFrameId("odom");
-  map.setGeometry(Length(3.0, 3.0), 0.03);
+  map.setGeometry(Length(10.0, 10.0), 0.03);
   map["elevation"].setConstant(0);
 
   grid_map::Polygon polygon;
   polygon.setFrameId(map.getFrameId());
   polygon.addVertex(Position(0.5, 0.3));
-  polygon.addVertex(Position(0.53, 0.3));
-  polygon.addVertex(Position(0.53, -0.3));
+  polygon.addVertex(Position(0.6, 0.3));
+  polygon.addVertex(Position(0.6, -0.3));
   polygon.addVertex(Position(0.5, -0.3));
 
   for (grid_map::PolygonIterator iterator(map, polygon); !iterator.isPastEnd(); ++iterator) {
-    map.at("elevation", *iterator) = 0.08;
+    map.at("elevation", *iterator) = 0.1;
   }
 
   ros::Rate rate(3.0);

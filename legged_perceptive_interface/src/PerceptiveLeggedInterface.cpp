@@ -44,11 +44,11 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
     planarTerrainPtr_->planarRegions.push_back(plannerRegion);
   }
 
-  std::string sdfLayer = "elevation_before_postprocess";
+  std::string layer = "elevation_before_postprocess";
   planarTerrainPtr_->gridMap.setGeometry(grid_map::Length(5.0, 5.0), 0.03);
-  planarTerrainPtr_->gridMap.add(sdfLayer, 0);
+  planarTerrainPtr_->gridMap.add(layer, 0);
   planarTerrainPtr_->gridMap.add("smooth_planar", 0);
-  signedDistanceFieldPtr_ = std::make_shared<grid_map::SignedDistanceField>(planarTerrainPtr_->gridMap, sdfLayer, -0.1, 0.1);
+  signedDistanceFieldPtr_ = std::make_shared<grid_map::SignedDistanceField>(planarTerrainPtr_->gridMap, layer, -0.1, 0.1);
 
   LeggedInterface::setupOptimalControlProblem(taskFile, urdfFile, referenceFile, verbose);
 
@@ -56,7 +56,7 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
     const std::string& footName = modelSettings().contactNames3DoF[i];
     std::unique_ptr<EndEffectorKinematics<scalar_t>> eeKinematicsPtr = getEeKinematicsPtr({footName}, footName);
 
-    std::unique_ptr<PenaltyBase> placementPenalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(5., 1e-2)));
+    std::unique_ptr<PenaltyBase> placementPenalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(1.0, 1e-2)));
     std::unique_ptr<PenaltyBase> collisionPenalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(1e-2, 1e-3)));
 
     // For foot placement
@@ -68,7 +68,7 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
 
     // For foot Collision
     std::unique_ptr<FootCollisionConstraint> footCollisionConstraint(
-        new FootCollisionConstraint(*referenceManagerPtr_, *eeKinematicsPtr, signedDistanceFieldPtr_, i, 0.02));
+        new FootCollisionConstraint(*referenceManagerPtr_, *eeKinematicsPtr, signedDistanceFieldPtr_, i, 0.03));
     problemPtr_->stateSoftConstraintPtr->add(
         footName + "_footCollision",
         std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(footCollisionConstraint), std::move(collisionPenalty))));
