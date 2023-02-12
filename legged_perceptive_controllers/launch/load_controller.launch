@@ -19,7 +19,6 @@
 
     <node name="controller_loader" pkg="controller_manager" type="controller_manager"
           output="screen" args="load
-          controllers/joint_state_controller
           controllers/perceptive_controller
 "/>
 
@@ -29,6 +28,6 @@
     <node pkg="legged_controllers" type="legged_target_trajectories_publisher" name="legged_robot_target"
           output="screen"/>
 
-    <!--    <include file="$(find legged_perceptive_controllers)/launch/elevation_mapping.launch">-->
-    <!--    </include>-->
+    <include file="$(find legged_perceptive_controllers)/launch/elevation_mapping.launch">
+    </include>
 </launch>

@@ -36,7 +36,7 @@ class PlanarTerrainReceiver : public SolverSynchronizedModule {
   convex_plane_decomposition::PlanarTerrain planarTerrain_;
   grid_map::SignedDistanceField signedDistanceField_;
 
-  std::string elevationLayer_;
+  std::string sdfElevationLayer_;
 
   std::mutex mutex_;
   std::atomic_bool updated_;

@@ -13,11 +13,11 @@ namespace legged {
 PlanarTerrainReceiver::PlanarTerrainReceiver(ros::NodeHandle nh,
                                              std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr,
                                              std::shared_ptr<grid_map::SignedDistanceField> signedDistanceFieldPtr,
-                                             const std::string& mapTopic, std::string elevationLayer)
+                                             const std::string& mapTopic, std::string sdfElevationLayer)
     : signedDistanceField_(*signedDistanceFieldPtr),
       planarTerrainPtr_(std::move(planarTerrainPtr)),
       sdfPtr_(std::move(signedDistanceFieldPtr)),
-      elevationLayer_(std::move(elevationLayer)),
+      sdfElevationLayer_(std::move(sdfElevationLayer)),
       updated_(false) {
   subscriber_ = nh.subscribe(mapTopic, 1, &PlanarTerrainReceiver::planarTerrainCallback, this);
 }
@@ -39,7 +39,7 @@ void PlanarTerrainReceiver::planarTerrainCallback(const convex_plane_decompositi
 
   planarTerrain_ = convex_plane_decomposition::PlanarTerrain(convex_plane_decomposition::fromMessage(*msg));
 
-  auto& elevationData = planarTerrain_.gridMap.get(elevationLayer_);
+  auto& elevationData = planarTerrain_.gridMap.get(sdfElevationLayer_);
   if (elevationData.hasNaN()) {
     const float inpaint{elevationData.minCoeffOfFinites()};
     ROS_WARN("[PlanarTerrainReceiver] Map contains NaN values. Will apply inpainting with min value.");
@@ -48,7 +48,7 @@ void PlanarTerrainReceiver::planarTerrainCallback(const convex_plane_decompositi
   const float heightMargin{0.1};
   const float minValue{elevationData.minCoeffOfFinites() - heightMargin};
   const float maxValue{elevationData.maxCoeffOfFinites() + heightMargin};
-  signedDistanceField_ = grid_map::SignedDistanceField(planarTerrain_.gridMap, elevationLayer_, minValue, maxValue);
+  signedDistanceField_ = grid_map::SignedDistanceField(planarTerrain_.gridMap, sdfElevationLayer_, minValue, maxValue);
 }
 
 }  // namespace legged
