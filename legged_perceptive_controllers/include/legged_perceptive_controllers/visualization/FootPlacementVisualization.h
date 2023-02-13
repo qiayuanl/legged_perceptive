@@ -26,7 +26,7 @@ class FootPlacementVisualization {
  private:
   visualization_msgs::Marker to3dRosMarker(const convex_plane_decomposition::CgalPolygon2d& polygon,
                                            const Eigen::Isometry3d& transformPlaneToWorld, const std_msgs::Header& header, Color color,
-                                           size_t i);
+                                           float alpha, size_t i);
 
   scalar_t lineWidth_ = 0.008;
   scalar_t footMarkerDiameter_ = 0.02;

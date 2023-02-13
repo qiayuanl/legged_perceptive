@@ -33,8 +33,10 @@ void FootPlacementVisualization::update(const SystemObservation& observation) {
     for (int leg = 0; leg < numFoot_; ++leg) {
       auto middleTimes = convexRegionSelector_.getMiddleTimes(leg);
 
-      for (int k = 1; k < middleTimes.size(); ++k) {
-        if (observation.time < middleTimes[k - 1] || observation.time > middleTimes[k]) {
+      int kStart = 0;
+      for (int k = 0; k < middleTimes.size(); ++k) {
+        if (middleTimes[k + 1] < observation.time) {
+          kStart = k + 1;
           continue;
         }
         const auto projection = convexRegionSelector_.getProjection(leg, middleTimes[k]);
@@ -42,20 +44,21 @@ void FootPlacementVisualization::update(const SystemObservation& observation) {
           continue;
         }
         auto color = feetColorMap_[leg];
-
+        float alpha = 1 - static_cast<float>(k - kStart) / static_cast<float>(middleTimes.size() - kStart);
         // Projections
         auto projectionMaker = getArrowAtPointMsg(projection.regionPtr->transformPlaneToWorld.linear() * vector3_t(0, 0, 0.1),
                                                   projection.positionInWorld, color);
         projectionMaker.header = header;
         projectionMaker.ns = "Projections";
         projectionMaker.id = i;
+        projectionMaker.color.a = alpha;
         makerArray.markers.push_back(projectionMaker);
 
         // Convex Region
         const auto convexRegion = convexRegionSelector_.getConvexPolygon(leg, middleTimes[k]);
         auto convexRegionMsg =
             convex_plane_decomposition::to3dRosPolygon(convexRegion, projection.regionPtr->transformPlaneToWorld, header);
-        makerArray.markers.push_back(to3dRosMarker(convexRegion, projection.regionPtr->transformPlaneToWorld, header, color, i));
+        makerArray.markers.push_back(to3dRosMarker(convexRegion, projection.regionPtr->transformPlaneToWorld, header, color, alpha, i));
 
         // Nominal Footholds
         const auto nominal = convexRegionSelector_.getNominalFootholds(leg, middleTimes[k]);
@@ -63,6 +66,7 @@ void FootPlacementVisualization::update(const SystemObservation& observation) {
         nominalMarker.header = header;
         nominalMarker.ns = "Nominal Footholds";
         nominalMarker.id = i;
+        nominalMarker.color.a = alpha;
         makerArray.markers.push_back(nominalMarker);
 
         i++;
@@ -75,14 +79,14 @@ void FootPlacementVisualization::update(const SystemObservation& observation) {
 
 visualization_msgs::Marker FootPlacementVisualization::to3dRosMarker(const convex_plane_decomposition::CgalPolygon2d& polygon,
                                                                      const Eigen::Isometry3d& transformPlaneToWorld,
-                                                                     const std_msgs::Header& header, Color color, size_t i) {
+                                                                     const std_msgs::Header& header, Color color, float alpha, size_t i) {
   visualization_msgs::Marker marker;
   marker.ns = "Convex Regions";
   marker.id = i;
   marker.header = header;
   marker.type = visualization_msgs::Marker::LINE_STRIP;
   marker.scale.x = lineWidth_;
-  marker.color = getColor(color);
+  marker.color = getColor(color, alpha);
   if (!polygon.is_empty()) {
     marker.points.reserve(polygon.size() + 1);
     for (const auto& point : polygon) {
