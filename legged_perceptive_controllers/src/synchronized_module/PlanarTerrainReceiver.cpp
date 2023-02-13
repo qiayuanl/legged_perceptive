@@ -47,7 +47,7 @@ void PlanarTerrainReceiver::planarTerrainCallback(const convex_plane_decompositi
   }
   const float heightMargin{0.1};
   const float minValue{elevationData.minCoeffOfFinites() - heightMargin};
-  const float maxValue{elevationData.maxCoeffOfFinites() + heightMargin};
+  const float maxValue{elevationData.maxCoeffOfFinites() + 3 * heightMargin};
   signedDistanceField_ = grid_map::SignedDistanceField(planarTerrain_.gridMap, sdfElevationLayer_, minValue, maxValue);
 }
 
