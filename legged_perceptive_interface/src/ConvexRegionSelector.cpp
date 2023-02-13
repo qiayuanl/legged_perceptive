@@ -76,10 +76,6 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, scalar_t ini
         const scalar_t standFinalTime = eventTimes[standFinalIndex];
         const scalar_t standMiddleTime = standStartTime + (standFinalTime - standStartTime) / 2;
 
-        if (standStartTime < initTime && initTime < standFinalTime) {
-          initStandFinalTime_[leg] = standFinalTime;
-        }
-
         if (!numerics::almost_eq(standMiddleTime, lastStandMiddleTime)) {
           lastStandMiddleTime = standMiddleTime;
           vector3_t foot_pos = getNominalFoothold(leg, standMiddleTime, initState, targetTrajectories);
@@ -97,6 +93,11 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, scalar_t ini
           feetProjections_[leg][i] = feetProjections_[leg][i - 1];
           convexPolygons_[leg][i] = convexPolygons_[leg][i - 1];
           nominalFootholds_[leg][i] = nominalFootholds_[leg][i - 1];
+        }
+
+        if (standStartTime < initTime && initTime < standFinalTime) {  // Already touchdown
+          initStandFinalTime_[leg] = standFinalTime;
+          feetProjections_[leg][i].positionInWorld(2) = endEffectorKinematicsPtr_->getPosition(initState)[leg].z();
         }
       }
     }
