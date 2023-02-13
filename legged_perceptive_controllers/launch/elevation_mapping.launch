@@ -5,6 +5,8 @@
     </node>
 
     <include file="$(find convex_plane_decomposition_ros)/launch/convex_plane_decomposition.launch">
+        <arg name="parameter_file"
+             value="$(find legged_perceptive_controllers)/config/convex_plane_decomposition.yaml"/>
     </include>
 
     <node pkg="tf2_ros" type="static_transform_publisher" name="odom_tf_publisher"
