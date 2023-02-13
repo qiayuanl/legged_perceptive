@@ -66,4 +66,13 @@ void LeggedReferenceManager::modifyReferences(scalar_t initTime, scalar_t finalT
   targetTrajectories = newTargetTrajectories;
 }
 
+contact_flag_t LeggedReferenceManager::getFootPlacementFlags(scalar_t time) const {
+  contact_flag_t flag;
+  const auto finalTime = convexRegionSelectorPtr_->getInitStandFinalTime();
+  for (int i = 0; i < flag.size(); ++i) {
+    flag[i] = getContactFlags(time)[i] && time >= finalTime[i];
+  }
+  return flag;
+}
+
 }  // namespace legged

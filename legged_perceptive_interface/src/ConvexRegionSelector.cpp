@@ -64,6 +64,7 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, scalar_t ini
     convexPolygons_[leg].resize(numPhases);
     nominalFootholds_[leg].resize(numPhases);
     middleTimes_[leg].clear();
+    initStandFinalTime_[leg] = 0;
 
     scalar_t lastStandMiddleTime = NAN;
     // Stand leg foot
@@ -75,14 +76,13 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, scalar_t ini
         const scalar_t standFinalTime = eventTimes[standFinalIndex];
         const scalar_t standMiddleTime = standStartTime + (standFinalTime - standStartTime) / 2;
 
+        if (standStartTime < initTime && initTime < standFinalTime) {
+          initStandFinalTime_[leg] = standFinalTime;
+        }
+
         if (!numerics::almost_eq(standMiddleTime, lastStandMiddleTime)) {
           lastStandMiddleTime = standMiddleTime;
-          vector3_t foot_pos;
-          if (standStartTime < initTime && initTime < standFinalTime) {
-            foot_pos = endEffectorKinematicsPtr_->getPosition(targetTrajectories.getDesiredState(initTime))[leg];
-          } else {
-            foot_pos = getNominalFoothold(leg, standMiddleTime, initState, targetTrajectories);
-          }
+          vector3_t foot_pos = getNominalFoothold(leg, standMiddleTime, initState, targetTrajectories);
           auto penaltyFunction = [](const vector3_t& /*projectedPoint*/) { return 0.0; };
           const auto projection = getBestPlanarRegionAtPositionInWorld(foot_pos, planarTerrainPtr_->planarRegions, penaltyFunction);
           scalar_t growthFactor = 1.05;

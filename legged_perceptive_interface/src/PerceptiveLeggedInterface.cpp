@@ -56,8 +56,8 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
     const std::string& footName = modelSettings().contactNames3DoF[i];
     std::unique_ptr<EndEffectorKinematics<scalar_t>> eeKinematicsPtr = getEeKinematicsPtr({footName}, footName);
 
-    std::unique_ptr<PenaltyBase> placementPenalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(1.0, 1e-2)));
-    std::unique_ptr<PenaltyBase> collisionPenalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(1e-2, 1e-3)));
+    std::unique_ptr<PenaltyBase> placementPenalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(1e-2, 1e-3)));
+    std::unique_ptr<PenaltyBase> collisionPenalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(1e-1, 1e-3)));
 
     // For foot placement
     std::unique_ptr<FootPlacementConstraint> footPlacementConstraint(
@@ -68,7 +68,7 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
 
     // For foot Collision
     std::unique_ptr<FootCollisionConstraint> footCollisionConstraint(
-        new FootCollisionConstraint(*referenceManagerPtr_, *eeKinematicsPtr, signedDistanceFieldPtr_, i, 0.03));
+        new FootCollisionConstraint(*referenceManagerPtr_, *eeKinematicsPtr, signedDistanceFieldPtr_, i, 0.04));
     problemPtr_->stateSoftConstraintPtr->add(
         footName + "_footCollision",
         std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(footCollisionConstraint), std::move(collisionPenalty))));

@@ -22,6 +22,8 @@ class LeggedReferenceManager : public SwitchedModelReferenceManager {
 
   const std::shared_ptr<ConvexRegionSelector>& getConvexRegionSelectorPtr() { return convexRegionSelectorPtr_; }
 
+  contact_flag_t getFootPlacementFlags(scalar_t time) const;
+
  private:
   void modifyReferences(scalar_t initTime, scalar_t finalTime, const vector_t& initState, TargetTrajectories& targetTrajectories,
                         ModeSchedule& modeSchedule) override;
