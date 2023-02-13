@@ -21,13 +21,6 @@ void LeggedReferenceManager::modifyReferences(scalar_t initTime, scalar_t finalT
   const auto timeHorizon = finalTime - initTime;
   modeSchedule = getGaitSchedule()->getModeSchedule(initTime - timeHorizon, finalTime + timeHorizon);
 
-  convexRegionSelectorPtr_->update(modeSchedule, initTime, initState, targetTrajectories);
-
-  // Swing trajectory
-  feet_array_t<scalar_array_t> liftOffHeightSequence, touchDownHeightSequence;
-  std::tie(liftOffHeightSequence, touchDownHeightSequence) = convexRegionSelectorPtr_->getHeight();
-  getSwingTrajectoryPlanner()->update(modeSchedule, liftOffHeightSequence, touchDownHeightSequence);
-
   TargetTrajectories newTargetTrajectories;
   int nodeNum = 11;
   for (size_t i = 0; i < nodeNum; ++i) {
@@ -35,10 +28,9 @@ void LeggedReferenceManager::modifyReferences(scalar_t initTime, scalar_t finalT
     vector_t state = targetTrajectories.getDesiredState(time);
     vector_t input = targetTrajectories.getDesiredState(time);
 
-    // Base Z Position
     const auto& map = convexRegionSelectorPtr_->getPlanarTerrainPtr()->gridMap;
     vector_t pos = centroidal_model::getBasePose(state, info_).head(3);
-    centroidal_model::getBasePose(state, info_)(2) = map.atPosition("smooth_planar", pos) + 0.4;
+    scalar_t height = 0.4;
 
     // Base Orientation
     scalar_t step = 0.3;
@@ -59,11 +51,23 @@ void LeggedReferenceManager::modifyReferences(scalar_t initTime, scalar_t finalT
     vector_t v = R.transpose() * normalVector;
     centroidal_model::getBasePose(state, info_)(4) = atan(v.x() / v.z());
 
+    // Base Z Position
+    centroidal_model::getBasePose(state, info_)(2) =
+        map.atPosition("smooth_planar", pos) + height / cos(centroidal_model::getBasePose(state, info_)(4));
+
     newTargetTrajectories.timeTrajectory.push_back(time);
     newTargetTrajectories.stateTrajectory.push_back(state);
     newTargetTrajectories.inputTrajectory.push_back(input);
   }
   targetTrajectories = newTargetTrajectories;
+
+  // Footstep
+  convexRegionSelectorPtr_->update(modeSchedule, initTime, initState, targetTrajectories);
+
+  // Swing trajectory
+  feet_array_t<scalar_array_t> liftOffHeightSequence, touchDownHeightSequence;
+  std::tie(liftOffHeightSequence, touchDownHeightSequence) = convexRegionSelectorPtr_->getHeight();
+  getSwingTrajectoryPlanner()->update(modeSchedule, liftOffHeightSequence, touchDownHeightSequence);
 }
 
 contact_flag_t LeggedReferenceManager::getFootPlacementFlags(scalar_t time) const {
