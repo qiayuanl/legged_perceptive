@@ -44,7 +44,6 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, scalar_t ini
   feet_array_t<std::vector<int>> startIndices;
   feet_array_t<std::vector<int>> finalIndices;
   for (size_t leg = 0; leg < info_.numThreeDofContacts; leg++) {
-    timeEvents_[leg] = eventTimes;
     startIndices[leg] = std::vector<int>(numPhases, 0);
     finalIndices[leg] = std::vector<int>(numPhases, 0);
     // find the startTime and finalTime indices for swing feet
@@ -99,6 +98,10 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, scalar_t ini
           initStandFinalTime_[leg] = standFinalTime;
           feetProjections_[leg][i].positionInWorld(2) = endEffectorKinematicsPtr_->getPosition(initState)[leg].z();
         }
+        if (standFinalTime < initTime) {
+          auto index = lookup::findIndexInTimeArray(timeEvents_[leg], standStartTime);
+          feetProjections_[leg][i].positionInWorld(2) = touchDownHeights_[leg][index];
+        }
       }
     }
   }
@@ -124,6 +127,10 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, scalar_t ini
                                                                                       : touchDownHeights_[leg][i + 1];
       }
     }
+  }
+
+  for (size_t leg = 0; leg < info_.numThreeDofContacts; leg++) {
+    timeEvents_[leg] = eventTimes;
   }
 }
 
