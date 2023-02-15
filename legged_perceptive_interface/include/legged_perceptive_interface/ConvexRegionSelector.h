@@ -51,7 +51,7 @@ class ConvexRegionSelector {
   feet_array_t<std::vector<vector3_t>> nominalFootholds_;
   feet_array_t<std::vector<scalar_t>> middleTimes_;
 
-  feet_array_t<scalar_t> initStandFinalTime_;
+  feet_array_t<scalar_t> initStandFinalTime_, lastLiftOffHeights_;
 
   feet_array_t<scalar_array_t> liftOffHeights_, touchDownHeights_;
 
