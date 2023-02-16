@@ -24,7 +24,10 @@ FootCollisionConstraint::FootCollisionConstraint(const FootCollisionConstraint& 
       clearance_(rhs.clearance_) {}
 
 bool FootCollisionConstraint::isActive(scalar_t time) const {
-  return !referenceManagerPtr_->getContactFlags(time)[contactPointIndex_];
+  scalar_t offset = 0.05;
+  return !referenceManagerPtr_->getContactFlags(time)[contactPointIndex_] &&
+         !referenceManagerPtr_->getContactFlags(time + offset)[contactPointIndex_] &&
+         !referenceManagerPtr_->getContactFlags(time - offset)[contactPointIndex_];
 }
 
 vector_t FootCollisionConstraint::getValue(scalar_t /*time*/, const vector_t& state, const PreComputation& /*preComp*/) const {

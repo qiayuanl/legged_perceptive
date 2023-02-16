@@ -35,12 +35,12 @@ void FootPlacementVisualization::update(const SystemObservation& observation) {
 
       int kStart = 0;
       for (int k = 0; k < middleTimes.size(); ++k) {
-        if (middleTimes[k + 1] < observation.time) {
-          kStart = k + 1;
-          continue;
-        }
         const auto projection = convexRegionSelector_.getProjection(leg, middleTimes[k]);
         if (projection.regionPtr == nullptr) {
+          continue;
+        }
+        if (middleTimes[k] < observation.time) {
+          kStart = k + 1;
           continue;
         }
         auto color = feetColorMap_[leg];
