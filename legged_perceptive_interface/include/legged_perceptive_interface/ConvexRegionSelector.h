@@ -60,6 +60,7 @@ class ConvexRegionSelector {
   const CentroidalModelInfo info_;
   size_t numVertices_;
 
+  convex_plane_decomposition::PlanarTerrain planarTerrain_;
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr_;
   std::unique_ptr<EndEffectorKinematics<scalar_t>> endEffectorKinematicsPtr_;
 };

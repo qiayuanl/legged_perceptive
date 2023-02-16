@@ -35,6 +35,7 @@ vector3_t ConvexRegionSelector::getNominalFootholds(size_t leg, scalar_t time) c
 
 void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, scalar_t initTime, const vector_t& initState,
                                   TargetTrajectories& targetTrajectories) {
+  planarTerrain_ = *planarTerrainPtr_;  // Need copy storage it since PlanarTerrainProjection.regionPtr is a pointer
   const auto& modeSequence = modeSchedule.modeSequence;
   const auto& eventTimes = modeSchedule.eventTimes;
   const auto contactFlagStocks = extractContactFlags(modeSequence);
@@ -82,7 +83,7 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, scalar_t ini
           lastStandMiddleTime = standMiddleTime;
           vector3_t foot_pos = getNominalFoothold(leg, standMiddleTime, initState, targetTrajectories);
           auto penaltyFunction = [](const vector3_t& /*projectedPoint*/) { return 0.0; };
-          const auto projection = getBestPlanarRegionAtPositionInWorld(foot_pos, planarTerrainPtr_->planarRegions, penaltyFunction);
+          const auto projection = getBestPlanarRegionAtPositionInWorld(foot_pos, planarTerrain_.planarRegions, penaltyFunction);
           scalar_t growthFactor = 1.05;
           const auto convexRegion = convex_plane_decomposition::growConvexPolygonInsideShape(
               projection.regionPtr->boundaryWithInset.boundary, projection.positionInTerrainFrame, numVertices_, growthFactor);
