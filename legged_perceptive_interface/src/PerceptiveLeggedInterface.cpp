@@ -56,7 +56,7 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
     const std::string& footName = modelSettings().contactNames3DoF[i];
     std::unique_ptr<EndEffectorKinematics<scalar_t>> eeKinematicsPtr = getEeKinematicsPtr({footName}, footName);
 
-    std::unique_ptr<PenaltyBase> placementPenalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(1e-1, 1e-3)));
+    std::unique_ptr<PenaltyBase> placementPenalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(1e-2, 1e-4)));
     std::unique_ptr<PenaltyBase> collisionPenalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(1e-2, 1e-3)));
 
     // For foot placement
@@ -68,7 +68,7 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
 
     // For foot Collision
     std::unique_ptr<FootCollisionConstraint> footCollisionConstraint(
-        new FootCollisionConstraint(*referenceManagerPtr_, *eeKinematicsPtr, signedDistanceFieldPtr_, i, 0.02));
+        new FootCollisionConstraint(*referenceManagerPtr_, *eeKinematicsPtr, signedDistanceFieldPtr_, i, 0.03));
     problemPtr_->stateSoftConstraintPtr->add(
         footName + "_footCollision",
         std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(footCollisionConstraint), std::move(collisionPenalty))));
@@ -78,9 +78,8 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
   scalar_t thighExcess = 0.025;
   scalar_t calfExcess = 0.02;
 
-  std::vector<std::string> collisionLinks = {"base"};
-  const std::vector<scalar_t>& maxExcesses = {0.05,       thighExcess, thighExcess, thighExcess, thighExcess,
-                                              calfExcess, calfExcess,  calfExcess,  calfExcess};
+  std::vector<std::string> collisionLinks = {"LF_calf", "RF_calf", "LH_calf", "RH_calf"};
+  const std::vector<scalar_t>& maxExcesses = {calfExcess, calfExcess, calfExcess, calfExcess};
 
   pinocchioSphereInterfacePtr_ = std::make_shared<PinocchioSphereInterface>(*pinocchioInterfacePtr_, collisionLinks, maxExcesses, 0.6);
 
@@ -89,7 +88,7 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
 
   std::unique_ptr<SphereSdfConstraint> sphereSdfConstraint(new SphereSdfConstraint(*sphereKinematicsPtr, signedDistanceFieldPtr_));
 
-  //  std::unique_ptr<PenaltyBase> penalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(1e-2, 1e-3)));
+  //  std::unique_ptr<PenaltyBase> penalty(new RelaxedBarrierPenalty(RelaxedBarrierPenalty::Config(1e-3, 1e-3)));
   //  problemPtr_->stateSoftConstraintPtr->add(
   //      "sdfConstraint", std::unique_ptr<StateCost>(new StateSoftConstraint(std::move(sphereSdfConstraint), std::move(penalty))));
 }

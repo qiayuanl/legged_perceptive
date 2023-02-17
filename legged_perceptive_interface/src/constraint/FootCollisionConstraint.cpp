@@ -26,7 +26,7 @@ FootCollisionConstraint::FootCollisionConstraint(const FootCollisionConstraint& 
 bool FootCollisionConstraint::isActive(scalar_t time) const {
   scalar_t offset = 0.05;
   return !referenceManagerPtr_->getContactFlags(time)[contactPointIndex_] &&
-         !referenceManagerPtr_->getContactFlags(time + offset)[contactPointIndex_] &&
+         !referenceManagerPtr_->getContactFlags(time + 0.5 * offset)[contactPointIndex_] &&
          !referenceManagerPtr_->getContactFlags(time - offset)[contactPointIndex_];
 }
 
