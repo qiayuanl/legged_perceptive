@@ -20,6 +20,8 @@ class PerceptiveController : public legged::LeggedController {
 
   void update(const ros::Time& time, const ros::Duration& period) override;
 
+  void setupVisualization();
+
  private:
   std::shared_ptr<FootPlacementVisualization> footPlacementVisualizationPtr_;
   std::shared_ptr<SphereVisualization> sphereVisualizationPtr_;

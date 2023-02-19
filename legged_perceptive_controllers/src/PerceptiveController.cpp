@@ -16,6 +16,10 @@ void PerceptiveController::setupLeggedInterface(const std::string& taskFile, con
   leggedInterface_ = std::make_shared<PerceptiveLeggedInterface>(taskFile, urdfFile, referenceFile, verbose);
   leggedInterface_->setupOptimalControlProblem(taskFile, urdfFile, referenceFile, verbose);
 
+  setupVisualization();
+}
+
+void PerceptiveController::setupVisualization() {
   ros::NodeHandle nh;
   footPlacementVisualizationPtr_ = std::make_shared<FootPlacementVisualization>(
       *dynamic_cast<LeggedReferenceManager&>(*leggedInterface_->getReferenceManagerPtr()).getConvexRegionSelectorPtr(),
