@@ -17,7 +17,6 @@
     <depend>convex_plane_decomposition_ros</depend>
     <depend>grid_map_sdf</depend>
     <depend>ocs2_sphere_approximation</depend>
-    <depend>visualization_msgs</depend>
 
     <depend>pinocchio</depend>
 </package>

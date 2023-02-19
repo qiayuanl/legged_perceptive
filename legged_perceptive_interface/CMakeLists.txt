@@ -11,7 +11,6 @@ find_package(catkin REQUIRED
         convex_plane_decomposition_ros
         grid_map_sdf
         ocs2_sphere_approximation
-        visualization_msgs
         )
 
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
@@ -31,7 +30,6 @@ catkin_package(
         convex_plane_decomposition_ros
         grid_map_sdf
         ocs2_sphere_approximation
-        visualization_msgs
         DEPENDS
         pinocchio
 )

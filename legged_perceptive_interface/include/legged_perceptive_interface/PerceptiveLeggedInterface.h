@@ -6,6 +6,8 @@
 
 #include <convex_plane_decomposition/PlanarRegion.h>
 #include <legged_interface/LeggedInterface.h>
+#include <ocs2_sphere_approximation/PinocchioSphereInterface.h>
+#include <grid_map_sdf/SignedDistanceField.hpp>
 
 namespace legged {
 
@@ -30,7 +32,7 @@ class PerceptiveLeggedInterface : public legged::LeggedInterface {
 
   size_t getNumVertices() const { return numVertices_; }
 
- private:
+ protected:
   size_t numVertices_ = 16;
 
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> planarTerrainPtr_;
