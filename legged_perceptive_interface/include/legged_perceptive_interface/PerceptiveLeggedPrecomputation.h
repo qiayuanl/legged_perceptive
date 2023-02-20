@@ -8,8 +8,9 @@
 
 #include <convex_plane_decomposition/PlanarRegion.h>
 #include <convex_plane_decomposition/PolygonTypes.h>
-#include <legged_perceptive_interface/ConvexRegionSelector.h>
-#include <legged_perceptive_interface/constraint/FootPlacementConstraint.h>
+
+#include "legged_perceptive_interface/ConvexRegionSelector.h"
+#include "legged_perceptive_interface/constraint/FootPlacementConstraint.h"
 
 namespace legged {
 using namespace ocs2;

@@ -7,7 +7,7 @@
 
 #include "legged_perceptive_interface/ConvexRegionSelector.h"
 
-#include <ocs2_legged_robot/reference_manager/SwitchedModelReferenceManager.h>
+#include <legged_interface/SwitchedModelReferenceManager.h>
 
 namespace legged {
 

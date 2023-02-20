@@ -4,8 +4,8 @@
 
 #pragma once
 
+#include <legged_interface/SwitchedModelReferenceManager.h>
 #include <ocs2_core/constraint/StateConstraint.h>
-#include <ocs2_legged_robot/reference_manager/SwitchedModelReferenceManager.h>
 #include <ocs2_robotic_tools/end_effector/EndEffectorKinematics.h>
 
 namespace legged {
