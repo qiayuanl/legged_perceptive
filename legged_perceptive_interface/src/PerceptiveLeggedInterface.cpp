@@ -22,26 +22,23 @@ void PerceptiveLeggedInterface::setupOptimalControlProblem(const std::string& ta
                                                            const std::string& referenceFile, bool verbose) {
   planarTerrainPtr_ = std::make_shared<convex_plane_decomposition::PlanarTerrain>();
 
-  double width{0.8}, height{0.15}, offset{0.3};
-  for (int i = -3; i < 6; ++i) {
-    convex_plane_decomposition::PlanarRegion plannerRegion;
-    plannerRegion.transformPlaneToWorld.setIdentity();
-    plannerRegion.transformPlaneToWorld.translation().x() = i * offset;
-    plannerRegion.bbox2d = convex_plane_decomposition::CgalBbox2d(-height / 2, -width / 2, +height / 2, width / 2);
-    convex_plane_decomposition::CgalPolygonWithHoles2d boundary;
-    boundary.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(+height / 2, +width / 2));
-    boundary.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(-height / 2, +width / 2));
-    boundary.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(-height / 2, -width / 2));
-    boundary.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(+height / 2, -width / 2));
-    plannerRegion.boundaryWithInset.boundary = boundary;
-    convex_plane_decomposition::CgalPolygonWithHoles2d insets;
-    insets.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(+height / 2 - 0.01, +width / 2 - 0.01));
-    insets.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(-height / 2 + 0.01, +width / 2 - 0.01));
-    insets.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(-height / 2 + 0.01, -width / 2 + 0.01));
-    insets.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(+height / 2 - 0.01, -width / 2 + 0.01));
-    plannerRegion.boundaryWithInset.insets.push_back(insets);
-    planarTerrainPtr_->planarRegions.push_back(plannerRegion);
-  }
+  double width{5.0}, height{5.0};
+  convex_plane_decomposition::PlanarRegion plannerRegion;
+  plannerRegion.transformPlaneToWorld.setIdentity();
+  plannerRegion.bbox2d = convex_plane_decomposition::CgalBbox2d(-height / 2, -width / 2, +height / 2, width / 2);
+  convex_plane_decomposition::CgalPolygonWithHoles2d boundary;
+  boundary.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(+height / 2, +width / 2));
+  boundary.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(-height / 2, +width / 2));
+  boundary.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(-height / 2, -width / 2));
+  boundary.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(+height / 2, -width / 2));
+  plannerRegion.boundaryWithInset.boundary = boundary;
+  convex_plane_decomposition::CgalPolygonWithHoles2d insets;
+  insets.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(+height / 2 - 0.01, +width / 2 - 0.01));
+  insets.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(-height / 2 + 0.01, +width / 2 - 0.01));
+  insets.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(-height / 2 + 0.01, -width / 2 + 0.01));
+  insets.outer_boundary().push_back(convex_plane_decomposition::CgalPoint2d(+height / 2 - 0.01, -width / 2 + 0.01));
+  plannerRegion.boundaryWithInset.insets.push_back(insets);
+  planarTerrainPtr_->planarRegions.push_back(plannerRegion);
 
   std::string layer = "elevation_before_postprocess";
   planarTerrainPtr_->gridMap.setGeometry(grid_map::Length(5.0, 5.0), 0.03);
