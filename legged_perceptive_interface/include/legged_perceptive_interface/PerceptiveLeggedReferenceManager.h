@@ -14,12 +14,12 @@ namespace legged {
 using namespace ocs2;
 using namespace legged_robot;
 
-class LeggedReferenceManager : public SwitchedModelReferenceManager {
+class PerceptiveLeggedReferenceManager : public SwitchedModelReferenceManager {
  public:
-  LeggedReferenceManager(CentroidalModelInfo info, std::shared_ptr<GaitSchedule> gaitSchedulePtr,
-                         std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr,
-                         std::shared_ptr<ConvexRegionSelector> convexRegionSelectorPtr,
-                         const EndEffectorKinematics<scalar_t>& endEffectorKinematics);
+  PerceptiveLeggedReferenceManager(CentroidalModelInfo info, std::shared_ptr<GaitSchedule> gaitSchedulePtr,
+                                   std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr,
+                                   std::shared_ptr<ConvexRegionSelector> convexRegionSelectorPtr,
+                                   const EndEffectorKinematics<scalar_t>& endEffectorKinematics);
 
   const std::shared_ptr<ConvexRegionSelector>& getConvexRegionSelectorPtr() { return convexRegionSelectorPtr_; }
 
@@ -29,7 +29,7 @@ class LeggedReferenceManager : public SwitchedModelReferenceManager {
   void modifyReferences(scalar_t initTime, scalar_t finalTime, const vector_t& initState, TargetTrajectories& targetTrajectories,
                         ModeSchedule& modeSchedule) override;
 
-  void updateSwingTrajectoryPlanner(scalar_t initTime, const vector_t& initState, ModeSchedule& modeSchedule);
+  virtual void updateSwingTrajectoryPlanner(scalar_t initTime, const vector_t& initState, ModeSchedule& modeSchedule);
 
   void modifyProjections(scalar_t initTime, const vector_t& initState, size_t leg, size_t initIndex,
                          const std::vector<bool>& contactFlagStocks,

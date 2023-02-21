@@ -63,8 +63,8 @@ add_library(${PROJECT_NAME}
         src/constraint/FootCollisionConstraint.cpp
         src/constraint/FootPlacementConstraint.cpp
         src/constraint/SphereSdfConstraint.cpp
-        src/LeggedReferenceManager.cpp
         src/ConvexRegionSelector.cpp
+        src/PerceptiveLeggedReferenceManager.cpp
         src/PerceptiveLeggedPrecomputation.cpp
         src/PerceptiveLeggedInterface.cpp
         )

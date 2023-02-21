@@ -6,9 +6,9 @@
 #include "legged_perceptive_interface/constraint/SphereSdfConstraint.h"
 
 #include "legged_perceptive_interface/ConvexRegionSelector.h"
-#include "legged_perceptive_interface/LeggedReferenceManager.h"
 #include "legged_perceptive_interface/PerceptiveLeggedInterface.h"
 #include "legged_perceptive_interface/PerceptiveLeggedPrecomputation.h"
+#include "legged_perceptive_interface/PerceptiveLeggedReferenceManager.h"
 
 #include <ocs2_centroidal_model/CentroidalModelPinocchioMapping.h>
 #include <ocs2_core/soft_constraint/StateSoftConstraint.h>
@@ -98,7 +98,7 @@ void PerceptiveLeggedInterface::setupReferenceManager(const std::string& taskFil
   auto convexRegionSelector =
       std::make_unique<ConvexRegionSelector>(centroidalModelInfo_, planarTerrainPtr_, *eeKinematicsPtr, numVertices_);
 
-  referenceManagerPtr_.reset(new LeggedReferenceManager(centroidalModelInfo_, loadGaitSchedule(referenceFile, verbose),
+  referenceManagerPtr_.reset(new PerceptiveLeggedReferenceManager(centroidalModelInfo_, loadGaitSchedule(referenceFile, verbose),
                                                         std::move(swingTrajectoryPlanner), std::move(convexRegionSelector),
                                                         *eeKinematicsPtr));
 }
@@ -107,7 +107,7 @@ void PerceptiveLeggedInterface::setupPreComputation(const std::string& /*taskFil
                                                     const std::string& /*referenceFile*/, bool /*verbose*/) {
   problemPtr_->preComputationPtr = std::make_unique<PerceptiveLeggedPrecomputation>(
       *pinocchioInterfacePtr_, centroidalModelInfo_, *referenceManagerPtr_->getSwingTrajectoryPlanner(), modelSettings_,
-      *dynamic_cast<LeggedReferenceManager&>(*referenceManagerPtr_).getConvexRegionSelectorPtr());
+      *dynamic_cast<PerceptiveLeggedReferenceManager&>(*referenceManagerPtr_).getConvexRegionSelectorPtr());
 }
 
 }  // namespace legged
