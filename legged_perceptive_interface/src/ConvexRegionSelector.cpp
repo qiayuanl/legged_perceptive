@@ -66,9 +66,6 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, scalar_t ini
     middleTimes_[leg].clear();
     initStandFinalTime_[leg] = 0;
 
-    liftOffHeights_[leg].clear();
-    liftOffHeights_[leg].resize(numPhases);
-
     scalar_t lastStandMiddleTime = NAN;
     // Stand leg foot
     for (size_t i = 0; i < numPhases; ++i) {
@@ -99,36 +96,7 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, scalar_t ini
 
         if (standStartTime < initTime && initTime < standFinalTime) {
           initStandFinalTime_[leg] = standFinalTime;
-          liftOffHeights_[leg][i] = endEffectorKinematicsPtr_->getPosition(initState)[leg].z();
-          lastLiftOffHeights_[leg] = liftOffHeights_[leg][i];
         }
-        if (standFinalTime < initTime) {
-          liftOffHeights_[leg][i] = lastLiftOffHeights_[leg];
-        }
-      }
-    }
-  }
-
-  for (size_t leg = 0; leg < info_.numThreeDofContacts; leg++) {
-    touchDownHeights_[leg].clear();
-    touchDownHeights_[leg].resize(numPhases);
-    liftOffHeights_[leg][0] = contactFlagStocks[leg][0] ? feetProjections_[leg][0].positionInWorld.z() : 0;
-    touchDownHeights_[leg][numPhases - 1] =
-        contactFlagStocks[leg][numPhases - 1] ? feetProjections_[leg][numPhases - 1].positionInWorld.z() : 0;
-
-    for (size_t i = 1; i < numPhases; ++i) {
-      if (!contactFlagStocks[leg][i]) {
-        if (liftOffHeights_[leg][i - 1] != 0) {  // already touchdown or during swing
-          liftOffHeights_[leg][i] = liftOffHeights_[leg][i - 1];
-        } else {
-          liftOffHeights_[leg][i] = feetProjections_[leg][i - 1].positionInWorld.z();
-        }
-      }
-    }
-    for (int i = numPhases - 2; i >= 0; --i) {
-      if (!contactFlagStocks[leg][i]) {
-        touchDownHeights_[leg][i] =
-            contactFlagStocks[leg][i + 1] ? feetProjections_[leg][i + 1].positionInWorld.z() : touchDownHeights_[leg][i + 1];
       }
     }
   }

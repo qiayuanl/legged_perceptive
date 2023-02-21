@@ -33,14 +33,15 @@ class ConvexRegionSelector {
 
   std::vector<scalar_t> getMiddleTimes(size_t leg) const { return middleTimes_[leg]; }
 
+  std::vector<convex_plane_decomposition::PlanarTerrainProjection> getProjections(size_t leg) { return feetProjections_[leg]; }
+
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> getPlanarTerrainPtr() { return planarTerrainPtr_; }
 
-  std::pair<feet_array_t<scalar_array_t>, feet_array_t<scalar_array_t>> getHeights() { return {liftOffHeights_, touchDownHeights_}; }
+  feet_array_t<scalar_t> getInitStandFinalTimes() { return initStandFinalTime_; }
 
-  feet_array_t<scalar_t> getInitStandFinalTime() { return initStandFinalTime_; }
+  feet_array_t<std::vector<bool>> extractContactFlags(const std::vector<size_t>& phaseIDsStock) const;
 
  private:
-  feet_array_t<std::vector<bool>> extractContactFlags(const std::vector<size_t>& phaseIDsStock) const;
   static std::pair<int, int> findIndex(size_t index, const std::vector<bool>& contactFlagStock);
 
   vector3_t getNominalFoothold(size_t leg, scalar_t time, const vector_t& initState, TargetTrajectories& targetTrajectories);
@@ -51,9 +52,7 @@ class ConvexRegionSelector {
   feet_array_t<std::vector<vector3_t>> nominalFootholds_;
   feet_array_t<std::vector<scalar_t>> middleTimes_;
 
-  feet_array_t<scalar_t> initStandFinalTime_, lastLiftOffHeights_;
-
-  feet_array_t<scalar_array_t> liftOffHeights_, touchDownHeights_;
+  feet_array_t<scalar_t> initStandFinalTime_;
 
   feet_array_t<std::vector<scalar_t>> timeEvents_;
 

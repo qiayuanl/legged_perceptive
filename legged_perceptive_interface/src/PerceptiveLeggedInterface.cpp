@@ -99,7 +99,8 @@ void PerceptiveLeggedInterface::setupReferenceManager(const std::string& taskFil
       std::make_unique<ConvexRegionSelector>(centroidalModelInfo_, planarTerrainPtr_, *eeKinematicsPtr, numVertices_);
 
   referenceManagerPtr_.reset(new LeggedReferenceManager(centroidalModelInfo_, loadGaitSchedule(referenceFile, verbose),
-                                                        std::move(swingTrajectoryPlanner), std::move(convexRegionSelector)));
+                                                        std::move(swingTrajectoryPlanner), std::move(convexRegionSelector),
+                                                        *eeKinematicsPtr));
 }
 
 void PerceptiveLeggedInterface::setupPreComputation(const std::string& /*taskFile*/, const std::string& /*urdfFile*/,
