@@ -24,7 +24,7 @@ class LeggedReferenceManager : public SwitchedModelReferenceManager {
 
   contact_flag_t getFootPlacementFlags(scalar_t time) const;
 
- private:
+ protected:
   void modifyReferences(scalar_t initTime, scalar_t finalTime, const vector_t& initState, TargetTrajectories& targetTrajectories,
                         ModeSchedule& modeSchedule) override;
 

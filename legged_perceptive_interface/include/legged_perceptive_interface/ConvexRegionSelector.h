@@ -35,7 +35,7 @@ class ConvexRegionSelector {
 
   std::shared_ptr<convex_plane_decomposition::PlanarTerrain> getPlanarTerrainPtr() { return planarTerrainPtr_; }
 
-  std::pair<feet_array_t<scalar_array_t>, feet_array_t<scalar_array_t>> getHeight() { return {liftOffHeights_, touchDownHeights_}; }
+  std::pair<feet_array_t<scalar_array_t>, feet_array_t<scalar_array_t>> getHeights() { return {liftOffHeights_, touchDownHeights_}; }
 
   feet_array_t<scalar_t> getInitStandFinalTime() { return initStandFinalTime_; }
 

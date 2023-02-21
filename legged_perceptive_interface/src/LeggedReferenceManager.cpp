@@ -66,7 +66,7 @@ void LeggedReferenceManager::modifyReferences(scalar_t initTime, scalar_t finalT
 
   // Swing trajectory
   feet_array_t<scalar_array_t> liftOffHeightSequence, touchDownHeightSequence;
-  std::tie(liftOffHeightSequence, touchDownHeightSequence) = convexRegionSelectorPtr_->getHeight();
+  std::tie(liftOffHeightSequence, touchDownHeightSequence) = convexRegionSelectorPtr_->getHeights();
   getSwingTrajectoryPlanner()->update(modeSchedule, liftOffHeightSequence, touchDownHeightSequence);
 }
 

@@ -80,17 +80,16 @@ void ConvexRegionSelector::update(const ModeSchedule& modeSchedule, scalar_t ini
         const scalar_t standMiddleTime = standStartTime + (standFinalTime - standStartTime) / 2;
 
         if (!numerics::almost_eq(standMiddleTime, lastStandMiddleTime)) {
-          lastStandMiddleTime = standMiddleTime;
-          vector3_t foot_pos = getNominalFoothold(leg, standMiddleTime, initState, targetTrajectories);
+          vector3_t footPos = getNominalFoothold(leg, standMiddleTime, initState, targetTrajectories);
           auto penaltyFunction = [](const vector3_t& /*projectedPoint*/) { return 0.0; };
-          const auto projection = getBestPlanarRegionAtPositionInWorld(foot_pos, planarTerrain_.planarRegions, penaltyFunction);
+          const auto projection = getBestPlanarRegionAtPositionInWorld(footPos, planarTerrain_.planarRegions, penaltyFunction);
           scalar_t growthFactor = 1.05;
           const auto convexRegion = convex_plane_decomposition::growConvexPolygonInsideShape(
               projection.regionPtr->boundaryWithInset.boundary, projection.positionInTerrainFrame, numVertices_, growthFactor);
 
           feetProjections_[leg][i] = projection;
           convexPolygons_[leg][i] = convexRegion;
-          nominalFootholds_[leg][i] = foot_pos;
+          nominalFootholds_[leg][i] = footPos;
           middleTimes_[leg].push_back(standMiddleTime);
         } else {
           feetProjections_[leg][i] = feetProjections_[leg][i - 1];
