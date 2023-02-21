@@ -71,7 +71,6 @@ void LeggedReferenceManager::modifyReferences(scalar_t initTime, scalar_t finalT
 }
 
 void LeggedReferenceManager::updateSwingTrajectoryPlanner(scalar_t initTime, const vector_t& initState, ModeSchedule& modeSchedule) {
-  const size_t numPhases = modeSchedule.modeSequence.size();
   const auto contactFlagStocks = convexRegionSelectorPtr_->extractContactFlags(modeSchedule.modeSequence);
   feet_array_t<scalar_array_t> liftOffHeightSequence, touchDownHeightSequence;
 
@@ -79,51 +78,29 @@ void LeggedReferenceManager::updateSwingTrajectoryPlanner(scalar_t initTime, con
     size_t initIndex = lookup::findIndexInTimeArray(modeSchedule.eventTimes, initTime);
 
     auto projections = convexRegionSelectorPtr_->getProjections(leg);
-    modifyProjections(initTime, initState, leg, initIndex, contactFlagStocks, projections);
+    modifyProjections(initTime, initState, leg, initIndex, contactFlagStocks[leg], projections);
 
-    liftOffHeightSequence[leg].clear();
-    liftOffHeightSequence[leg].resize(numPhases);
-    touchDownHeightSequence[leg].clear();
-    touchDownHeightSequence[leg].resize(numPhases);
-
-    for (size_t i = 1; i < numPhases; ++i) {
-      if (!contactFlagStocks[leg][i]) {
-        liftOffHeightSequence[leg][i] =
-            contactFlagStocks[leg][i - 1] ? projections[i - 1].positionInWorld.z() : liftOffHeightSequence[leg][i - 1];
-      }
-    }
-    for (int i = numPhases - 2; i >= 0; --i) {
-      if (!contactFlagStocks[leg][i]) {
-        touchDownHeightSequence[leg][i] =
-            contactFlagStocks[leg][i + 1] ? projections[i + 1].positionInWorld.z() : touchDownHeightSequence[leg][i + 1];
-      }
-    }
-
-    //    for (int i = 0; i < numPhases; ++i) {
-    //      if (leg == 1) std::cerr << std::setprecision(3) << liftOffHeightSequence[leg][i] << "\t";
-    //    }
-    //    std::cerr << std::endl;
-    //    for (int i = 0; i < numPhases; ++i) {
-    //      if (leg == 1) std::cerr << std::setprecision(3) << contactFlagStocks[leg][i] << "\t";
-    //    }
-    //    std::cerr << std::endl;
+    scalar_array_t liftOffHeights, touchDownHeights;
+    std::tie(liftOffHeights, touchDownHeights) = getHeights(contactFlagStocks[leg], projections);
+    liftOffHeightSequence[leg] = liftOffHeights;
+    touchDownHeightSequence[leg] = touchDownHeights;
   }
   swingTrajectoryPtr_->update(modeSchedule, liftOffHeightSequence, touchDownHeightSequence);
 }
 
 void LeggedReferenceManager::modifyProjections(scalar_t initTime, const vector_t& initState, size_t leg, size_t initIndex,
-                                               const feet_array_t<std::vector<bool>>& contactFlagStocks,
+                                               const std::vector<bool>& contactFlagStocks,
                                                std::vector<convex_plane_decomposition::PlanarTerrainProjection>& projections) {
-  if (contactFlagStocks[leg][initIndex]) {
+  if (contactFlagStocks[initIndex]) {
     lastLiftoffPos_[leg] = endEffectorKinematicsPtr_->getPosition(initState)[leg];
     for (int i = initIndex; i < projections.size(); ++i) {
-      if (!contactFlagStocks[leg][i]) {
+      if (!contactFlagStocks[i]) {
         break;
       }
       projections[i].positionInWorld = lastLiftoffPos_[leg];
     }
     for (int i = initIndex; i >= 0; --i) {
-      if (!contactFlagStocks[leg][i]) {
+      if (!contactFlagStocks[i]) {
         break;
       }
       projections[i].positionInWorld = lastLiftoffPos_[leg];
@@ -131,10 +108,10 @@ void LeggedReferenceManager::modifyProjections(scalar_t initTime, const vector_t
   }
   if (initTime > convexRegionSelectorPtr_->getInitStandFinalTimes()[leg]) {
     for (int i = initIndex; i >= 0; --i) {
-      if (contactFlagStocks[leg][i]) {
+      if (contactFlagStocks[i]) {
         projections[i].positionInWorld = lastLiftoffPos_[leg];
       }
-      if (!contactFlagStocks[leg][i] && !contactFlagStocks[leg][i + 1]) {
+      if (!contactFlagStocks[i] && !contactFlagStocks[i + 1]) {
         break;
       }
     }
@@ -143,6 +120,39 @@ void LeggedReferenceManager::modifyProjections(scalar_t initTime, const vector_t
   //      if (leg == 1) std::cerr << std::setprecision(3) << projections[i].positionInWorld.z() << "\t";
   //    }
   //    std::cerr << std::endl;
+}
+
+std::pair<scalar_array_t, scalar_array_t> LeggedReferenceManager::getHeights(
+    const std::vector<bool>& contactFlagStocks, const std::vector<convex_plane_decomposition::PlanarTerrainProjection>& projections) {
+  scalar_array_t liftOffHeights, touchDownHeights;
+  const size_t numPhases = projections.size();
+
+  liftOffHeights.clear();
+  liftOffHeights.resize(numPhases);
+  touchDownHeights.clear();
+  touchDownHeights.resize(numPhases);
+
+  for (size_t i = 1; i < numPhases; ++i) {
+    if (!contactFlagStocks[i]) {
+      liftOffHeights[i] = contactFlagStocks[i - 1] ? projections[i - 1].positionInWorld.z() : liftOffHeights[i - 1];
+    }
+  }
+  for (int i = numPhases - 2; i >= 0; --i) {
+    if (!contactFlagStocks[i]) {
+      touchDownHeights[i] = contactFlagStocks[i + 1] ? projections[i + 1].positionInWorld.z() : touchDownHeights[i + 1];
+    }
+  }
+
+  //  for (int i = 0; i < numPhases; ++i) {
+  //    std::cerr << std::setprecision(3) << liftOffHeights[i] << "\t";
+  //  }
+  //  std::cerr << std::endl;
+  //  for (int i = 0; i < numPhases; ++i) {
+  //    std::cerr << std::setprecision(3) << contactFlagStocks[i] << "\t";
+  //  }
+  //  std::cerr << std::endl;
+
+  return {liftOffHeights, touchDownHeights};
 }
 
 contact_flag_t LeggedReferenceManager::getFootPlacementFlags(scalar_t time) const {
