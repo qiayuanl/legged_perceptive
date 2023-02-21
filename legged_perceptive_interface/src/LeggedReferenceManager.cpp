@@ -70,53 +70,16 @@ void LeggedReferenceManager::modifyReferences(scalar_t initTime, scalar_t finalT
   updateSwingTrajectoryPlanner(initTime, initState, modeSchedule);
 }
 
-contact_flag_t LeggedReferenceManager::getFootPlacementFlags(scalar_t time) const {
-  contact_flag_t flag;
-  const auto finalTime = convexRegionSelectorPtr_->getInitStandFinalTimes();
-  for (int i = 0; i < flag.size(); ++i) {
-    flag[i] = getContactFlags(time)[i] && time >= finalTime[i];
-  }
-  return flag;
-}
-
 void LeggedReferenceManager::updateSwingTrajectoryPlanner(scalar_t initTime, const vector_t& initState, ModeSchedule& modeSchedule) {
   const size_t numPhases = modeSchedule.modeSequence.size();
   const auto contactFlagStocks = convexRegionSelectorPtr_->extractContactFlags(modeSchedule.modeSequence);
   feet_array_t<scalar_array_t> liftOffHeightSequence, touchDownHeightSequence;
 
   for (size_t leg = 0; leg < info_.numThreeDofContacts; leg++) {
-    auto projections = convexRegionSelectorPtr_->getProjections(leg);
     size_t initIndex = lookup::findIndexInTimeArray(modeSchedule.eventTimes, initTime);
-    if (contactFlagStocks[leg][initIndex]) {
-      lastLiftoffPos_[leg] = endEffectorKinematicsPtr_->getPosition(initState)[leg];
-      for (int i = initIndex; i < numPhases; ++i) {
-        if (!contactFlagStocks[leg][i]) {
-          break;
-        }
-        projections[i].positionInWorld = lastLiftoffPos_[leg];
-      }
-      for (int i = initIndex; i >= 0; --i) {
-        if (!contactFlagStocks[leg][i]) {
-          break;
-        }
-        projections[i].positionInWorld = lastLiftoffPos_[leg];
-      }
-    }
-    if (initTime > convexRegionSelectorPtr_->getInitStandFinalTimes()[leg]) {
-      for (int i = initIndex; i >= 0; --i) {
-        if (contactFlagStocks[leg][i]) {
-          projections[i].positionInWorld = lastLiftoffPos_[leg];
-        }
-        if (!contactFlagStocks[leg][i] && !contactFlagStocks[leg][i + 1]) {
-          break;
-        }
-      }
-    }
 
-    //    for (int i = 0; i < numPhases; ++i) {
-    //      if (leg == 1) std::cerr << std::setprecision(3) << projections[i].positionInWorld.z() << "\t";
-    //    }
-    //    std::cerr << std::endl;
+    auto projections = convexRegionSelectorPtr_->getProjections(leg);
+    modifyProjections(initTime, initState, leg, initIndex, contactFlagStocks, projections);
 
     liftOffHeightSequence[leg].clear();
     liftOffHeightSequence[leg].resize(numPhases);
@@ -146,6 +109,49 @@ void LeggedReferenceManager::updateSwingTrajectoryPlanner(scalar_t initTime, con
     //    std::cerr << std::endl;
   }
   swingTrajectoryPtr_->update(modeSchedule, liftOffHeightSequence, touchDownHeightSequence);
+}
+
+void LeggedReferenceManager::modifyProjections(scalar_t initTime, const vector_t& initState, size_t leg, size_t initIndex,
+                                               const feet_array_t<std::vector<bool>>& contactFlagStocks,
+                                               std::vector<convex_plane_decomposition::PlanarTerrainProjection>& projections) {
+  if (contactFlagStocks[leg][initIndex]) {
+    lastLiftoffPos_[leg] = endEffectorKinematicsPtr_->getPosition(initState)[leg];
+    for (int i = initIndex; i < projections.size(); ++i) {
+      if (!contactFlagStocks[leg][i]) {
+        break;
+      }
+      projections[i].positionInWorld = lastLiftoffPos_[leg];
+    }
+    for (int i = initIndex; i >= 0; --i) {
+      if (!contactFlagStocks[leg][i]) {
+        break;
+      }
+      projections[i].positionInWorld = lastLiftoffPos_[leg];
+    }
+  }
+  if (initTime > convexRegionSelectorPtr_->getInitStandFinalTimes()[leg]) {
+    for (int i = initIndex; i >= 0; --i) {
+      if (contactFlagStocks[leg][i]) {
+        projections[i].positionInWorld = lastLiftoffPos_[leg];
+      }
+      if (!contactFlagStocks[leg][i] && !contactFlagStocks[leg][i + 1]) {
+        break;
+      }
+    }
+  }
+  //    for (int i = 0; i < numPhases; ++i) {
+  //      if (leg == 1) std::cerr << std::setprecision(3) << projections[i].positionInWorld.z() << "\t";
+  //    }
+  //    std::cerr << std::endl;
+}
+
+contact_flag_t LeggedReferenceManager::getFootPlacementFlags(scalar_t time) const {
+  contact_flag_t flag;
+  const auto finalTime = convexRegionSelectorPtr_->getInitStandFinalTimes();
+  for (int i = 0; i < flag.size(); ++i) {
+    flag[i] = getContactFlags(time)[i] && time >= finalTime[i];
+  }
+  return flag;
 }
 
 }  // namespace legged

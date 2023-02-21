@@ -31,6 +31,10 @@ class LeggedReferenceManager : public SwitchedModelReferenceManager {
 
   void updateSwingTrajectoryPlanner(scalar_t initTime, const vector_t& initState, ModeSchedule& modeSchedule);
 
+  void modifyProjections(scalar_t initTime, const vector_t& initState, size_t leg, size_t initIndex,
+                         const feet_array_t<std::vector<bool>>& contactFlagStocks,
+                         std::vector<convex_plane_decomposition::PlanarTerrainProjection>& projections);
+
   const CentroidalModelInfo info_;
   feet_array_t<vector3_t> lastLiftoffPos_;
 
