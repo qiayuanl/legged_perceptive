@@ -14,12 +14,12 @@ namespace legged {
 using namespace ocs2;
 using namespace legged_robot;
 
-class LeggedReferenceManager : public SwitchedModelReferenceManager {
+class PerceptiveLeggedReferenceManager : public SwitchedModelReferenceManager {
  public:
-  LeggedReferenceManager(CentroidalModelInfo info, std::shared_ptr<GaitSchedule> gaitSchedulePtr,
-                         std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr,
-                         std::shared_ptr<ConvexRegionSelector> convexRegionSelectorPtr,
-                         const EndEffectorKinematics<scalar_t>& endEffectorKinematics);
+  PerceptiveLeggedReferenceManager(CentroidalModelInfo info, std::shared_ptr<GaitSchedule> gaitSchedulePtr,
+                                   std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr,
+                                   std::shared_ptr<ConvexRegionSelector> convexRegionSelectorPtr,
+                                   const EndEffectorKinematics<scalar_t>& endEffectorKinematics);
 
   const std::shared_ptr<ConvexRegionSelector>& getConvexRegionSelectorPtr() { return convexRegionSelectorPtr_; }
 

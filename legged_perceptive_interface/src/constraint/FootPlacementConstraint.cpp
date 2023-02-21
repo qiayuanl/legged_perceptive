@@ -3,8 +3,8 @@
 //
 
 #include "legged_perceptive_interface/constraint/FootPlacementConstraint.h"
-#include "legged_perceptive_interface/LeggedReferenceManager.h"
 #include "legged_perceptive_interface/PerceptiveLeggedPrecomputation.h"
+#include "legged_perceptive_interface/PerceptiveLeggedReferenceManager.h"
 
 namespace legged {
 FootPlacementConstraint::FootPlacementConstraint(const SwitchedModelReferenceManager& referenceManager,
@@ -24,7 +24,7 @@ FootPlacementConstraint::FootPlacementConstraint(const FootPlacementConstraint& 
       numVertices_(rhs.numVertices_) {}
 
 bool FootPlacementConstraint::isActive(scalar_t time) const {
-  return dynamic_cast<const LeggedReferenceManager&>(*referenceManagerPtr_).getFootPlacementFlags(time)[contactPointIndex_];
+  return dynamic_cast<const PerceptiveLeggedReferenceManager&>(*referenceManagerPtr_).getFootPlacementFlags(time)[contactPointIndex_];
 }
 
 vector_t FootPlacementConstraint::getValue(scalar_t /*time*/, const vector_t& state, const PreComputation& preComp) const {
