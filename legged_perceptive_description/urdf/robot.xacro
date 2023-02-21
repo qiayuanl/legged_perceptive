@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robot">
+    <xacro:arg name="sim" default="false"/>
+
+    <xacro:include filename="$(find legged_unitree_description)/urdf/robot.xacro"/>
+
+    <xacro:include filename="$(find legged_perceptive_description)/urdf/sensor_d435.xacro"/>
+    <xacro:include filename="$(find legged_perceptive_description)/urdf/sensor_t265.xacro"/>
+
+    <xacro:sensor_t265 name="tracking_camera" topics_ns="tracking_camera" parent="base">
+        <origin xyz="-0.068 0 0.142" rpy="1.5707 -1.8324 0"/>
+    </xacro:sensor_t265>
+
+    <xacro:sensor_d435 name="front_camera" topics_ns="front_camera" parent="base">
+        <origin xyz="0.35 0 0.1" rpy="0 0.52 0"/>
+    </xacro:sensor_d435>
+
+</robot>

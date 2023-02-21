@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>legged_perceptive_description</name>
+    <version>0.0.0</version>
+    <description>Unitree robot description files</description>
+    <maintainer email="liaoqiayuan@gmail.com">Qiayuan Liao</maintainer>
+    <license>BSD</license>
+    <author email="liaoqiayuan@gmail.com">Qiayuan Liao</author>
+
+    <!-- buildtool_depend: dependencies of the build process -->
+    <buildtool_depend>catkin</buildtool_depend>
+    <exec_depend>xacro</exec_depend>
+    <depend>gazebo_ros</depend>
+
+    <export>
+        <!-- Other tools can request additional information be placed here -->
+        <gazebo_ros gazebo_model_path="${prefix}"/>
+    </export>
+</package>
+
