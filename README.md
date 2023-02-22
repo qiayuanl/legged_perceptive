@@ -7,6 +7,9 @@
 - [elevation_mapping](https://github.com/ANYbotics/elevation_mapping);
 - [elevation_mapping_cupy/plane_segmentation](https://github.com/leggedrobotics/elevation_mapping_cupy): NOTE that we only need 
 convex_plane_decomposition_ros package (and its dependencies), DO NOT build the elevation_mapping_cupy package
+- [realsense_gazebo_plugin](https://github.com/pal-robotics/realsense_gazebo_plugin)
+- [realsense2_description](https://github.com/IntelRealSense/realsense-ros/tree/ros2-development/realsense2_description)
+
 
 ### Build
 
