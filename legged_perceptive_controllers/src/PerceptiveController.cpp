@@ -2,11 +2,13 @@
 // Created by qiayuan on 23-1-3.
 //
 
+#include <pinocchio/fwd.hpp>
+
 #include "legged_perceptive_controllers/PerceptiveController.h"
 
 #include "legged_perceptive_controllers/synchronized_module/PlanarTerrainReceiver.h"
-#include "legged_perceptive_interface/LeggedReferenceManager.h"
 #include "legged_perceptive_interface/PerceptiveLeggedInterface.h"
+#include "legged_perceptive_interface/PerceptiveLeggedReferenceManager.h"
 
 #include <pluginlib/class_list_macros.hpp>
 
@@ -22,7 +24,7 @@ void PerceptiveController::setupLeggedInterface(const std::string& taskFile, con
 void PerceptiveController::setupVisualization() {
   ros::NodeHandle nh;
   footPlacementVisualizationPtr_ = std::make_shared<FootPlacementVisualization>(
-      *dynamic_cast<LeggedReferenceManager&>(*leggedInterface_->getReferenceManagerPtr()).getConvexRegionSelectorPtr(),
+      *dynamic_cast<PerceptiveLeggedReferenceManager&>(*leggedInterface_->getReferenceManagerPtr()).getConvexRegionSelectorPtr(),
       leggedInterface_->getCentroidalModelInfo().numThreeDofContacts, nh);
 
   sphereVisualizationPtr_ = std::make_shared<SphereVisualization>(
