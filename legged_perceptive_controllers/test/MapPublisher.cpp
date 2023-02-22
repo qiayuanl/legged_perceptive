@@ -32,13 +32,20 @@ int main(int argc, char** argv) {
   polygon.addVertex(Position(0.5, -0.3));
 
   for (grid_map::PolygonIterator iterator(map, polygon); !iterator.isPastEnd(); ++iterator) {
-    map.at("elevation", *iterator) = 0.1;
+    map.at("elevation", *iterator) = 0.16;
   }
 
   ros::Rate rate(3.0);
   while (nh.ok()) {
     // Add data to grid map.
     ros::Time time = ros::Time::now();
+
+    try {
+      geometry_msgs::TransformStamped tran = buffer.lookupTransform("odom", "base", ros::Time(0));
+      map.move(Position(tran.transform.translation.x, tran.transform.translation.y));
+    } catch (tf2::TransformException& ex) {
+      ROS_WARN("Failure %s\n", ex.what());
+    }
 
     // Publish grid map.
     map.setTimestamp(time.toNSec());
