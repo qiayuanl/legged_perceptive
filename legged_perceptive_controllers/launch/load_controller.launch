@@ -4,7 +4,7 @@
     <arg name="robot_type" default="$(env ROBOT_TYPE)" doc="Robot type: [a1, aliengo, go1, laikago]"/>
 
     <arg name="urdfFile" default="$(find legged_unitree_description)/urdf/$(arg robot_type).urdf"/>
-    <arg name="taskFile" default="$(find legged_perceptive_controllers)/config/task.info"/>
+    <arg name="taskFile" default="$(find legged_perceptive_controllers)/config/$(arg robot_type)/task.info"/>
     <arg name="referenceFile" default="$(find legged_controllers)/config/$(arg robot_type)/reference.info"/>
     <arg name="gaitCommandFile" default="$(find legged_controllers)/config/$(arg robot_type)/gait.info"/>
 

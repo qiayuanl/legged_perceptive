@@ -19,7 +19,7 @@ class PerceptiveLeggedReferenceManager : public SwitchedModelReferenceManager {
   PerceptiveLeggedReferenceManager(CentroidalModelInfo info, std::shared_ptr<GaitSchedule> gaitSchedulePtr,
                                    std::shared_ptr<SwingTrajectoryPlanner> swingTrajectoryPtr,
                                    std::shared_ptr<ConvexRegionSelector> convexRegionSelectorPtr,
-                                   const EndEffectorKinematics<scalar_t>& endEffectorKinematics);
+                                   const EndEffectorKinematics<scalar_t>& endEffectorKinematics, scalar_t comHeight);
 
   const std::shared_ptr<ConvexRegionSelector>& getConvexRegionSelectorPtr() { return convexRegionSelectorPtr_; }
 
@@ -43,6 +43,8 @@ class PerceptiveLeggedReferenceManager : public SwitchedModelReferenceManager {
 
   std::shared_ptr<ConvexRegionSelector> convexRegionSelectorPtr_;
   std::unique_ptr<EndEffectorKinematics<scalar_t>> endEffectorKinematicsPtr_;
+
+  scalar_t comHeight_;
 };
 
 }  // namespace legged

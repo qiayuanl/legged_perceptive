@@ -98,9 +98,11 @@ void PerceptiveLeggedInterface::setupReferenceManager(const std::string& taskFil
   auto convexRegionSelector =
       std::make_unique<ConvexRegionSelector>(centroidalModelInfo_, planarTerrainPtr_, *eeKinematicsPtr, numVertices_);
 
+  scalar_t comHeight = 0;
+  loadData::loadCppDataType(referenceFile, "comHeight", comHeight);
   referenceManagerPtr_.reset(new PerceptiveLeggedReferenceManager(centroidalModelInfo_, loadGaitSchedule(referenceFile, verbose),
-                                                        std::move(swingTrajectoryPlanner), std::move(convexRegionSelector),
-                                                        *eeKinematicsPtr));
+                                                                  std::move(swingTrajectoryPlanner), std::move(convexRegionSelector),
+                                                                  *eeKinematicsPtr, comHeight));
 }
 
 void PerceptiveLeggedInterface::setupPreComputation(const std::string& /*taskFile*/, const std::string& /*urdfFile*/,
