@@ -12,7 +12,7 @@ input_sources:
     sensor_processor:
       type: structured_light
       cutoff_min_depth: 0.2
-      cutoff_max_depth: 1.5
+      cutoff_max_depth: 3.25
       normal_factor_a: 0.000611
       normal_factor_b: 0.003587
       normal_factor_c: 0.3515
