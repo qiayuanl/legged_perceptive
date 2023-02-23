@@ -1,4 +1,4 @@
-centroidalModelType             0      // 0: FullCentroidalDynamics, 1: Single Rigid Body Dynamics
+centroidalModelType             1      // 0: FullCentroidalDynamics, 1: Single Rigid Body Dynamics
 
 legged_robot_interface
 {
@@ -192,7 +192,7 @@ Q
   (7,7)   1000.0   ; p_base_y
   (8,8)   1000.0   ; p_base_z
   (9,9)   100.0    ; theta_base_z
-  (10,10) 1500.0    ; theta_base_y
+  (10,10) 800.0    ; theta_base_y
   (11,11) 300.0    ; theta_base_x
 
   ;; Leg Joint Positions: [LF, LH, RF, RH] ;;

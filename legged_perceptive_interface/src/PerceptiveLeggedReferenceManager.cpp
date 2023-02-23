@@ -95,6 +95,7 @@ void PerceptiveLeggedReferenceManager::modifyProjections(scalar_t initTime, cons
                                                          std::vector<convex_plane_decomposition::PlanarTerrainProjection>& projections) {
   if (contactFlagStocks[initIndex]) {
     lastLiftoffPos_[leg] = endEffectorKinematicsPtr_->getPosition(initState)[leg];
+    lastLiftoffPos_[leg].z() -= 0.02;
     for (int i = initIndex; i < projections.size(); ++i) {
       if (!contactFlagStocks[i]) {
         break;
