@@ -10,7 +10,15 @@ input_sources:
     queue_size: 1
     publish_on_update: true
     sensor_processor:
-      type: perfect
+      type: structured_light
+      cutoff_min_depth: 0.2
+      cutoff_max_depth: 3.25
+      normal_factor_a: 0.000611
+      normal_factor_b: 0.003587
+      normal_factor_c: 0.3515
+      normal_factor_d: 0
+      normal_factor_e: 1
+      lateral_factor: 0.01576
 
 track_point_frame_id: base
 track_point_x: 0.0
@@ -20,7 +28,7 @@ min_update_rate: 3.0
 time_tolerance: 1e-3
 time_offset_for_point_cloud: 0.0
 robot_motion_map_update/covariance_scale: 0.03
-scanning_duration: 0.033
+scanning_duration: 0.2
 
 # Map.
 length_in_x: 5.0
