@@ -109,7 +109,7 @@
         <gazebo>
             <plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
                 <alwaysOn>true</alwaysOn>
-                <updateRate>200.0</updateRate>
+                <updateRate>50.0</updateRate>
                 <bodyName>${name}_pose_frame</bodyName>
                 <topicName>${name}/odom/sample</topicName>
                 <gaussianNoise>0</gaussianNoise>
