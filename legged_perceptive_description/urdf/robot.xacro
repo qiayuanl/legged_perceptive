@@ -10,11 +10,11 @@
 
 
     <xacro:sensor_d435 name="front_camera" topics_ns="front_camera" parent="base">
-        <origin xyz="0.29 0.01 -0.05" rpy="-0.02 0.22 0"/>
+        <origin xyz="0.349 0.021 -0.035" rpy="1.57 0.64 0"/>
     </xacro:sensor_d435>
 
     <xacro:sensor_t265 name="tracking_camera" topics_ns="tracking_camera" parent="base">
-        <origin xyz="0.32 0.01 0" rpy="0 0.25 0"/>
+        <origin xyz="0.387 0.01 0.002" rpy="0 0 0"/>
     </xacro:sensor_t265>
 
 </robot>
