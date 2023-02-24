@@ -2,7 +2,7 @@
 map_frame_id: odom
 robot_base_frame_id: base
 robot_pose_with_covariance_topic: /pose
-robot_pose_cache_size: 50
+robot_pose_cache_size: 100
 input_sources:
   front: # A name to identify the input source
     type: pointcloud # Supported types: pointcloud
@@ -24,7 +24,6 @@ track_point_frame_id: base
 track_point_x: 0.0
 track_point_y: 0.0
 track_point_z: 0.0
-min_update_rate: 3.0
 time_tolerance: 1e-3
 time_offset_for_point_cloud: 0.0
 robot_motion_map_update/covariance_scale: 0.03
@@ -35,7 +34,7 @@ length_in_x: 5.0
 length_in_y: 5.0
 position_x: 0.0
 position_y: 0.0
-resolution: 0.01
+resolution: 0.03
 min_variance: 0.0001
 max_variance: 0.05
 mahalanobis_distance_threshold: 2.5
