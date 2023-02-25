@@ -13,26 +13,23 @@
           clear_params="true"/>
 
 
-    <node pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager"
-          output="screen"/>
+    <!--    <group ns="front_camera">-->
+    <!--        <include file="$(find realsense2_camera)/launch/includes/nodelet.launch.xml">-->
+    <!--            <arg name="external_manager" value="true"/>-->
+    <!--            <arg name="manager" value="/$(arg manager)"/>-->
+    <!--            <arg name="json_file_path" value="$(find legged_perceptive_description)/config/HighAccuracyPreset.json"/>-->
+    <!--            <arg name="tf_prefix" value="front_camera"/>-->
+    <!--            <arg name="device_type" value="d435"/>-->
+    <!--            <arg name="reconnect_timeout" value="1"/>-->
+    <!--            <arg name="enable_pointcloud" value="true"/>-->
+    <!--            <arg name="allow_no_texture_points" value="true"/>-->
+    <!--        </include>-->
+    <!--    </group>-->
 
-    <group ns="front_camera">
-        <include file="$(find realsense2_camera)/launch/includes/nodelet.launch.xml">
-            <arg name="external_manager" value="true"/>
-            <arg name="manager" value="/$(arg manager)"/>
-            <arg name="json_file_path" value="$(find legged_perceptive_description)/config/HighAccuracyPreset.json"/>
-            <arg name="tf_prefix" value="front_camera"/>
-            <arg name="device_type" value="d435"/>
-            <arg name="reconnect_timeout" value="1"/>
-            <arg name="enable_pointcloud" value="true"/>
-            <arg name="allow_no_texture_points" value="true"/>
-        </include>
-    </group>
+    <include file="$(find legged_perceptive_description)/launch/mid360.launch"/>
 
     <group ns="tracking_camera">
         <include file="$(find realsense2_camera)/launch/includes/nodelet.launch.xml">
-            <arg name="external_manager" value="true"/>
-            <arg name="manager" value="/$(arg manager)"/>
             <arg name="tf_prefix" value="tracking_camera"/>
             <arg name="device_type" value="t265"/>
             <arg name="enable_pose" value="true"/>

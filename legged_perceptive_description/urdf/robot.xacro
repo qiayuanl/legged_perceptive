@@ -9,12 +9,33 @@
     <xacro:include filename="$(find legged_perceptive_description)/urdf/sensor_t265.xacro"/>
 
 
-    <xacro:sensor_d435 name="front_camera" topics_ns="front_camera" parent="base">
-        <origin xyz="0.36 -0.0 0.01" rpy="3.141 0.38 0"/>
-    </xacro:sensor_d435>
+    <!--    <xacro:sensor_d435 name="front_camera" topics_ns="front_camera" parent="base">-->
+    <!--        <origin xyz="0.36 -0.0 0.01" rpy="3.141 0.38 0"/>-->
+    <!--    </xacro:sensor_d435>-->
 
     <xacro:sensor_t265 name="tracking_camera" topics_ns="tracking_camera" parent="base">
         <origin xyz="0.145 0 0.1" rpy="0 -1.04 0"/>
     </xacro:sensor_t265>
+
+    <link name="livox_frame">
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size="0.01 1.0 1.0"/>
+            </geometry>
+        </collision>
+        <collision>
+            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <geometry>
+                <box size="1.0 0.01 1.0"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint name="livox_fixed" type="fixed">
+        <origin rpy="-2.59 1.03 3.09" xyz="0.3535 -0.057 -0.0185"/>
+        <parent link="base"/>
+        <child link="livox_frame"/>
+    </joint>
 
 </robot>
