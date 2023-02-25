@@ -14,20 +14,20 @@
     <!--    </xacro:sensor_d435>-->
 
     <xacro:sensor_t265 name="tracking_camera" topics_ns="tracking_camera" parent="base">
-        <origin xyz="0.145 0 0.1" rpy="0 -1.04 0"/>
+        <origin xyz="0.15 0 0.1" rpy="0 -1.04 0"/>
     </xacro:sensor_t265>
 
     <link name="livox_frame">
         <collision>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <box size="0.01 1.0 1.0"/>
+                <box size="0.01 5.0 5.0"/>
             </geometry>
         </collision>
         <collision>
             <origin rpy="0 0 0" xyz="0 0 0"/>
             <geometry>
-                <box size="1.0 0.01 1.0"/>
+                <box size="5.0 0.01 5.0"/>
             </geometry>
         </collision>
     </link>

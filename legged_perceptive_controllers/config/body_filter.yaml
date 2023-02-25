@@ -1,0 +1,15 @@
+cloud_filter_chain:
+  - name: robot_body_filter_containment
+    type: robot_body_filter/RobotBodyFilterPointCloud2
+    params:
+      frames/sensor: livox_frame
+      frames/filtering: livox_frame
+      frames/output: livox_frame
+      body_model/inflation/scale: 1.0
+      body_model/inflation/padding: 0.1
+      body_model/robot_description_param: legged_robot_description
+      filter/do_shadow_test: false
+      model_pose_update_interval: 0.
+      bounding_box/compute: false
+      bounding_box/debug: false
+      sensor/max_distance: 1.5

@@ -19,6 +19,13 @@ input_sources:
       normal_factor_e: 1
       lateral_factor: 0.01576
       ignore_points_below: -0.5
+  livox:
+    type: pointcloud # Supported types: pointcloud
+    topic: /livox/filtered
+    queue_size: 1
+    publish_on_update: true
+    sensor_processor:
+      type: perfect
 
 track_point_frame_id: base
 track_point_x: 0.0
@@ -26,7 +33,7 @@ track_point_y: 0.0
 track_point_z: 0.0
 time_tolerance: 1e-3
 robot_motion_map_update/covariance_scale: 0.03
-scanning_duration: 0.05
+scanning_duration: 0.1
 visibility_cleanup_rate: 5
 
 # Map.
@@ -40,3 +47,8 @@ max_variance: 0.05
 mahalanobis_distance_threshold: 2.5
 multi_height_noise: 0.001
 surface_normal_positive_axis: z
+initialize_elevation_map: true
+submap_length_x: 3.0
+submap_length_y: 3.0
+target_frame_init_submap: odom
+init_submap_variance: 1e-3

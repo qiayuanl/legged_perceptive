@@ -1,4 +1,4 @@
-centroidalModelType             1      // 0: FullCentroidalDynamics, 1: Single Rigid Body Dynamics
+centroidalModelType             0      // 0: FullCentroidalDynamics, 1: Single Rigid Body Dynamics
 
 legged_robot_interface
 {
@@ -11,7 +11,7 @@ model_settings
   phaseTransitionStanceTime     0.1
 
   verboseCppAd                  true
-  recompileLibrariesCppAd       true
+  recompileLibrariesCppAd       false
   modelFolderCppAd              /tmp/legged_control/aliengo
 }
 
