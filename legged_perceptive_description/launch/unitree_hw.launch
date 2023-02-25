@@ -41,6 +41,7 @@
             <arg name="initial_reset" value="true"/>
         </include>
         <rosparam>tracking_module/enable_relocalization: false</rosparam>
+        <rosparam>tracking_module/enable_pose_jumping: false</rosparam>
     </group>
 
 
