@@ -25,7 +25,9 @@ input_sources:
     queue_size: 1
     publish_on_update: true
     sensor_processor:
-      type: perfect
+      type: laser
+      ignore_points_above: 0.5
+      ignore_points_below: -0.5
 
 track_point_frame_id: base
 track_point_x: 0.0

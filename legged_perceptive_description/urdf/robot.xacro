@@ -19,13 +19,26 @@
 
     <link name="livox_frame">
         <collision>
-            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <origin rpy="-2.59 1.03 3.09" xyz="0.38 -0.057 -0.0185"/>
             <geometry>
                 <box size="0.01 5.0 5.0"/>
             </geometry>
         </collision>
         <collision>
-            <origin rpy="0 0 0" xyz="0 0 0"/>
+            <origin rpy="-2.59 1.03 3.09" xyz="0.38 -0.057 -0.0185"/>
+            <geometry>
+                <box size="5.0 0.01 5.0"/>
+            </geometry>
+        </collision>
+
+        <collision>
+            <origin rpy="2.59 1.03 -3.09" xyz="0.38 0.057 -0.0185"/>
+            <geometry>
+                <box size="0.01 5.0 5.0"/>
+            </geometry>
+        </collision>
+        <collision>
+            <origin rpy="2.59 1.03 -3.09" xyz="0.38 0.057 -0.0185"/>
             <geometry>
                 <box size="5.0 0.01 5.0"/>
             </geometry>
@@ -33,7 +46,7 @@
     </link>
 
     <joint name="livox_fixed" type="fixed">
-        <origin rpy="-2.59 1.03 3.09" xyz="0.3535 -0.057 -0.0185"/>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
         <parent link="base"/>
         <child link="livox_frame"/>
     </joint>
