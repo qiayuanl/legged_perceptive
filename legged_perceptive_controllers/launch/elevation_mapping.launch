@@ -4,12 +4,21 @@
     <node pkg="nodelet" type="nodelet" name="$(arg manager)" args="manager"
           output="screen"/>
 
-    <node pkg="nodelet" type="nodelet" name="body_filter"
+    <rosparam command="load" file="$(find legged_perceptive_controllers)/config/body_filter.yaml"/>
+
+    <node pkg="nodelet" type="nodelet" name="livox_right_filter"
           args="load sensor_filters/pointcloud2_filter_chain $(arg manager)">
-        <remap from="~input" to="/livox/lidar"/>
-        <remap from="~output" to="/livox/filtered"/>
-        <rosparam command="load" file="$(find legged_perceptive_controllers)/config/body_filter.yaml"/>
+        <remap from="~input" to="/livox/lidar_192_168_8_101"/>
+        <remap from="~output" to="/livox/right"/>
     </node>
+
+    <node pkg="nodelet" type="nodelet" name="livox_left_filter"
+          args="load sensor_filters/pointcloud2_filter_chain $(arg manager)">
+        <remap from="~input" to="/livox/lidar_192_168_8_102"/>
+        <remap from="~output" to="/livox/left"/>
+    </node>
+
+    <include file="$(find legged_perceptive_description)/launch/mid360.launch"/>
 
     <!-- Elevation mapping node -->
     <node pkg="elevation_mapping" type="elevation_mapping" name="elevation_mapping" output="screen">

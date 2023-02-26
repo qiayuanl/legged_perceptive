@@ -1,14 +1,51 @@
-cloud_filter_chain:
-  - name: robot_body_filter_containment
-    type: robot_body_filter/RobotBodyFilterPointCloud2
-    params:
-      frames/sensor: livox_frame
-      frames/filtering: livox_frame
-      frames/output: livox_frame
-      body_model/inflation/scale: 1.0
-      body_model/inflation/padding: 0.05
-      body_model/robot_description_param: legged_robot_description
-      filter/do_shadow_test: false
-      model_pose_update_interval: 0.
-      bounding_box/compute: false
-      bounding_box/debug: false
+livox_right_filter:
+  cloud_filter_chain:
+    - name: livox_filter
+      type: robot_body_filter/RobotBodyFilterPointCloud2
+      params:
+        frames/fixed: odom
+        frames/sensor: livox_right
+        frames/output: livox_right
+        body_model/inflation/shadow_test/scale: 1.1
+        body_model/robot_description_param: legged_robot_description
+        debug/pcl/shadow: true
+        debug/marker/shadow: true
+        filter/do_shadow_test: true
+        only_links:
+          - livox_right
+    - name: robot_body_filter_containment
+      type: robot_body_filter/RobotBodyFilterPointCloud2
+      params:
+        frames/fixed: odom
+        frames/output: base
+        body_model/inflation/scale: 1.0
+        body_model/inflation/padding: 0.1
+        body_model/robot_description_param: legged_robot_description
+        filter/do_shadow_test: false
+        debug/pcl/inside: true
+
+livox_left_filter:
+  cloud_filter_chain:
+    - name: livox_filter
+      type: robot_body_filter/RobotBodyFilterPointCloud2
+      params:
+        frames/fixed: odom
+        frames/sensor: livox_left
+        frames/output: livox_left
+        body_model/inflation/shadow_test/scale: 1.1
+        body_model/robot_description_param: legged_robot_description
+        debug/pcl/shadow: true
+        debug/marker/shadow: true
+        filter/do_shadow_test: true
+        only_links:
+          - livox_left
+    - name: robot_body_filter_containment
+      type: robot_body_filter/RobotBodyFilterPointCloud2
+      params:
+        frames/fixed: odom
+        frames/output: base
+        body_model/inflation/scale: 1.0
+        body_model/inflation/padding: 0.1
+        body_model/robot_description_param: legged_robot_description
+        filter/do_shadow_test: false
+        debug/pcl/inside: true
