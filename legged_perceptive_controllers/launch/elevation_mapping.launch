@@ -18,8 +18,6 @@
         <remap from="~output" to="/livox/left"/>
     </node>
 
-    <include file="$(find legged_perceptive_description)/launch/mid360.launch"/>
-
     <!-- Elevation mapping node -->
     <node pkg="elevation_mapping" type="elevation_mapping" name="elevation_mapping" output="screen">
         <rosparam command="load" file="$(find legged_perceptive_controllers)/config/elevation_mapping.yaml"/>
