@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://ros.org/wiki/xacro">
+
+    <xacro:macro name="mid360"
+                 params="name parent *origin">
+
+        <link name="${name}">
+            <inertial>
+                <origin rpy="0 0 0" xyz="0 0 -0.0076"/>
+                <mass value="0.270"/>
+                <inertia
+                        ixx="${(2*0.270)/5.0*(0.022*0.022)}" ixy="0.0" ixz="0.0"
+                        iyy="${(2*0.270)/5.0*(0.022*0.022)}" iyz="0.0"
+                        izz="${(2*0.270)/5.0*(0.022*0.022)}"/>
+            </inertial>
+            <visual>
+                <origin rpy="0 0 0" xyz="0 0 -0.0076"/>
+                <geometry>
+                    <sphere radius="0.022"/>
+                </geometry>
+                <color rgba="0.0 0.0 0.5 0.5"/>
+            </visual>
+
+            <collision>
+                <origin xyz="0 0 0.027" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.003 0.067 0.0165"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0 0.041 0.007" rpy="-1.04 0 0"/>
+                <geometry>
+                    <box size="0.003 0.055 0.024"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0 -0.041 0.007" rpy="1.04 0 0"/>
+                <geometry>
+                    <box size="0.003 0.055 0.024"/>
+                </geometry>
+            </collision>
+
+            <collision>
+                <origin xyz="0 0 0.027" rpy="0 0 0"/>
+                <geometry>
+                    <box size="0.067 0.003 0.0165"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="0.041 0 0.007" rpy="0 1.04 0"/>
+                <geometry>
+                    <box size="0.055 0.003 0.024"/>
+                </geometry>
+            </collision>
+            <collision>
+                <origin xyz="-0.041 0 0.007" rpy="0 -1.04 0"/>
+                <geometry>
+                    <box size="0.055 0.003 0.024"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <joint name="${name}_fixed" type="fixed">
+            <xacro:insert_block name="origin"/>
+            <parent link="${parent}"/>
+            <child link="${name}"/>
+        </joint>
+
+        <gazebo reference="${name}">
+            <self_collide>1</self_collide>
+            <material>Gazebo/Blue</material>
+        </gazebo>
+
+    </xacro:macro>
+</robot>

@@ -7,6 +7,7 @@
 
     <xacro:include filename="$(find legged_perceptive_description)/urdf/sensor_d435.xacro"/>
     <xacro:include filename="$(find legged_perceptive_description)/urdf/sensor_t265.xacro"/>
+    <xacro:include filename="$(find legged_perceptive_description)/urdf/mid360.xacro"/>
 
 
     <!--    <xacro:sensor_d435 name="front_camera" topics_ns="front_camera" parent="base">-->
@@ -17,51 +18,13 @@
         <origin xyz="0.16 0 0.085" rpy="0 -1.04 0"/>
     </xacro:sensor_t265>
 
-    <link name="livox_frame">
-    </link>
 
-    <joint name="livox_fixed" type="fixed">
-        <origin rpy="0 0 0" xyz="0 0 0"/>
-        <parent link="base"/>
-        <child link="livox_frame"/>
-    </joint>
+    <xacro:mid360 name="livox_right" parent="base">
+        <origin xyz="0.365 -0.068 -0.0185" rpy="-2.59 1.03 3.09"/>
+    </xacro:mid360>
 
-    <link name="livox_right">
-        <collision>
-            <geometry>
-                <box size="0.003 5.0 5.0"/>
-            </geometry>
-        </collision>
-        <collision>
-            <geometry>
-                <box size="5.0 0.003 5.0"/>
-            </geometry>
-        </collision>
-    </link>
-
-    <joint name="livox_right_fixed" type="fixed">
-        <origin rpy="-2.59 1.03 3.09" xyz="0.365 -0.068 -0.0185"/>
-        <parent link="livox_frame"/>
-        <child link="livox_right"/>
-    </joint>
-
-    <link name="livox_left">
-        <collision>
-            <geometry>
-                <box size="0.003 5.0 5.0"/>
-            </geometry>
-        </collision>
-        <collision>
-            <geometry>
-                <box size="5.0 0.003 5.0"/>
-            </geometry>
-        </collision>
-    </link>
-
-    <joint name="livox_left_fixed" type="fixed">
-        <origin rpy="2.59 1.03 -3.09" xyz="0.365 0.068 -0.0185"/>
-        <parent link="livox_frame"/>
-        <child link="livox_left"/>
-    </joint>
+    <xacro:mid360 name="livox_left" parent="base">
+        <origin xyz="0.365 0.068 -0.0185" rpy="2.59 1.03 -3.09"/>
+    </xacro:mid360>
 
 </robot>
