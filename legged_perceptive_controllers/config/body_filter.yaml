@@ -3,11 +3,11 @@ livox_right_filter:
     - name: livox_filter
       type: robot_body_filter/RobotBodyFilterPointCloud2
       params:
-        sensor/min_distance: 0.1
+        sensor/min_distance: 0.4
         frames/fixed: odom
         frames/sensor: livox_right
         frames/output: livox_right
-        body_model/inflation/padding: 0.001
+        body_model/inflation/padding: 0.0005
         body_model/robot_description_param: legged_robot_description
         debug/marker/shadow: true
         debug/marker/contains: true
@@ -19,7 +19,7 @@ livox_right_filter:
         frames/fixed: odom
         frames/sensor: livox_right
         frames/output: livox_right
-        body_model/inflation/padding: 0.02
+        body_model/inflation/padding: 0.01
         body_model/robot_description_param: legged_robot_description
         debug/marker/shadow: true
         debug/marker/contains: true
@@ -33,11 +33,11 @@ livox_left_filter:
     - name: livox_filter
       type: robot_body_filter/RobotBodyFilterPointCloud2
       params:
-        sensor/min_distance: 0.1
+        sensor/min_distance: 0.4
         frames/fixed: odom
         frames/sensor: livox_left
         frames/output: livox_left
-        body_model/inflation/padding: 0.001
+        body_model/inflation/padding: 0.0005
         body_model/robot_description_param: legged_robot_description
         debug/marker/shadow: true
         debug/marker/contains: true
@@ -49,7 +49,7 @@ livox_left_filter:
         frames/fixed: odom
         frames/sensor: livox_right
         frames/output: livox_right
-        body_model/inflation/padding: 0.02
+        body_model/inflation/padding: 0.01
         body_model/robot_description_param: legged_robot_description
         debug/marker/shadow: true
         debug/marker/contains: true
