@@ -20,11 +20,11 @@
 
 
     <xacro:mid360 name="livox_right" parent="base">
-        <origin xyz="0.365 -0.068 -0.0185" rpy="-2.59 1.03 3.09"/>
+        <origin xyz="0.365 -0.068 -0.030" rpy="-2.59 1.03 3.09"/>
     </xacro:mid360>
 
     <xacro:mid360 name="livox_left" parent="base">
-        <origin xyz="0.365 0.068 -0.0185" rpy="2.59 1.03 -3.09"/>
+        <origin xyz="0.365 0.068 -0.030" rpy="2.59 1.03 -3.09"/>
     </xacro:mid360>
 
 </robot>

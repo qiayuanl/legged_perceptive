@@ -27,7 +27,6 @@ track_point_x: 0.0
 track_point_y: 0.0
 track_point_z: 0.0
 time_tolerance: 1e-3
-robot_motion_map_update/covariance_scale: 0.03
 scanning_duration: 0.1
 visibility_cleanup_rate: 5
 
@@ -47,4 +46,3 @@ length_in_x_init_submap: 3.0
 length_in_y_init_submap: 3.0
 init_submap_variance: 1e-3
 target_frame_init_submap: odom
-increase_height_alpha: 0.2
