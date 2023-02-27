@@ -5,7 +5,7 @@
         robot_type:=$(arg robot_type) sim:=true
     "/>
     <node name="generate_urdf" pkg="legged_common" type="generate_urdf.sh" output="screen"
-          args="legged_robot_description $(arg robot_type)"/>
+          args="$(find legged_perceptive_description)/urdf/robot.xacro $(arg robot_type)"/>
 
     <rosparam file="$(find legged_gazebo)/config/default.yaml" command="load"/>
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
