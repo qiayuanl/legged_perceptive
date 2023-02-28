@@ -38,6 +38,7 @@ add_library(${PROJECT_NAME}
         src/synchronized_module/PlanarTerrainReceiver.cpp
         src/visualization/FootPlacementVisualization.cpp
         src/visualization/SphereVisualization.cpp
+        src/FootHeightEstimation.cpp
         src/PerceptiveController.cpp
         )
 

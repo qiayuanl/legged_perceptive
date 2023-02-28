@@ -18,6 +18,8 @@ class PerceptiveController : public legged::LeggedController {
 
   void setupMpc() override;
 
+  void setupStateEstimate(const std::string& taskFile, bool verbose) override;
+
   void update(const ros::Time& time, const ros::Duration& period) override;
 
   void setupVisualization();

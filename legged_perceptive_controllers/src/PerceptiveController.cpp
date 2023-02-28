@@ -6,6 +6,7 @@
 
 #include "legged_perceptive_controllers/PerceptiveController.h"
 
+#include "legged_perceptive_controllers/FootHeightEstimation.h"
 #include "legged_perceptive_controllers/synchronized_module/PlanarTerrainReceiver.h"
 #include "legged_perceptive_interface/PerceptiveLeggedInterface.h"
 #include "legged_perceptive_interface/PerceptiveLeggedReferenceManager.h"
@@ -47,6 +48,14 @@ void PerceptiveController::update(const ros::Time& time, const ros::Duration& pe
   LeggedController::update(time, period);
   footPlacementVisualizationPtr_->update(currentObservation_);
   sphereVisualizationPtr_->update(currentObservation_);
+}
+
+void PerceptiveController::setupStateEstimate(const std::string& taskFile, bool verbose) {
+  stateEstimate_ = std::make_shared<FootHeightEstimation>(
+      leggedInterface_->getPinocchioInterface(), leggedInterface_->getCentroidalModelInfo(), *eeKinematicsPtr_,
+      dynamic_cast<PerceptiveLeggedInterface&>(*leggedInterface_).getPlanarTerrainPtr());
+  dynamic_cast<FootHeightEstimation&>(*stateEstimate_).loadSettings(taskFile, verbose);
+  currentObservation_.time = 0;
 }
 
 }  // namespace legged
