@@ -3,6 +3,22 @@ map_frame_id: odom
 robot_base_frame_id: base
 robot_pose_with_covariance_topic: /pose
 input_sources:
+  front: # A name to identify the input source
+    type: pointcloud # Supported types: pointcloud
+    topic: /front_camera/depth/color/points
+    queue_size: 1
+    publish_on_update: true
+    sensor_processor:
+      type: structured_light
+      cutoff_min_depth: 0.2
+      cutoff_max_depth: 1.5
+      normal_factor_a: 0.000611
+      normal_factor_b: 0.003587
+      normal_factor_c: 0.3515
+      normal_factor_d: 0
+      normal_factor_e: 1
+      lateral_factor: 0.01576
+      ignore_points_below: -0.5
   livox_right:
     type: pointcloud
     topic: /livox/right
