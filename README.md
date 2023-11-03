@@ -1,4 +1,7 @@
 # legged_perceptive
+[](https://youtu.be/zcTuBe6d1qQ?si=yn4POSM8wvb2f0C8)
+![](https://i.ytimg.com/vi/zcTuBe6d1qQ/maxresdefault.jpg)
+
 ## Getting Started
 ### Dependency
 
