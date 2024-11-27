@@ -1,4 +1,6 @@
 # legged_perceptive
+   ***NOTICE: This software is not supported anymore! The authors of this software are developing a completely new framework and are not working on this project anymore. Please excuse any inconvenience this might cause.***
+
 [![](https://i.ytimg.com/vi/zcTuBe6d1qQ/maxresdefault.jpg)](https://youtu.be/zcTuBe6d1qQ?si=yn4POSM8wvb2f0C8)
 
 ## Getting Started
